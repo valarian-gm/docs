@@ -1,0 +1,45 @@
+---
+title: "Arquitetura & Plataformas"
+sidebarTitle: "Plataformas"
+description: "Os sistemas onde o motor roda (runtime vs construção) e as integrações que conectam ferramentas externas."
+---
+
+O motor roda em **dois ambientes distintos** e se conecta ao mundo por **integrações**. Saber qual é qual evita confusão (ex.: a memória viva mora no runtime, não no repo).
+
+<Info>
+  **Fonte:** `empresa/contexto/visao.md` (Ferramentas) · `sistema/agentes/isis/TOOLS.md` · `sistema/integracoes/*`.
+</Info>
+
+## Os dois ambientes
+
+<CardGroup cols={2}>
+  <Card title="Hermes — runtime (produção)" icon="bolt">
+    Onde a ISIS **opera ao vivo**: recebe mensagens (Telegram/Slack), roda crons, toma decisões operacionais, mantém memória dinâmica. É o "agente trabalhando".
+  </Card>
+
+  <Card title="Claude Code — construção" icon="hammer">
+    Onde se **constrói e edita o cérebro** (este repositório). Versiona regras, skills, agentes, documentação.
+  </Card>
+</CardGroup>
+
+> Distinção que importa: o que **roda** vive no Hermes; o que é **fonte de verdade** vive no repo. A Constituição manda que tudo que roda tenha cópia canônica versionada — nada de skill solta só no runtime.
+
+## Integrações (ferramentas externas)
+
+| Ferramenta | Papel | Como conecta | Estado |
+| --- | --- | --- | --- |
+| **Meta Ads** | Leitura/diagnóstico de tráfego; relatórios. Nunca altera sem OK | MCP nativo (`ads_*`) · Composio fallback | ✅ ativo |
+| **Asaas** | Financeiro: MRR, cobranças, inadimplência (read-only por padrão) | MCP próprio | ✅ ativo |
+| **Composio** | Gateway p/ Gmail, Calendar, Drive, Sheets, ClickUp, \+100 apps | HTTP MCP | ✅ ativo |
+| **ClickUp** | Tarefas, MRR, cockpit operacional | leitura nativa · escrita via Composio (\+ verificação) | ✅ ativo |
+| **Slack** | Comunicação interna (colaboradores ↔ ISIS), canais por cliente | bot token | 🟡 em conexão |
+| **Telegram** | Cockpit principal do Tai; tópicos por cliente/área | bot | ✅ ativo |
+| **WhatsApp** | Atendimento/client-ops (Evolution API) | Evolution (Baileys) | 🟡 piloto |
+| **Git/GitHub** | Versionamento do cérebro | git nativo | ✅ ativo |
+| **Vercel** | Publicação de relatórios/páginas sanitizadas | deploy | ✅ ativo |
+
+## Princípios de integração
+
+- **4 padrões de auth** cobrem quase tudo: token simples, OAuth, CLI, e-mail. Não se decora 50 APIs.
+- **Escopo mínimo \+ read-only por padrão.** O que só lê não pede permissão de escrita.
+- **Credencial nunca aparece** — injetada em runtime por referência; valor jamais em chat/comando/log (regra cirúrgica do SOUL). Detalhe em [Guardrails](/guardrails/visao-geral).

@@ -1,0 +1,39 @@
+---
+title: "Workflows"
+sidebarTitle: "Catálogo"
+description: "Os fluxos de trabalho do sistema: gatilho, passos, quais skills e agentes cada um chama, gate de qualidade e status real."
+---
+
+Um **workflow** é o POP (procedimento operacional) de uma tarefa recorrente: diz quais skills usar, quais agentes chamar e qual gate valida. A regra de ouro: antes de executar tarefa recorrente, consulte o roteador.
+
+<Info>
+  **Fonte:** roteamento canônico em `sistema/operacao/core/workflow-router.md`. Workflows vivem em dois formatos — skills `workflow_*` em `sistema/skills/workflows/` e YAMLs em `sistema/operacao/workflows/`.
+</Info>
+
+## Status (honesto, não fachada)
+
+🟢 **ativo** = testado, roda ponta a ponta · 🟡 **piloto** = em ativação · ⚪ **contrato** = receita escrita, ainda não testada.
+
+## Catálogo
+
+| Workflow | Gatilho | Orquestra (agentes) | Skills que chama | Gate | Status |
+| --- | --- | --- | --- | --- | --- |
+| **relatorio-trafego** | traffic → cs → qa | auditoria-meta-360, scan-anomalias, relatorio-trafego-pago | GATE-RELATORIO-TRAFEGO-PAGO | 🟢 ativo |  |
+| **onboarding** | cs, strategist, traffic, qa | pack-cliente, persona-neurocomportamental, branding-cliente | GATE-CHECK-CLIENTE, GATE-PROVISIONAMENTO-CLIENTE | 🟡 piloto |  |
+| **check-cliente** | isis, traffic, cs, qa | pack-cliente (verificação), auditoria-tracking/meta | GATE-CHECK-CLIENTE | 🟡 piloto |  |
+| **campanha-nova** | strategist, copy, design, traffic, qa, cs | core-estrategia-cliente, tracking-checklist, copy-anuncio, criativo-gerador-andromeda, static-ad-blueprint | GATE-CAMPANHA | 🟡 piloto |  |
+| **qbr** | traffic, strategist, fin, cs, qa | relatorio-trafego-pago, core-estrategia-cliente, relatorio-visao-geral-cliente, retencao-upsell | GATE-RELATORIO-TRAFEGO-PAGO | 🟡 piloto |  |
+| **offboarding** | "cliente saiu/pausou", "colaborador saiu" | isis, cs, qa | — (edita pack/yaml \+ desprovisiona) | GATE-OFFBOARDING | 🟡 piloto |
+| **dashboard-anomalias** | "tem algo estranho nas contas?", radar do dia | traffic, fin, cs, qa | scan-anomalias | GATE-AUDITORIA | 🟡 piloto |
+| **onboarding\_colaborador** | "novo colaborador", "adicionar fulano" | isis | — (permissões fail-closed \+ rotinas) | GATE-COLABORADOR-CANAIS | 🟡 piloto |
+| **whatsapp-setup** | "conecta o WhatsApp da ISIS" | isis | whatsapp-evolution | GATE-WHATSAPP | 🟡 piloto |
+| **iterar-criativo** | "frequência alta", "CPL alto", "novo ângulo" | traffic, strategist, copy, design, qa, cs | copy-anuncio, copy-revisor, criativo-gerador-andromeda | GATE-COPY, GATE-CRIATIVO | ⚪ contrato |
+| **abertura-semana** | "segunda-feira", "o que foco essa semana?" | isis, scout, cs | — | — | ⚪ contrato |
+| **rotina-diaria-operacional** | "curadoria da manhã", "rotina diária" | isis, traffic, cs, qa | scan-anomalias | — | ⚪ contrato |
+| **diagnostico-venda**_(playbook, não automático)_ | call comercial, antes de proposta | MIDAS/SDR (manual) | — (10 seções \+ matriz de fit) | — | guia |
+
+## Anatomia de um workflow (exemplo: relatorio-trafego 🟢)
+
+<Warning>
+  **Red-line transversal:** publicar, enviar ao cliente, alterar ads, criar cobrança ou ativar WhatsApp **nunca** é automático — o workflow entrega draft e pede OK explícito (`sistema/operacao/core/full-auto.md`).
+</Warning>
