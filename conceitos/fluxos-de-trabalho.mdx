@@ -1,0 +1,85 @@
+---
+title: "Fluxos de trabalho no Cerebro Valarian explicados"
+sidebarTitle: "Fluxos de Trabalho"
+description: "Saiba o que são fluxos de trabalho no Cerebro Valarian, como criá-los, quais etapas configurar e como automatizar processos da sua equipe."
+---
+
+No Cerebro Valarian, um **fluxo de trabalho** é a representação digital de um processo recorrente da sua equipe — desde a triagem de uma solicitação até a entrega de um projeto completo. Ao modelar esses processos dentro da plataforma, você garante que cada etapa seja executada na ordem certa, pelo responsável certo e no momento certo, sem depender de comunicações informais ou memórias individuais.
+
+## Anatomia de um fluxo
+
+Todo fluxo de trabalho no Cerebro Valarian é composto por elementos fundamentais que, juntos, descrevem como um processo funciona do início ao fim:
+
+- **Nome:** identifica o fluxo de forma clara e única dentro do espaço ou projeto. Escolha nomes descritivos que expressem o objetivo do processo, como "Aprovação de conteúdo" ou "Onboarding de cliente".
+- **Etapas:** são os estágios sequenciais (ou paralelos) pelos quais uma tarefa ou item passa. Cada etapa representa um estado bem definido no ciclo de vida do processo.
+- **Responsáveis:** cada etapa pode ter um ou mais membros da equipe designados para executá-la, garantindo clareza sobre quem age em cada momento.
+- **Gatilhos:** definem o que inicia o fluxo — pode ser uma ação manual do usuário, a criação de um item, a chegada de uma data específica ou um evento externo via integração.
+- **Condições:** regras lógicas que determinam qual caminho o fluxo seguirá dependendo de critérios como campos preenchidos, status anteriores ou dados de entrada.
+
+Compreender esses elementos é essencial antes de criar seu primeiro fluxo, pois eles formam a base de qualquer processo automatizado ou manual dentro da plataforma.
+
+## Criando um fluxo de trabalho
+
+<Steps>
+  <Step title="Navegue até a seção Fluxos">
+    No menu lateral esquerdo, clique em **Fluxos**. Você verá a lista de todos os fluxos existentes no espaço ou projeto atual. Certifique-se de estar dentro do espaço correto antes de continuar.
+  </Step>
+  <Step title="Clique em Novo Fluxo">
+    No canto superior direito da tela, clique no botão **+ Novo Fluxo**. Uma janela de configuração será aberta para que você defina as propriedades iniciais do fluxo, incluindo nome, descrição e tipo (manual ou automático).
+  </Step>
+  <Step title="Defina as etapas do processo">
+    Dentro do editor visual de fluxos, adicione as etapas que compõem o processo. Para cada etapa, informe o nome, o tipo (ação, aprovação ou notificação) e as condições de transição para a próxima fase. Arraste as etapas para reorganizá-las conforme necessário.
+  </Step>
+  <Step title="Atribua responsáveis a cada etapa">
+    Para cada etapa criada, clique em **Atribuir responsável** e selecione um membro da equipe ou um grupo. Você também pode configurar atribuições dinâmicas baseadas em regras, como "responsável pelo projeto" ou "criador do item".
+  </Step>
+  <Step title="Ative o fluxo">
+    Após revisar todas as etapas e configurações, clique em **Salvar e Ativar**. O fluxo passará para o status **Ativo** e estará disponível para uso imediato. Você pode pausar ou editar o fluxo a qualquer momento sem perder o histórico de execuções anteriores.
+  </Step>
+</Steps>
+
+## Tipos de fluxo
+
+<Tabs>
+  <Tab title="Manual">
+    Os fluxos manuais são iniciados diretamente por um usuário, sob demanda. Eles são ideais para processos que não seguem uma cadência previsível ou que exigem julgamento humano antes de começar.
+
+    **Quando usar fluxos manuais:**
+    - Processos iniciados por solicitação de cliente ou colega
+    - Revisões pontuais de documentos ou entregas
+    - Aprovações que dependem de contexto específico
+
+    **Como funciona na prática:**
+    O usuário acessa o item ou tarefa, clica em **Iniciar Fluxo** e seleciona o fluxo desejado na lista de opções disponíveis. A partir daí, o Cerebro Valarian guia o processo passo a passo, notificando os responsáveis em cada etapa.
+
+    **Vantagem principal:** total controle sobre quando um processo é iniciado, sem risco de execuções indesejadas.
+  </Tab>
+  <Tab title="Automático">
+    Os fluxos automáticos são iniciados por gatilhos configurados previamente, sem necessidade de intervenção humana. Eles são ideais para processos recorrentes, previsíveis e que precisam de consistência rigorosa.
+
+    **Gatilhos disponíveis:**
+    - **Criação de item:** o fluxo inicia automaticamente quando um novo item é criado em um projeto específico.
+    - **Mudança de campo:** disparado quando um campo (como status, prioridade ou responsável) é alterado para um valor definido.
+    - **Data e hora:** o fluxo começa em uma data agendada ou quando um prazo se aproxima.
+    - **Integração externa:** eventos vindos de ferramentas conectadas (como formulários, e-mails ou webhooks) disparam o fluxo automaticamente.
+
+    **Como funciona na prática:**
+    Configure o gatilho nas propriedades do fluxo, defina as condições de disparo e ative o fluxo. A partir desse momento, sempre que o gatilho for acionado, o processo se inicia sem intervenção manual.
+
+    **Vantagem principal:** elimina etapas esquecidas e garante que nenhum processo crítico deixe de ser executado por falta de ação humana.
+  </Tab>
+</Tabs>
+
+## Boas práticas
+
+<Note>
+  Fluxos bem modelados reduzem o retrabalho e aumentam a previsibilidade das entregas. Antes de criar um novo fluxo, mapeie o processo no papel: identifique entradas, saídas, responsáveis e possíveis exceções. Isso economiza tempo de reconfiguração depois.
+</Note>
+
+Siga estas recomendações para criar fluxos eficientes e fáceis de manter:
+
+- **Nomeie as etapas com verbos de ação:** prefira "Revisar proposta" a "Revisão", pois deixa claro o que deve ser feito naquela fase.
+- **Evite fluxos com mais de 8 etapas:** processos muito longos tendem a ser difíceis de monitorar. Se necessário, quebre-os em subfluxos interligados.
+- **Documente o propósito de cada fluxo:** use o campo de descrição para explicar quando e por que aquele fluxo deve ser usado — isso facilita o onboarding de novos membros.
+- **Teste antes de ativar:** utilize o modo de simulação para percorrer todas as etapas e verificar se as condições e atribuições estão corretas antes de liberar o fluxo para a equipe.
+- **Revise periodicamente:** agende revisões trimestrais dos fluxos ativos para verificar se ainda refletem como o processo funciona na prática e arquive os que caíram em desuso.

@@ -1,30 +1,11 @@
 {
-  "$schema": "https://mintlify.com/docs.json",
+  "projectType": "saas",
+  "projectName": "Cerebro Valarian",
+  "projectDescription": "Cerebro Valarian is an intelligent SaaS platform that centralizes information, workflows, and decision-making tools to help teams operate smarter and faster.",
   "theme": "almond",
-  "name": "Cerebro Valarian",
-  "colors": {
-    "primary": "#ef7025",
-    "light": "#eec9bc",
-    "dark": "#4fa1ab"
-  },
-  "favicon": "/favicon.svg",
-  "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
-  },
-  "navbar": {
-    "links": [
-      {
-        "label": "Suporte",
-        "href": "/suporte/contato"
-      }
-    ],
-    "primary": {
-      "type": "button",
-      "label": "Acessar Plataforma",
-      "href": "https://app.valarian.com.br"
-    }
-  },
+  "primaryColor": "#ef7025",
+  "lightColor": "#eec9bc",
+  "darkColor": "#4fa1ab",
   "navigation": {
     "tabs": [
       {
@@ -90,9 +71,23 @@
       }
     ]
   },
-  "footer": {
-    "socials": {
-      "linkedin": "https://linkedin.com/company/valarian"
-    }
-  }
+  "keyFeatures": [
+    "Painel centralizado de informações e tarefas",
+    "Gestão de fluxos de trabalho e projetos",
+    "Base de conhecimento colaborativa",
+    "Relatórios e análises em tempo real",
+    "Controle de permissões e papéis por equipe",
+    "Integrações com ferramentas externas",
+    "Notificações e alertas configuráveis",
+    "Gestão de membros e equipes"
+  ],
+  "publicApiSurface": [
+    "Autenticação e acesso à conta",
+    "Criação e gerenciamento de espaços/projetos",
+    "Criação e atribuição de tarefas",
+    "Base de conhecimento: criar, editar e buscar conteúdo",
+    "Relatórios e exportação de dados",
+    "Configuração de integrações externas",
+    "Gerenciamento de membros e permissões"
+  ]
 }

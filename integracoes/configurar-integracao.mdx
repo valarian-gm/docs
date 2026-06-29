@@ -1,0 +1,79 @@
+---
+title: "Como configurar uma integração no Cerebro Valarian"
+sidebarTitle: "Configurar Integração"
+description: "Guia passo a passo para conectar o Cerebro Valarian a ferramentas externas, autenticar sua conta e gerenciar as permissões da integração."
+---
+
+Configurar uma integração no Cerebro Valarian envolve autenticar sua conta na ferramenta externa, conceder as permissões necessárias e definir como os dados serão sincronizados entre os sistemas. O processo é guiado pela própria plataforma e, na maioria dos casos, leva menos de dois minutos para ser concluído.
+
+## Instalando uma integração
+
+<Steps>
+  <Step title="Acesse as configurações de integrações">
+    No menu lateral, clique em **Configurações** e, em seguida, selecione **Integrações** no submenu. Você verá a lista completa de integrações disponíveis organizadas por categoria.
+  </Step>
+  <Step title="Encontre a integração desejada">
+    Navegue pelas categorias ou use a barra de pesquisa para localizar a ferramenta que deseja conectar. Cada cartão de integração exibe o status atual (conectada ou disponível) e uma breve descrição do que ela faz.
+  </Step>
+  <Step title="Clique em Conectar">
+    No cartão da integração escolhida, clique no botão **Conectar**. Uma janela de autenticação será aberta para iniciar o processo de autorização com o serviço externo.
+  </Step>
+  <Step title="Faça login na ferramenta externa">
+    Quando solicitado, insira suas credenciais na página de login da ferramenta externa. Essa etapa acontece diretamente no site do serviço — o Cerebro Valarian não tem acesso à sua senha.
+  </Step>
+  <Step title="Autorize as permissões necessárias">
+    Revise as permissões solicitadas pelo Cerebro Valarian e clique em **Autorizar** para concluir a autenticação via OAuth. As permissões listadas correspondem exatamente ao que é necessário para o funcionamento da integração.
+  </Step>
+  <Step title="Confirme a conexão">
+    Após a autorização, você será redirecionado de volta ao Cerebro Valarian. Uma mensagem de confirmação indicará que a integração foi conectada com sucesso. O status no cartão da integração mudará para **Conectada**.
+  </Step>
+</Steps>
+
+## Gerenciando integrações ativas
+
+Todas as integrações conectadas ficam listadas na seção **Integrações Ativas**, dentro de **Configurações > Integrações**. A partir daí, você pode:
+
+- **Visualizar detalhes**: veja quais permissões estão ativas, a data da última sincronização e o status da conexão.
+- **Testar a conexão**: clique em **Testar** para verificar se a integração está respondendo corretamente. O resultado aparece imediatamente na tela.
+- **Desconectar**: clique em **Desconectar** para remover a integração da sua conta ou da organização. Você precisará confirmar a ação antes que ela seja efetivada.
+
+## Sincronização de dados
+
+Por padrão, o Cerebro Valarian sincroniza os dados das integrações a cada **15 minutos**. Esse intervalo garante que as informações exibidas na plataforma estejam sempre atualizadas sem sobrecarregar as APIs dos serviços externos.
+
+Caso precise de dados mais recentes imediatamente, acesse **Configurações > Integrações**, clique na integração desejada e selecione **Sincronizar agora**. A sincronização manual processa as atualizações em tempo real e reseta o contador do próximo ciclo automático.
+
+## Solução de problemas
+
+<Accordion title="A integração não conecta">
+  Se a janela de autenticação fechar sem concluir a conexão, verifique os seguintes pontos:
+
+  - Confirme que você está usando as credenciais corretas para a ferramenta externa.
+  - Certifique-se de que sua conta na ferramenta externa tem as permissões necessárias para autorizar aplicativos de terceiros.
+  - Verifique se há bloqueios de pop-up no navegador impedindo a abertura da janela de autenticação.
+  - Tente o processo em uma aba anônima ou em um navegador diferente para descartar conflitos de extensões.
+
+  Se o problema persistir, entre em contato com o suporte do Cerebro Valarian informando o nome da integração e a mensagem de erro exibida.
+</Accordion>
+
+<Accordion title="Os dados não sincronizam">
+  Se os dados não estão sendo atualizados após a conexão, siga estas verificações:
+
+  - Acesse **Configurações > Integrações** e confirme que a integração está com o status **Conectada** (e não **Erro** ou **Expirada**).
+  - Clique em **Sincronizar agora** para forçar uma sincronização manual e observe se alguma mensagem de erro aparece.
+  - Verifique se as configurações de filtros da integração não estão excluindo os dados que você espera ver.
+  - Confirme que sua conta na ferramenta externa ainda tem acesso aos recursos que o Cerebro Valarian está tentando ler.
+</Accordion>
+
+<Accordion title="Perdemos a conexão">
+  Conexões podem expirar quando o token OAuth é revogado ou quando a senha da ferramenta externa é alterada. Para reconectar:
+
+  1. Acesse **Configurações > Integrações**.
+  2. Localize a integração com o status **Desconectada** ou **Expirada**.
+  3. Clique em **Reconectar** e siga o mesmo fluxo de autenticação da instalação original.
+  4. Após reconectar, acione uma sincronização manual para recuperar os dados mais recentes.
+</Accordion>
+
+<Warning>
+  Desconectar uma integração interrompe imediatamente a sincronização de dados entre o Cerebro Valarian e a ferramenta externa. Registros, links e referências criados a partir dessa integração podem ficar desatualizados ou inacessíveis. Antes de desconectar, avalie o impacto nos fluxos de trabalho que dependem dessa conexão.
+</Warning>
