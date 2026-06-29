@@ -1,0 +1,96 @@
+---
+title: "Skill: Artigo LinkedIn"
+sidebarTitle: "Artigo LinkedIn"
+description: "Escreve conteúdo educativo longo em dois modos — artigo viral de LinkedIn (1200-2000 palavras, fundo de funil, jornada A→B) ou matéria de blog em estilo jornalístico (~800 palavras). Fluxo: pesquisa verificada → urgências ocultas → texto final."
+---
+
+## O que é
+
+Skill de redação de conteúdo educativo longo com processo estruturado em três fases e dois checkpoints.
+
+Dois modos:
+
+- **LinkedIn (default)** — artigo viral de fundo de funil, 1200-2000 palavras. Conduz o leitor do Ponto A (problema) ao Ponto B (solução), com cada fato ancorado em fonte real e verificada. CTA elegante, sem venda direta.
+- **Jornalístico** — matéria de blog (~800 palavras), registro neutro e informativo, com entrevista simulada de especialista embutida.
+
+O diferencial está no processo: nenhuma linha é escrita sem antes passar por pesquisa de fontes verificadas e mapeamento de urgências ocultas do público.
+
+## Quando usar
+
+- "Escreve um artigo pro LinkedIn", "artigo de blog", "matéria educativa"
+- "Conteúdo de autoridade", "artigo viral", "texto longo que ensina"
+- Transformar um tema em conteúdo de fundo de funil
+
+Não usar para: post curto, carrossel (→ `criativo-carrossel-html`), reels (→ `conteudo-roteiro-reels`), stories (→ `conteudo-sequencia-stories`), copy de página (→ [pagina-copy-lp](/skills/pagina-copy-lp)), VSL (→ `copy-vsl`), construir avatar (→ [persona-neurocomportamental](/skills/persona-neurocomportamental)), humanizar texto (→ `copy-humanizar-ia`).
+
+## Como utilizar
+
+**O que você pede:**
+1. Público-alvo no formato N2D — "Eu ajudo [nicho] que não consegue [dor] a [desejo]."
+2. Tema do artigo — o assunto ou a transformação central.
+3. Modo: `linkedin` (padrão) ou `jornalístico`.
+
+Se houver cliente nomeado, a ISIS busca o avatar em `clientes/{cliente}/` antes de pedir o N2D.
+
+**O que a ISIS faz — três fases com checkpoints:**
+
+**Fase 1 — Pesquisa de fontes (5-10 artigos)**
+
+Busca em fontes confiáveis e de autoridade. Para cada fonte: busca por palavras-chave, valida o conteúdo e verifica o link antes de incluir. Links que caem são descartados e substituídos.
+
+Apresenta tabela: Nº | Título | Contexto | Link (verificado).
+
+**Checkpoint 1:** você escolhe até três fontes para usar no artigo.
+
+**Fase 2 — Urgências ocultas (10 itens)**
+
+Tabela com 10 urgências ocultas: necessidades não expressas ligadas às dores e desejos do público — ansiedades, vícios, medos latentes.
+
+**Checkpoint 2:** você escolhe até três para ancorarem o artigo.
+
+**Fase 3 — Artigo final**
+
+6 blocos com word-budgets fixos:
+
+| Bloco | Função | Palavras |
+|---|---|---|
+| 1. Gancho | Para o scroll na primeira linha | 15-30 |
+| 2. Problema + Conexão | Expansão profunda da dor | 300-500 |
+| 3. Insight Transformador | A virada de chave com analogia | 350-600 |
+| 4. Mini-Transformação | Caminho aplicável, prático | 300-500 |
+| 5. Moral + Visão | Síntese duradoura | 150-250 |
+| 6. CTA | Convite elegante (pergunta ou compartilhamento) | 20-50 |
+
+<Info>
+**CTA nunca é venda direta.** O artigo de LinkedIn termina com pergunta aberta para comentários ou convite para compartilhar — nunca "clique aqui para comprar". Venda acontece no relacionamento, não no CTA do artigo.
+</Info>
+
+**O que você recebe:**
+
+- Artigo completo (1200-2000 palavras no modo LinkedIn, ~800 no jornalístico)
+- Indicação de handoff para `copy-humanizar-ia` e/ou `copy-revisor`
+
+## Entradas / Saídas
+
+| Campo | Tipo | Obrigatório |
+|---|---|---|
+| N2D do público | texto ("Eu ajudo [nicho]...") | Sim |
+| Tema do artigo | texto | Sim |
+| Modo | `linkedin` ou `jornalístico` | Não (padrão: `linkedin`) |
+
+| Saída | Descrição |
+|---|---|
+| Tabela de fontes | 5-10 fontes verificadas para escolha |
+| Tabela de urgências | 10 urgências ocultas para escolha |
+| Artigo final | Texto completo nos 6 blocos |
+
+## O que NÃO faz
+
+- Não usa fontes sem verificar o link — link quebrado é descartado.
+- Não escreve o artigo antes dos dois checkpoints.
+- Não faz venda direta no CTA.
+- Não produz carrossel, reels ou copy de página — essas são skills separadas.
+
+---
+
+**Fonte:** `sistema/skills/performance/conteudo-artigo-linkedin/SKILL.md`

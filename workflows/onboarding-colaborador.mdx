@@ -1,0 +1,80 @@
+---
+title: "Workflow: Onboarding de Colaborador"
+sidebarTitle: "Onboarding de colaborador"
+description: "Coloca uma pessoa do time dentro do sistema: estrutura mínima, permissões fail-closed, identidade de canal e as rotinas na DM. Não liga nada externo sem o seu OK."
+---
+
+## O que é
+O fluxo que regulariza **uma pessoa do seu time** (não cliente) dentro do sistema: cria a pasta dela, fecha as permissões no modo "nega por padrão", amarra a identidade de canal (o Slack que recebe as mensagens) e deixa as rotinas automáticas — checkup matinal, alerta da tarde, cobrança de tarefas — prontas pra ligar. O núcleo é **permissão fechada + identidade de canal**: sem isso, ninguém entra. A ISIS conduz tudo, mas a ativação das DMs só acontece quando você diz "pode".
+
+## Quando usar
+Dispara quando você diz, no canal certo:
+- *"onboarding de colaborador"* / *"novo colaborador"* / *"adiciona o fulano ao sistema"*
+- quando alguém do time existe mas **não tem ficha** (`<slug>.yaml`) ou está sem bloco de automações
+- **antes** de ligar as rotinas automáticas de qualquer pessoa da equipe — é o pré-requisito delas
+
+<Warning>É para **gente interna**. Se o alvo for cliente, o fluxo certo é o [Onboarding de cliente](/workflows/catalogo) — outro caminho, outros gates.</Warning>
+
+## Como utilizar
+1. **Você manda o gatilho** com o nome e o papel da pessoa. Ex.: *"faz o onboarding da fulana, ela cuida de copy de dois clientes, sem acesso a financeiro."*
+2. **A ISIS confirma o plano antes de agir** (Passo 0 — eco do plano): mostra a pessoa-alvo e os passos numerados, e espera seu "ok".
+3. **Ela monta a estrutura e fecha as permissões** — e aqui ela vai te perguntar o que falta: a que clientes essa pessoa atende, o que ela **nunca** pode fazer, quais pastas/ferramentas ela acessa. Na dúvida, ela **nega**.
+4. **Ela pede o Slack da pessoa** (o ID do canal). Sem isso, não há para onde mandar rotina — e o fluxo trava ali de propósito.
+5. **Você recebe a ficha pronta** e decide se ativa as DMs. A ISIS **prepara** as rotinas; **ligar** as mensagens é red line de comunicação externa — só com seu OK explícito.
+
+**O que ter em mãos (inputs):**
+
+| Input | Obrigatório | O que é |
+|---|---|---|
+| `slug` da pessoa | sim | nome curto, kebab-case (vira a pasta dela) |
+| papel / escopos | sim | o que ela faz no time (define os `escopos` de acesso) |
+| clientes que ela atende | sim | lista fechada — não herda "tudo" |
+| proibições (`nunca`) | sim | o que ela explicitamente **não** pode tocar |
+| `ids.slack` | sim p/ rotinas | o canal de entrega; sem ele as rotinas não provisionam |
+| status | sim | `ativo` (recebe rotinas) ou `standby` (fica preparado e mudo) |
+| email / whatsapp | opcional | desejáveis, não bloqueiam |
+
+## Por dentro (a sequência)
+Cada step é uma ação atômica conduzida pela ISIS. Aqui a ordem, o dono e onde grava.
+
+| # | Step | Quem | O que faz | Grava em |
+|---|---|---|---|---|
+| 1 | Estrutura mínima | ISIS | cria pasta + arquivos da pessoa | `colaboradores/<slug>/<slug>.md` (contexto) + `<slug>.yaml` (permissões) |
+| 2 | **Permissões (fail-closed)** | ISIS | preenche `escopos`, `clientes`, `nunca`, `acessos` | `colaboradores/<slug>/<slug>.yaml` |
+| 3 | Identidade de canal | ISIS | valida o `ids.slack` (gate) | `<slug>.yaml.ids` |
+| 4 | **Provisionar rotinas** | ISIS | escreve o bloco `automacoes`; cria 1 cron por rotina | `<slug>.yaml.automacoes` + crons por-slug |
+| 5 | Inscrever no índice | ISIS | adiciona a pessoa no índice geral (só ponteiro) | `colaboradores/USERS.md` |
+| 6 | Dry-run | ISIS | manda uma DM de teste de checkup e confirma o recebimento | confirmação — ativação real exige seu OK |
+
+Os steps **2 e 3 são o núcleo**: permissões fechadas + Slack definido são o que autoriza provisionar. O resto pendura neles.
+
+> Os agentes (ISIS e os subagentes) estão explicados em [Os Agentes](/agentes/visao-geral).
+
+<Accordion title="Por que 'fail-closed' importa">
+Permissão fechada significa: a pessoa só pode o que está **escrito** que pode. Nada de herdar `"*"` (acesso total) — isso é só do dono da operação. Se a ISIS está na dúvida se a fulana pode mexer no cliente X, a resposta padrão é **não**. Identidade, ela confirma pelo metadado da plataforma (o ID real do Slack), nunca pelo nome digitado no chat — porque nome se forja, ID não.
+</Accordion>
+
+## Entradas / Saídas
+- **Entra:** nome, papel, clientes atendidos, proibições e o Slack da pessoa (tabela acima).
+- **Sai** (o que define "completo"):
+  - `colaboradores/<slug>/<slug>.md` — contexto pessoal
+  - `colaboradores/<slug>/<slug>.yaml` — permissões fail-closed + `ids.slack` + bloco `automacoes`
+  - `colaboradores/USERS.md` — pessoa inscrita no índice (como ativa ou em standby, conforme o status)
+
+## Onde trava
+- **Gate `GATE-COLABORADOR-CANAIS`:** o `ids.slack` é **obrigatório**. Sem ele, o Step 4 (provisionar rotinas) **não roda** — não tem para onde entregar a mensagem. Email e WhatsApp são desejáveis, mas não travam.
+- **Slug ambíguo** (pasta já existe sem autorização de regularização) → ela para e sugere um slug.
+- **Permissões em aberto** → na dúvida, nega; não avança "no chute".
+- **Ativar DMs sem OK** → bloqueado. Preparar é livre; disparar mensagem é red line.
+
+## O que NÃO faz
+- **Não dispara as rotinas em produção** sem OK explícito — DM é comunicação externa.
+- **Não provisiona quem está `standby`** — pessoa em standby fica preparada e muda, sem cron, sem mensagem.
+- **Não faz offboarding** — desligar/desprovisionar (cancelar crons, tirar do índice) é um fluxo separado.
+- **Não dá acesso "total"** a ninguém que não seja o dono.
+
+## Exemplo
+Pediram pra entrar uma pessoa que cuida só de copy de dois clientes. A ISIS criou a pasta, escreveu as permissões com `escopos: [copy]`, `clientes: [cliente-a, cliente-b]` e `nunca: [financeiro, alterar-ads]`, pediu o ID do Slack, escreveu o bloco de automações com as três rotinas (checkup matinal, alerta da tarde, cobrança de tarefas) apontando pra DM dela, inscreveu no índice e mandou uma DM de teste. Voltou com: *"Ficha pronta, dry-run recebido. As rotinas estão provisionadas mas paradas — confirma que pode ligar as DMs dela?"* As mensagens só começaram a sair depois do OK.
+
+## Fonte
+`sistema/skills/workflows/workflow_onboarding_colaborador/SKILL.md` — esta página é a leitura de operador desse workflow.

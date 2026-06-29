@@ -1,0 +1,38 @@
+---
+title: "scout — Inteligência competitiva"
+sidebarTitle: "scout"
+description: "Monitora concorrência, ofertas, posicionamento e landing pages. Entrega mudanças, SWOT e alertas com evidência. Não acessa área privada nem conclui sem prova."
+---
+
+## O que é / papel
+O **scout** é o subagente de inteligência competitiva. Monitora concorrentes, ofertas, posicionamento, landing pages e mudanças relevantes de mercado, e devolve **mudanças por concorrente, SWOT comparativo, alertas de oportunidade/ameaça e os snapshots como evidência**. Toda conclusão vem com prova — sem snapshot, não afirma.
+
+<Info>É um contrato P2: função com limite claro, acionada sob demanda (QBR, planejamento, campanha nova). Não roda como vigia autônoma.</Info>
+
+## Como a ISIS o aciona
+A ISIS despacha o scout quando o flow precisa de leitura de mercado — abertura de semana (opcional), QBR, planejamento trimestral ou campanha nova. Ele lê os concorrentes listados no `pack.yaml`, as URLs públicas e os snapshots anteriores, compara e reporta.
+
+## Pode sozinho
+| Produz | Detalhe |
+|---|---|
+| Mudanças por concorrente | O que mexeu desde o último snapshot |
+| SWOT comparativo | Posição relativa do cliente |
+| Alertas | Oportunidade / ameaça |
+| Evidências | Snapshots que sustentam cada conclusão |
+
+## NUNCA
+<Warning>
+- Acessar área privada/fechada sem consentimento.
+- Fazer scrape agressivo sem rate limit.
+- Concluir sem evidência.
+- Copiar criativo/posicionamento sem adaptação estratégica.
+</Warning>
+
+## Em quais workflows entra
+- [Abertura de semana](/workflows/abertura-semana) (opcional) · [QBR](/workflows/qbr) · [Campanha nova](/workflows/campanha-nova)
+
+## Skills que usa
+Análise competitiva e captura de snapshot de páginas públicas. Catálogo em [Skills](/skills/catalogo). Guardrails de coleta em [Guardrails](/guardrails/visao-geral).
+
+## Fonte
+Contrato `sistema/operacao/subagentes/contratos-p2.md#scout`.

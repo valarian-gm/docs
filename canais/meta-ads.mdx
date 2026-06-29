@@ -1,0 +1,35 @@
+---
+title: "Meta Ads — Leitura & diagnóstico"
+sidebarTitle: "Meta Ads"
+description: "Acesso às contas de anúncio Meta dos clientes para leitura e diagnóstico de mídia paga. Lê à vontade; nunca altera anúncio ativo sem OK explícito."
+---
+
+## O que é
+O Meta Ads é o canal de **leitura e diagnóstico de mídia paga**: puxar performance, montar relatório, diagnosticar campanha, alimentar a estratégia com número ao vivo. A premissa é dura: aqui a ISIS **lê**, ela não mexe. Alterar anúncio que está rodando é gastar (ou parar de gastar) o dinheiro do cliente — isso é decisão sua.
+
+## Como conecta
+Dois caminhos, nessa ordem:
+1. **MCP nativo (`ads_*`) — prioritário.** É o que a ISIS usa primeiro pra leitura e diagnóstico.
+2. **Composio — fallback**, quando o nativo não cobrir o que precisa.
+
+A conta de anúncio de cada cliente (o `act_...`) vive no `pack.yaml` daquele cliente — **não há lista central**. A credencial é injetada em runtime; valor nunca renderizado.
+
+## Como se usa
+Você pede no tópico do cliente: *"como tá a campanha"*, *"puxa o desempenho dos últimos 7 dias"*, *"diagnostica por que o CPL subiu"*. A ISIS busca **dado ao vivo** (nunca relê dump velho), monta o diagnóstico e, quando é caso de relatório, entrega o pacote pra revisão. Numa campanha nova, ela monta a ficha completa — mas quem sobe no Gerenciador é você.
+
+## Guardrail do canal
+Carrega dado de cliente, então a trava `resolve-canal` valida **canal × cliente × conta** antes de responder qualquer número, **fail-closed**: pediu dado do cliente A no tópico/canal do B, bloqueia. Detalhe em [Guardrails](/guardrails/visao-geral) e [Operar sem vazar](/guardrails/operacao-na-pratica).
+
+<Warning>Dois gotchas que viram incêndio: editar o `daily_budget` **força o anúncio pra PAUSED** (tem que reativar); e criar/editar anúncio click-to-WhatsApp via API está **bloqueado** — nesse caso a saída é entregar a ficha e subir no Gerenciador na mão.</Warning>
+
+## Read-only vs escrita
+- **Leitura (sem pedir):** insights, performance, estrutura de conta/campanha/conjunto/anúncio, diagnóstico, prévia de anúncio. É o uso padrão.
+- **Escrita / ação externa (exige OK explícito):** publicar, pausar, reativar, alterar budget, mexer em qualquer anúncio ativo. Irreversível em termos de gasto — só pela sua mão, com aprovação.
+
+## O que NÃO faz / fronteira
+- **Não publica, não pausa, não altera budget** de nada sozinha.
+- **Não relê dado velho** pra diagnosticar — sempre ao vivo.
+- **Não inventa a conta** — se o `act_` não está no pack do cliente, ela não adivinha.
+
+## Fonte
+`sistema/integracoes/meta-ads.md`.

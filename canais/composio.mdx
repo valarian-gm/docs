@@ -1,0 +1,31 @@
+---
+title: "Composio — Gateway de apps"
+sidebarTitle: "Composio"
+description: "O gateway default pra apps externas: Gmail, Calendar, Sheets, Drive, ClickUp e centenas de outras. Pesquisa a tool antes de executar; credencial injetada em runtime."
+---
+
+## O que é
+O Composio é o **gateway** por onde passam as apps conectadas que não têm integração nativa mais específica: Gmail, Google Calendar, Google Sheets, Google Drive, ClickUp e centenas de outras. Em vez de a ISIS decorar 50 APIs diferentes, o Composio padroniza o acesso a todas elas num lugar só. É o **default** pra integração externa.
+
+## Como conecta
+Via **HTTP MCP**. Cada app conectada autentica por dentro do Composio — a credencial é **injetada em runtime** e o valor nunca é renderizado em chat, comando ou log. Você só passa parâmetros não-sensíveis; o gateway resolve o segredo internamente.
+
+## Como se usa
+O fluxo padrão é **pesquisar a tool antes de executar** (`COMPOSIO_SEARCH_TOOLS`) — porque o catálogo é grande e a tool certa varia por app. Depois de achar, executa. Você pede a tarefa em linguagem natural (*"agenda uma reunião"*, *"manda esse e-mail"*, *"joga isso numa planilha"*) e a ISIS encontra a ferramenta do app certo e roda.
+
+<Info>Há duas exceções importantes que **não** passam pelo Composio: **Asaas** (MCP nativo próprio) e **Meta Ads** (MCP nativo `ads_*` prioritário; Composio só como fallback). Pra todo o resto, Composio é o caminho.</Info>
+
+## Guardrail do canal
+Como gateway, o Composio toca vários apps que carregam dado de cliente (e-mail, agenda, planilha). Quando há dado de cliente envolvido, a trava `resolve-canal` valida **canal × cliente × conta** antes de a ISIS responder, **fail-closed**. E vale a regra geral: **escrita externa pede aprovação** — depois de escrever num app, ela faz verificação read-only e reporta o identificador. Detalhe em [Guardrails](/guardrails/visao-geral) e [Operar sem vazar](/guardrails/operacao-na-pratica).
+
+## Read-only vs escrita
+- **Leitura (sem pedir):** consultar e-mail, agenda, planilha, drive — o que só lê não pede permissão de escrita.
+- **Escrita / ação externa (exige OK):** enviar e-mail, criar/alterar evento, escrever em planilha, qualquer coisa com efeito externo. Verificada com GET depois.
+
+## O que NÃO faz / fronteira
+- **Não substitui** os MCPs nativos do Asaas e do Meta Ads.
+- **Não executa às cegas** — pesquisa/valida a tool antes.
+- **Não escreve pra fora** sem aprovação.
+
+## Fonte
+`sistema/integracoes/composio.md`.

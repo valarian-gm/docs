@@ -1,0 +1,83 @@
+---
+title: "Skill: Relatório Raio-X Ecommerce"
+sidebarTitle: "Raio-X ecommerce"
+description: "Raio-x de vendas de um cliente de e-commerce: reconcilia loja × ads, mede funil, recompra/LTV, RFM, cohort, cesta de compras e viabilidade (P&L). Roda no onboarding de todo cliente ecommerce."
+---
+
+## O que é
+
+Um diagnóstico completo do negócio de e-commerce do cliente — não só da mídia. Reconcilia dados da loja (Shopify) com os dados de ads (Meta/Google), mede o funil, analisa recompra, LTV, RFM, cohort por safra, cesta de compras e viabilidade (P&L). O objetivo é sair do papel de operador de mídia e entrar no negócio: descobrir onde o cliente **ganha e perde dinheiro de verdade**.
+
+A loja é sempre a fonte de verdade. O ads é comparação.
+
+Deve rodar no onboarding de **todo cliente ecommerce** com loja conectada.
+
+## Quando usar
+
+- Todo novo cliente de e-commerce (Shopify ou similar) no onboarding.
+- Auditoria periódica — quando a operação precisa de uma leitura de saúde do negócio, não só da mídia.
+- Quando o ROAS está bonito mas a receita não aparece no caixa.
+- Para montar o veredito "dentro ou por fora": o quanto a agência entende e pode mover o negócio do cliente.
+
+## Como utilizar
+
+**Pré-requisitos de acesso (read-only — checar antes de começar):**
+
+| Acesso | Escopo necessário |
+|---|---|
+| Shopify | `read_orders`, **`read_all_orders`** (essencial — `read_orders` sozinho só vê 60 dias!), `read_products`, `read_customers` |
+| GA4 | Property canônica da loja (a que registra a receita real) |
+| Meta/Google Ads | Read-only |
+| Dono da loja | Margem bruta e custo por produto (destrava análises de lucro e desconto) |
+
+**O que a ISIS faz — 8 seções do dossiê:**
+
+| # | Seção | O que analisa |
+|---|---|---|
+| 1 | **Reconciliação loja × ads** | Faturamento e pedidos REAIS (loja) vs. compras/ROAS atribuídos (Meta). Detecta sobreatribuição. |
+| 2 | **Funil (GA4)** | session → view_item → add_to_cart → begin_checkout → add_payment_info → purchase, **por sessão** (não eventCount). Acha a maior quebra; quebra por device. |
+| 3 | **Recompra / LTV** | Repeat rate, intervalo 1ª→2ª compra (mediana), ciclo recorrente, LTV médio e de repeaters. |
+| 4 | **RFM** | Segmenta clientes em: Campeões, Leais, Em risco, Novos, Esfriando, Perdidos — com receita e ação por segmento. |
+| 5 | **Cohort / LTV por safra** | O LTV cresce com a idade da cohort (base recorrente) ou não ("aluga" clientes)? |
+| 6 | **Cesta de compras** | O que vende junto (combos, cross-sell), tamanho de cesta. Separa brinde de pago (preço de linha = 0 → brinde). |
+| 7 | **Produtos** | Papel (aquisição × recompra), curva ABC/Pareto, âncoras. |
+| 8 | **Viabilidade (P&L)** | Margem bruta × faturamento − mídia − fee da agência. Breakeven de margem. Unit economics: CAC vs. margem no LTV. |
+
+Ferramentas usadas: Shopify Admin GraphQL (via Composio), GA4 `run_report`, Composio Workbench (Python) para agregação precisa.
+
+**O que você recebe:**
+
+- `clientes/{cliente}/estrategia/{data}/analise-vendas.md` — cesta, RFM, cohort, estratégia de desconto.
+- Achados-chave + recomendações priorizadas (retenção / checkout / AOV) + P&L de viabilidade.
+- Veredito **"dentro ou por fora"**: o quanto a agência entende e pode mover o negócio do cliente.
+
+## Entradas / Saídas
+
+**Entra:** acessos read-only da loja + GA4 + ads + margem/custo por produto do dono.
+
+**Sai:** dossiê com 8 seções + tabelas, achados priorizados, P&L e veredito. Template de saída em `references/template-raio-x.md`.
+
+## Usada em quais workflows
+
+- [Onboarding de Cliente](/workflows/onboarding-cliente) — análise obrigatória para todo cliente ecommerce.
+- [QBR](/workflows/qbr) — revisão trimestral da saúde do negócio.
+- Alimenta [Relatório Visão Geral Cliente](/skills/relatorio-visao-geral-cliente) — que usa os achados para montar a apresentação para o cliente.
+
+## Cuidados críticos (aprendizados de campo)
+
+- **`read_orders` sozinho só enxerga 60 dias** → sempre pedir `read_all_orders`; senão a recompra fica enviesada para intervalos curtos.
+- **Brinde ≠ venda** → checar o preço de linha (gift = 0); senão um produto-isca vira "campeão" falso e infla o attach.
+- **Plataforma de ads sobreatribui** → reconciliar sempre com a loja.
+- **Funil por sessão, não por eventCount** → `add_to_cart` conta por item; comparar com checkout por sessão distorce.
+- **Agregar no workbench**, nunca somar dezenas de valores manualmente (origem da disciplina de agregação).
+- **PII → trabalhar com IDs agregados**, nunca expor dado de cliente final; read-only por padrão.
+
+## O que NÃO faz
+
+- Não altera nada — é leitura e análise.
+- Não substitui o relatório de tráfego pago semanal — este é o diagnóstico do negócio, não da mídia do período.
+- Não acessa dados financeiros sem confirmação explícita de acesso.
+
+## Fonte
+
+`sistema/skills/performance/relatorio-raio-x-ecommerce/SKILL.md`

@@ -1,0 +1,82 @@
+---
+title: "Skill: Copy de Anúncio"
+sidebarTitle: "Copy de Anúncio"
+description: "Escreve o texto final de anúncios de performance (Meta/Google) — primary text, headline, descrição e CTA — ancorado no avatar e no ângulo já definido. Gera variações por framework e nível de consciência."
+---
+
+## O que é
+
+Produz o texto final de um anúncio de performance pronto para subir — primary text, headline, descrição e CTA — em múltiplas variações por ângulo e nível de consciência.
+
+Cada variação parte do avatar real do cliente (suas dores, desejos e as palavras que usa) e do ângulo A→B já definido. A primeira linha faz o avatar se reconhecer. O CTA leva a uma única ação.
+
+<Info>
+Esta skill **consome** o ângulo gerado por `/skills/criativo-gerador-andromeda`. Sem o ângulo definido, ela não inicia — faz handoff de volta para o criativo. A criação do ângulo fica na skill canônica de geração de criativos.
+</Info>
+
+## Quando usar
+
+- "Escreve a copy do anúncio", "primary text pro {cliente}", "copy pra esse criativo"
+- "Headlines e descrições pro Google Ads", "varia a copy desse ângulo"
+- Depois que o ângulo A→B já existe e falta o texto final
+- Precisa de 3 variações de copy para testar no Meta
+
+## Como utilizar
+
+**O que você pede:** o ângulo / conceito do criativo + a plataforma (Meta ou Google) + o objetivo do funil (tráfego, lead, venda).
+
+A ISIS busca o restante antes de pedir: avatar do cliente, pack.yaml com produto/oferta/mecanismo, e qualquer brief ou ângulo já gerado.
+
+**O que a ISIS faz:**
+1. Lê o avatar (dores, desejos, objeções, linguagem do decisor).
+2. Lê o ângulo A→B (o conceito único gerado pelo criativo-gerador-andromeda).
+3. Escreve as variações — cada uma por framework distinto, sem inventar claim.
+4. Aplica o GATE-COPY: todo claim quantificado precisa de lastro. Sem lastro, reescreve sem o número ou marca `[PROVA?]`.
+5. Entrega as variações declarando ângulo e nível de consciência de cada uma.
+
+**O que você recebe:**
+
+Para **Meta (feed/reels):**
+- 3 variações de primary text (frameworks: PAS, AIDA, abertura por dor direta)
+- Headline (≤40 caracteres) por variação
+- Descrição opcional (≤30 caracteres)
+- CTA — botão Meta válido e coerente com o funil
+
+Para **Google (RSA):**
+- 15 headlines (≤30 caracteres) cobrindo benefício, dor, diferencial, urgência, prova
+- 4 descrições (≤90 caracteres) com CTA embutido
+- Indicação de 1-2 headlines para fixar
+
+## Entradas / Saídas
+
+| | Detalhe |
+|---|---------|
+| **Input obrigatório** | Ângulo A→B do criativo + plataforma + objetivo do funil |
+| **Fontes internas** | Avatar do cliente, pack.yaml, oferta produtizada |
+| **Saída Meta** | 3x primary text + headline + descrição + CTA |
+| **Saída Google** | 15 headlines + 4 descrições |
+| **Declarado por variação** | Ângulo atacado + nível de consciência |
+| **Gate** | Claims sem lastro são reescritos ou marcados `[PROVA?]` |
+
+## Usada em quais workflows
+
+- [`/workflows/campanha-nova`](/workflows/campanha-nova) — etapa de copy, depois do ângulo (criativo-gerador-andromeda) e antes da revisão
+- [`/workflows/iterar-criativo`](/workflows/iterar-criativo) — para gerar variações de copy em cima de criativos que já rodaram
+
+**Fluxo típico:**
+`/skills/persona-neurocomportamental` → `/skills/criativo-gerador-andromeda` → **copy-anuncio** → `/skills/copy-revisor`
+
+## O que NÃO faz
+
+- Não cria o ângulo — consome o de `/skills/criativo-gerador-andromeda`
+- Não revisa copy existente → use `/skills/copy-revisor`
+- Não constrói o avatar → use `/skills/persona-neurocomportamental`
+- Não sobe o anúncio no Gerenciador — entrega o texto para aprovação
+
+<Info>
+**GATE-COPY:** nenhum claim quantificado ou superlativo sai sem lastro no pack/oferta/avatar. Se o número não existir, a skill reescreve sem ele ou marca `[PROVA?]` e sinaliza. Para saúde, financeiro e emagrecimento, nenhum claim regulatório proibido passa.
+</Info>
+
+---
+
+**Fonte:** `sistema/skills/performance/copy-anuncio/SKILL.md`

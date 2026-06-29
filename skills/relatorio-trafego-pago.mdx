@@ -1,0 +1,132 @@
+---
+title: "Skill: Relatório de Tráfego Pago"
+sidebarTitle: "Relatório de tráfego pago"
+description: "Gera relatórios de tráfego pago profissionais em HTML — KPIs, gráficos, diagnóstico, mensagem de WhatsApp — com duas camadas: artefato privado do cliente e versão pública sanitizada pronta para compartilhar."
+---
+
+## O que é
+
+Gera relatórios de tráfego pago profissionais, principalmente para Meta Ads, com a linguagem visual da agência. A saída é um **relatório HTML estático e bem-acabado** — gráficos, KPIs, recortes por campanha/conjunto/anúncio, notas de diagnóstico e mensagem pronta para enviar ao cliente.
+
+A operação tem **duas camadas sempre separadas**:
+
+1. **Artefato privado** (pasta do cliente) — dados brutos, notas internas, input JSON, contexto sensível.
+2. **Artefato público sanitizado** — HTML final, restrito a um único cliente, seguro para compartilhar por link.
+
+O que está no artefato privado nunca vai direto para o público. O HTML publicado não pode incluir tokens, notas internas, caminhos do sistema, dados de outros clientes, estratégia não divulgada — nada que ficaria constrangedor num print encaminhado para o grupo do cliente.
+
+Tom: direto, estratégico, claro o bastante para o cliente. Sem sopa de jargão de gestor de tráfego.
+
+## Quando usar
+
+- Relatório de tráfego pago (semanal, mensal).
+- Relatório Meta Ads para cliente.
+- "gera o relatório do {cliente}", "link público do relatório", "análise de performance de campanhas".
+- Qualquer combinação de: cliente + período + "relatório" no mesmo pedido.
+
+## Como utilizar
+
+**O que você passa:**
+
+**Obrigatórios:**
+
+| Input | Exemplo |
+|---|---|
+| Nome e slug do cliente | `{cliente}` |
+| Período atual (início/fim) | 2026-06-23 a 2026-06-29 |
+| Período anterior de comparação | 2026-06-16 a 2026-06-22 |
+| Métricas dos dois períodos | Spend, impressões, cliques, CTR, CPC, CPM, freq., resultados, CPR |
+| Texto de análise | O que aconteceu, por quê, o que vem a seguir |
+
+**Opcionais mas recomendados:**
+
+- Dados diários, top campanhas, top conjuntos, top anúncios/criativos.
+- Links de preview dos anúncios.
+- Cor de destaque do cliente.
+- Mensagem de WhatsApp/Telegram para o cliente.
+
+**O que a ISIS faz:**
+
+1. Confirma escopo (cliente, período, pasta).
+2. Cria o diretório privado: `clientes/{cliente}/relatorios/trafego-pago/{periodo}/`.
+3. Salva `input.json` com os dados estruturados no schema canônico.
+4. Gera o `relatorio.html` com o script dedicado.
+5. Exporta o HTML público sanitizado para `public/relatorios/{cliente}/{periodo}/index.html`.
+6. **Gate de reconciliação obrigatório antes de publicar** (ver abaixo).
+7. Publica (Cloudflare Pages preferido; GitHub Pages como alternativa).
+8. Entrega URL pública + mensagem de WhatsApp/Telegram pronta para copiar.
+
+**Gate de reconciliação (obrigatório antes de publicar):**
+
+Antes de gerar e publicar qualquer número de ROAS ou compras, a skill reconcilia:
+
+- Define QUAL ROAS o relatório mostra (Meta-atribuído / receita real de plataforma) e rotula.
+- O número bate com a fonte declarada? Divergência > ~15% contra o Gerenciador = PARAR, é over-count.
+- Gasto bate com a conta ao vivo?
+- Receita do relatório ≤ receita real total do período? Se for maior, está inflado — PARAR.
+- Order bump/checkout externo? Então o pixel do Meta é PISO — "Meta < plataforma" é esperado, não é bug.
+
+**Coleta de dados — regras críticas para não inflar resultados:**
+
+1. **Janela de atribuição única** — nunca somar valores de janelas diferentes (1d/7d/28d × click/view).
+2. **Um único `action_type`** — para compras: `omni_purchase`. Para leads: `lead`. Não somar dois action_types (duplica a mesma conversão).
+3. **ROAS = `purchase_roas` (valor único da API)** — não derive ROAS somando `action_values` de várias janelas.
+
+**O que você recebe:**
+
+- URL pública do relatório.
+- Caminho do arquivo privado + do artefato público.
+- Mensagem de WhatsApp/Telegram pronta para copiar (250–450 palavras, conversacional, números concretos em cada parágrafo, termina com pergunta ou decisão útil para o cliente).
+- 3 pontos-chave do relatório.
+- Ressalvas sobre dados faltantes/incompletos.
+
+## Entradas / Saídas
+
+**Entra:** métricas dos períodos atual e anterior + texto de análise + inputs opcionais.
+
+**Sai:** `relatorio.html` privado + `index.html` público sanitizado + URL pública + mensagem de WhatsApp.
+
+## Estrutura de pastas
+
+```text
+clientes/
+  {cliente}/
+    relatorios/
+      trafego-pago/
+        {YYYY-MM-DD}_{YYYY-MM-DD}/
+          input.json
+          relatorio.html
+          notas-internas.md (opcional)
+
+public/
+  relatorios/
+    {cliente}/
+      {YYYY-MM-DD}_{YYYY-MM-DD}/
+        index.html
+```
+
+## Usada em quais workflows
+
+- [Relatório de Tráfego](/workflows/relatorio-trafego) — workflow principal de entrega de relatório.
+- [Dashboard Anomalias](/workflows/dashboard-anomalias) — quando o relatório é gerado junto com o scan.
+
+## O que NÃO faz
+
+- Não altera campanhas, verbas, criativos ou públicos — é read-only até ser explicitamente autorizado.
+- Não publica dado sensível de cliente sem revisão.
+- Não mistura dados de clientes diferentes em um único relatório.
+- Não usa tom interno de agência na copy do cliente — o relatório é franco, não brutalmente interno.
+
+## Armadilhas clássicas
+
+| Erro | Correto |
+|---|---|
+| Publicar a pasta privada inteira | Publicar apenas `public/relatorios/.../index.html` |
+| Somar janelas de atribuição diferentes | Janela única (padrão da conta, normalmente 7d_click/1d_view) |
+| ROAS Meta = receita real | Rotular corretamente — Meta é piso quando há order bump |
+| Confiar em "URL obscura = segurança" | URLs obscuras reduzem descoberta casual, não são autenticação |
+| Tom de dashboard interno | Tom direto pra cliente — como o gestor de tráfego falando |
+
+## Fonte
+
+`sistema/skills/performance/relatorio-trafego-pago/SKILL.md`

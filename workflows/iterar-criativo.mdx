@@ -1,0 +1,74 @@
+---
+title: "Workflow: Iterar Criativo"
+sidebarTitle: "Iterar criativo"
+description: "Diagnostica por que um criativo cansou ou caiu e devolve um pacote de iteração — hipótese, copies, specs e plano de teste — pronto pra subir. Não pausa nem publica nada sozinho."
+---
+
+## O que é
+O fluxo que pega um criativo que **cansou ou está ruim** e devolve a próxima rodada: primeiro diagnostica (o que caiu e por quê, com evidência), depois forma uma hipótese, gera novas copies e novos specs visuais em paralelo, valida tudo num gate de qualidade e entrega um pacote testável. A ISIS orquestra; os subagentes especializados fazem cada parte. **Trocar de fato o criativo no Gerenciador continua sendo sua mão.**
+
+## Quando usar
+Dispara quando os números pedem ou quando você pede:
+- **frequência alta** (o público já viu demais)
+- **CPL alto** / **CTR baixo** / **conversas ou leads caíram**
+- **pedido explícito** seu ou do cliente
+- **nova hipótese criativa** que você quer testar
+
+## Como utilizar
+1. **Você aponta o criativo e o motivo.** Ex.: *"o criativo X tá com frequência alta e o CPL subiu, gera a próxima iteração."* O criativo precisa ser **identificável** — nome, ID ou um print que sirva de evidência.
+2. **A ISIS diagnostica antes de propor.** Ela lê os dados da janela (7 ou 14 dias por padrão), levanta o problema principal e a hipótese de por que caiu — e declara os **limites dos dados** se eles forem fracos.
+3. **Ela forma a hipótese e gera as variações** — copies e specs visuais em paralelo, ancoradas no diagnóstico e no branding.
+4. **Tudo passa pelo gate.** Nota abaixo de 80 bloqueia: nada de pacote meia-boca.
+5. **Você recebe o pacote** na pasta do cliente e decide o que subir. A ISIS **não pausa, não publica, não troca** nada — isso é irreversível e é sua decisão.
+
+**O que ter em mãos (inputs):**
+
+| Input | Obrigatório | Valores |
+|---|---|---|
+| `cliente_slug` | sim | o cliente-alvo |
+| `criativo_ref` | sim | nome, ID ou evidência do criativo |
+| `razao_iteracao` | sim | fadiga/frequência · CPL alto · CTR baixo · conversão baixa · pedido do operador · nova hipótese |
+| `janela_dados` | opcional | padrão: últimos 7d ou 14d |
+| `formatos_desejados` | opcional | padrão: 1080x1080 e 1080x1920 |
+
+<Info>Se não houver dado nenhum, o fluxo não inventa: ele marca a iteração como **hipótese sem evidência** e entrega só um draft exploratório, deixando claro que é chute fundamentado, não leitura de números.</Info>
+
+## Por dentro (a sequência)
+Cada etapa tem um dono e uma skill. As etapas de copy e design rodam **em paralelo**.
+
+| # | Etapa | Quem | O que faz | Skills |
+|---|---|---|---|---|
+| 1 | Diagnóstico | traffic | lê histórico, isola o problema, levanta hipótese, declara limites — **read-only** | [`scan-anomalias`](/skills/catalogo) · [`auditoria-meta-360`](/skills/catalogo) |
+| 2 | Estratégia da iteração | strategist | nova hipótese, ângulos, o que manter/mudar, critério de sucesso | [`core-estrategia-cliente`](/skills/catalogo) · [`persona-neurocomportamental`](/skills/catalogo) |
+| 3 | Copy nova ∥ | copy | variações, mecanismo, flags de compliance, provas | [`copy-anuncio`](/skills/catalogo) → [`copy-revisor`](/skills/catalogo) |
+| 4 | Design novo ∥ | design | specs visuais, instruções, formatos | [`criativo-gerador-andromeda`](/skills/catalogo) · [`static-ad-blueprint`](/skills/catalogo) · [`image-prompt-architect`](/skills/catalogo) |
+| 5 | Validação (gate) | qa | passa pelos gates de copy e criativo | **GATE-COPY · GATE-CRIATIVO** — bloqueia se nota < 80 |
+| 6 | Pacote final | cs | monta os arquivos | — |
+
+<Warning>No diagnóstico (step 1) o subagente de tráfego é **proibido** de pausar criativo, alterar campanha ou mexer em budget. Ele lê e diz o que vê — nada mais.</Warning>
+
+> Os agentes (ISIS, traffic, strategist, copy, design, qa, cs) estão em [Os Agentes](/agentes/visao-geral).
+
+## Entradas / Saídas
+- **Entra:** cliente, referência do criativo, razão da iteração (tabela acima).
+- **Sai** (em `clientes/<slug>/criativos/iteracoes/<data>-<criativo_ref>/`):
+  - `diagnostico.md` — o que caiu e por quê
+  - `copy.yaml` — as variações de copy
+  - `criativos-spec.yaml` — os specs visuais
+  - `plano-teste.md` — como ler o resultado
+  - `qa-verdict.yaml` — o veredito do gate
+
+## Onde trava
+- **Gate `GATE-COPY` + `GATE-CRIATIVO`:** rodam antes do pacote final; nota **< 80 bloqueia**.
+- **Criativo não identificável** → para e pede uma referência mínima.
+- **Bloqueia também:** claim sem prova · copy sem mecanismo · cliente/contexto errado · qualquer publicar/pausar/alterar ads sem confirmação.
+
+## O que NÃO faz
+- **Não pausa, não publica, não troca** o criativo no Meta/Google Ads. Entrega o pacote; a troca exige confirmação explícita.
+- **Não inventa métrica** — sem dado, vira hipótese declarada, não relatório.
+
+## Exemplo
+Um criativo estava com frequência alta e o CPL 1,6x acima da média. O subagente de tráfego leu os últimos 7 dias, apontou "fadiga de público + ângulo único saturado" como problema, com a evidência da curva de frequência. O estrategista propôs trocar o ângulo de "preço" para "prova social", mantendo o formato. Copy e design rodaram juntos, geraram 4 variações e 4 specs. O gate deu nota acima de 80. Você recebeu o pacote com diagnóstico, copies, specs e o plano de leitura de 7 dias — e subiu você mesmo as variações que quis testar.
+
+## Fonte
+`sistema/operacao/workflows/iterar-criativo.yaml` — esta página é a leitura de operador desse fluxo.

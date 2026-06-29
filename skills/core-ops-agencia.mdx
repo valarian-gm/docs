@@ -1,0 +1,74 @@
+---
+title: "Skill: Ops da Agência"
+sidebarTitle: "Ops da agência"
+description: "Opera o workspace da agência via ISIS — briefing diário, onboarding de cliente, preflight read-only de mídia, healthcheck e ritmos recorrentes."
+---
+
+## O que é
+
+A skill que governa como a ISIS opera o workspace da agência: como navegar o repositório, o que fazer antes de tocar em qualquer tarefa recorrente, quais referências consultar para cada operação (preflight de Meta Ads, onboarding, auditoria de e-commerce, etc.), quais ações exigem confirmação explícita e como estruturar os ritmos recorrentes da agência.
+
+É a cola operacional — não define a estratégia de negócio, mas garante que a execução segue os padrões certos, no repositório certo, sem inventar estrutura onde já existe.
+
+## Quando usar
+
+- Operar, inspecionar, adaptar ou raciocinar sobre o workspace da agência.
+- Iniciar ou retomar qualquer tarefa recorrente (relatório, onboarding, auditoria, briofing diário).
+- Configurar ou revisar ritmos recorrentes e cronjobs da agência.
+- Verificar se a estrutura do repositório está saudável (healthcheck).
+- Qualquer situação em que a pergunta é "como a ISIS deve operar aqui?".
+
+## Como utilizar
+
+**O que você manda:** o pedido operacional — *"faz o briefing de hoje"*, *"onboarding do cliente X"*, *"preflight Meta do {cliente}"*, *"auditoria de e-commerce"*, *"healthcheck do repositório"*.
+
+**O que a ISIS faz:**
+
+**Antes de qualquer tarefa recorrente:** consulta `sistema/operacao/workflows/` — se existe um POP para a tarefa, segue. O workflow diz quais skills usar, quais subagentes acionar e quais dados do cliente considerar. Não reinventa o processo que já está documentado.
+
+**Briefing diário:** lê só os arquivos necessários (leitura preguiçosa — range, não arquivo inteiro). Identifica clientes ativos, timelines paradas, riscos pendentes e as 3 ações recomendadas. Retorna: status/contexto + o que foi checado + riscos/bloqueios + próxima ação recomendada.
+
+**Onboarding de cliente:** segue `workflow_onboarding` e a task `pack-cliente`. Núcleo mínimo: `pack.yaml` + persona de 1 página + funil + os 3 números. O resto é aprofundamento sob demanda. Confirma intake mínimo → cria artefatos em `clientes/{slug}/` → usa descoberta read-only quando possível.
+
+**Preflight Meta Ads:** permanece read-only — valida página operacional vs. institucional, vínculo de Instagram, referências/lacunas de pixel, destinos de ad-set e baseline de campanha dos últimos 30 dias. Não executa otimizações sem aprovação explícita à parte.
+
+**Auditoria de e-commerce:** reconcilia GA4, Meta Ads, Clarity e Shopify; identifica problemas de pixel/CAPI/UTM; diagnostica abandono de carrinho; separa achados confirmados de bloqueios de acesso.
+
+**Healthcheck do repositório:** valida arquivos-chave na raiz (`AGENTS.md`, `MAPA.md`, `CLAUDE.md`), estrutura do motor (`sistema/`), pastas de negócio (`clientes/`, `projetos/`), e garante que arquivos versionáveis não carregam segredos ou referências a workspaces legados.
+
+<Info>
+**Regra de ouro:** consultar a operação antes de executar. Se existe um workflow para a tarefa, segue o workflow — não reinventa o processo.
+</Info>
+
+**O que exige confirmação explícita antes de agir:**
+
+| Ação | Regra |
+|---|---|
+| Enviar e-mail/WhatsApp/post | Sempre perguntar |
+| Mexer em verbas, campanhas, cobranças | Sempre perguntar |
+| Alterar configuração global da agência | Sempre perguntar |
+| Operar entre múltiplos clientes / compartilhar dados | Sempre perguntar |
+| Qualquer ação client-facing ou irreversível | Sempre perguntar |
+
+## Entradas / Saídas
+
+| | Detalhe |
+|---|---|
+| **Entra** | Pedido operacional em texto livre; cliente/slug quando a operação é específica |
+| **Sai** | Depende da operação: briefing (status + riscos + ações), artefatos de onboarding em `clientes/{slug}/`, relatório de preflight, diagnóstico de healthcheck |
+
+## Usada em quais workflows
+
+É transversal — todos os workflows da agência passam por esta skill como camada de governança operacional. Especificamente relevante em `/workflows/onboarding-cliente`, `/workflows/abertura-semana`, `/workflows/rotina-diaria` e `/workflows/check-cliente`.
+
+## O que NÃO faz
+
+- Não inspeciona repositórios não relacionados automaticamente.
+- Não envia comunicação client-facing sem confirmação explícita.
+- Não inventa métricas — usa `não aplicável`, `(estimado)` ou `(inferência)`.
+- Não guarda dados de cliente na memória de sessão — vão para arquivos do repositório.
+- Não cria relatório no formato legado — segue os destinos canônicos do `AGENTS.md`.
+
+## Fonte
+
+`sistema/skills/core/core-ops-agencia/SKILL.md`

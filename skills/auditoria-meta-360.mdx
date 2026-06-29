@@ -1,0 +1,82 @@
+---
+title: "Skill: Auditoria Meta 360"
+sidebarTitle: "Auditoria Meta 360"
+description: "Diagnóstico completo de uma conta Meta Ads em modo read-only — dois modos (breve e 360), via subagentes isolados, com plano priorizado e revisão de 7 dias."
+---
+
+## O que é
+
+Skill de diagnóstico de conta Meta Ads. Funciona em dois modos:
+
+- **Breve** — recorrente ou pré-otimização: roda só a primeira onda (estado, oportunidade e benchmark de leilão), escala se acender sinal.
+- **360** — onboarding ou revisão trimestral: roda as duas ondas completas, incluindo análise de criativo, tendência e indústria.
+
+A auditoria lê dados ao vivo via MCP ads, consulta o método canônico de diagnóstico e grava um documento datado com diagnóstico, plano priorizado e data de revisão. Nenhuma alteração é feita na conta sem aprovação explícita.
+
+<Info>
+**Read-only até aprovação.** Os subagentes que executam a coleta não têm acesso a nenhuma ferramenta de escrita — não pausam, não alteram orçamento, não mexem em campanha. O plano só entra em execução depois que você aprova.
+</Info>
+
+## Quando usar
+
+- Antes de otimizar, criar campanhas ou propor reestruturação em qualquer conta.
+- No onboarding de um novo cliente (modo 360).
+- Na revisão trimestral (QBR) — modo 360.
+- Quando houver queda de performance sem causa óbvia — modo breve para triagem rápida.
+- Antes de aumentar verba ou mudar estrutura de campanha.
+
+## Como utilizar
+
+**O que você pede:** slug do cliente + modo desejado (breve ou 360) + período de análise + objetivo principal da conta (leads WhatsApp, vendas ecommerce, tráfego, remarketing).
+
+**O que a ISIS faz:**
+
+1. Resolve o Account ID na ficha do cliente.
+2. Lê auditorias anteriores para não repetir diagnóstico já registrado e verificar revisões de 7 dias vencidas.
+3. Consulta o método canônico de diagnóstico para ancorar os critérios de avaliação.
+4. Cria o documento de auditoria no caminho canônico do cliente.
+5. Dispara os subagentes em ondas:
+   - **Onda 1 (paralela):** estado da conta · opportunity score · benchmark de leilão
+   - **Onda 2 (condicional, só modo 360):** análise de criativo · tendência · indústria
+6. Sintetiza diagnóstico e recomendações priorizadas no documento.
+7. Notifica no canal do cliente que a auditoria está pronta para aprovação.
+8. Após aprovação: preenche o plano de ação e define data de revisão (+7 dias).
+9. Na data de revisão: roda o tier de estado novamente, compara esperado vs. real e anota evolução.
+
+**O que você recebe:**
+
+- Documento `auditoria.md` em `clientes/{cliente}/auditorias/{AAAA-MM-DD}/` com diagnóstico claro, riscos explícitos e recomendações com lógica de crescimento.
+- Notificação no canal quando pronto para revisão.
+- Atualização de acompanhamento na data de revisão.
+
+## Entradas / Saídas
+
+| Campo | Tipo | Obrigatório |
+|---|---|---|
+| Slug do cliente | texto | Sim |
+| Modo | `breve` ou `360` | Sim (padrão: `breve`) |
+| Período de análise | ex: `últimos 30d` / `últimos 90d` | Não (padrão: 30d breve, 90d 360) |
+| Objetivo principal | leads, vendas, tráfego, remarketing | Sim |
+
+| Saída | Descrição |
+|---|---|
+| `auditoria.md` | Documento datado com diagnóstico, plano e revisão |
+| Notificação | Aviso no canal do cliente quando pronto |
+| Revisão | Atualização automática na data de revisão |
+
+## Usada em quais workflows
+
+- [Onboarding de cliente](/workflows/onboarding-cliente) — auditoria 360 como step inicial
+- [Check de cliente](/workflows/check-cliente) — modo breve para monitoramento recorrente
+- [QBR](/workflows/qbr) — modo 360 para revisão trimestral
+
+## O que NÃO faz
+
+- Não executa nenhuma alteração na conta (pausar, ativar, alterar orçamento, trocar criativo).
+- Não acessa dados de criativo sem que a onda 2 seja solicitada (modo 360).
+- Não inventa número: se um tier estiver indisponível no ambiente, registra "indisponível" e segue.
+- Não entrega auditoria parcial como completa.
+
+---
+
+**Fonte:** `sistema/skills/performance/auditoria-meta-360/SKILL.md`

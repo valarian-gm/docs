@@ -1,0 +1,60 @@
+---
+title: "Skill: Estratégia de Cliente"
+sidebarTitle: "Estratégia de cliente"
+description: "Constrói a estratégia completa de um cliente — modelo de negócio primeiro, marca depois, com gate de compliance. Alimenta landing page, criativos e campanha."
+---
+
+## O que é
+
+Uma skill que constrói a estratégia de um cliente em 4 fases sequenciais: classificar o modelo de negócio, definir a economia da oferta, construir o posicionamento de marca e traduzir tudo em wireframe/oferta. O princípio central: **modelo de negócio antes de marca**. A mensagem se ancora na economia — portanto, diagnosticar como o cliente ganha dinheiro vem antes de qualquer posicionamento. Psicólogo, e-commerce e infoprodutor não levam o mesmo jeito.
+
+## Quando usar
+
+- Novo cliente ou prospect que precisa de posicionamento, oferta ou redesign de landing page.
+- Reposicionar oferta ou preço ("vende bom como se fosse barato").
+- Antes de criar landing page, criativos ou campanha que dependem de ângulo e oferta definidos.
+- Encadeia com o workflow de `/workflows/onboarding-cliente` (usa o dossiê como input) e alimenta skills de tráfego e criativo.
+
+## Como utilizar
+
+**O que você manda:** nome do cliente, modelo aparente de negócio, objetivo, site/redes/oferta atual. Se houver dossiê de onboarding, a skill usa. Dados reais de Asaas (ticket/receita) ou Meta (CAC/CPA) são prioritários quando disponíveis.
+
+**O que a ISIS faz:**
+
+**Fase 0 — Classifica o modelo de negócio.** Enquadra numa taxonomia: profissional liberal, saúde, infoproduto, e-commerce, local, B2B, agência. Carrega o perfil econômico e o gate de compliance correspondente. Se o modelo for híbrido, escolhe o dominante e anota o secundário.
+
+**Fase 1 — Estratégia de modelo (a economia).** Define unit economics com lente do modelo: ticket, CAC tolerável, ciclo de venda, recorrência/LTV, margem. Constrói oferta central + escada de ofertas. Define a métrica-chave. Usa dados reais > benchmark (benchmark sempre citado, nunca cravado como verdade).
+
+**Fase 2 — Estratégia de marca (a mensagem).** Posicionamento, BIG IDEA e 3 ângulos no padrão validado — cada um com argumento central, para quem converte melhor, pontos fortes e atenção de compliance. Fecha com recomendação: qual é a espinha dorsal e o que aproveitar dos outros.
+
+**Fase 3 — Materialização.** Traduz em wireframe de landing page (diagnóstico da LP atual → travas de conversão → nova estrutura por seção) e/ou pacote de oferta. Conecta à mídia via skills de tráfego quando for virar campanha.
+
+**Fase 4 — Gate de compliance.** Roda o gate do modelo (`sistema/operacao/core/gates.yaml`). Claims financeiros, garantias, antes/depois e promessas terapêuticas exigem prova/aviso legal ou são bloqueados. Saúde → CFM/CFO/Anvisa; infoproduto → claims de resultado; e-commerce → CDC/Procon.
+
+**O que você recebe:** pasta versionada `clientes/{cliente}/estrategia/{data}/` com 5 documentos: `modelo-negocio.md`, `estrategia-marca.md`, `abordagens.md`, `wireframe.md` (ou `oferta.md`), `riscos-compliance.md` + `index.md` de resumo.
+
+<Info>
+Faltando dado? A skill marca `[a definir]` e segue — nunca inventa número. Benchmarks são referência e sempre têm fonte citada.
+</Info>
+
+## Entradas / Saídas
+
+| | Detalhe |
+|---|---|
+| **Entra** | Cliente + modelo aparente + objetivo; site/redes/oferta atual; dossiê de onboarding se existir; dados reais de plataformas quando disponíveis |
+| **Sai** | `clientes/{cliente}/estrategia/{data}/`: `modelo-negocio.md` · `estrategia-marca.md` · `abordagens.md` · `wireframe.md` (ou `oferta.md`) · `riscos-compliance.md` · `index.md` |
+
+## Usada em quais workflows
+
+Chamada nos workflows `/workflows/campanha-nova` (etapa de estratégia) e `/workflows/onboarding-cliente` (depois do dossiê). Alimenta diretamente as skills de tráfego, criativo e copy.
+
+## O que NÃO faz
+
+- Não publica, não sobe campanha, não envia nada — diagnóstico e rascunho são livres; publicar exige confirmação.
+- Não inventa métrica — fato, estimativa e inferência são separados explicitamente.
+- Não ignora compliance por modelo — gate é obrigatório, não opcional.
+- A estratégia nasce versionada no repositório; o site é cópia, nunca o único lugar.
+
+## Fonte
+
+`sistema/skills/core/core-estrategia-cliente/SKILL.md`

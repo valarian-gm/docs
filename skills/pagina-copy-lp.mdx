@@ -1,0 +1,87 @@
+---
+title: "Skill: Página Copy LP"
+sidebarTitle: "Copy de landing page"
+description: "Escreve a copy de uma landing page de alta conversão, seção por seção, sob a filosofia 'UM de tudo' — 1 objetivo, 1 mensagem, 1 público, 1 dor. Entrega a copy; não publica nem faz o build do site."
+---
+
+## O que é
+
+Escreve a **copy de uma landing page de alta conversão**, construída seção por seção sob a filosofia **"UM de tudo"**: 1 objetivo, 1 mensagem, 1 público, 1 dor. Uma LP que tenta falar com todo mundo não converte ninguém — fixar esses quatro "uns" é a primeira obrigação da skill.
+
+O fluxo é: 5 big ideas → o usuário escolhe UMA (único checkpoint) → menu de grupos de seções → escrever, incrementar, repetir até a página ficar completa.
+
+**Escopo:** esta skill entrega a **copy** — textos prontos, seção por seção, em markdown editável. Não publica nem faz o build do site. Construção de página e deploy são de outras skills.
+
+## Quando usar
+
+- "escreve a copy da landing", "copy da LP", "texto da página de vendas/captura/conversão".
+- "monta a página de vendas" — na parte de **texto**.
+- Estruturar uma landing seção por seção (cabeçalho, benefícios, prova social, FAQ, CTA...).
+- Gerar 5 big ideas / ângulos centrais para escolher a mensagem-mãe de uma página.
+
+## Como utilizar
+
+**Antes de qualquer coisa:** a ISIS verifica `clientes/{cliente}/` — se existem avatar, N2D, promessa central, dores, bônus, garantia e preço já documentados (output de [Persona Neurocomportamental](/skills/persona-neurocomportamental) e [Oferta: Produtizar](/skills/oferta-produtizar)), usa tudo sem re-coletar.
+
+**O que você passa (os 4 "uns"):**
+
+| Item | Exemplo |
+|---|---|
+| 1 objetivo | entrar na lista de espera / comprar / agendar |
+| 1 mensagem | a ideia-mãe que a página defende |
+| 1 público | específico, em formato N2D (Nicho, Dor, Desejo) |
+| 1 dor | a dor central que a página resolve |
+
+Se vier genérico, a ISIS propõe uma versão afiada e confirma.
+
+**O que a ISIS faz:**
+
+**Etapa 1 — 5 big ideas → CHECKPOINT:**
+Com os 4 "uns" definidos, gera 5 ideias centrais distintas para a landing — ângulos diferentes para a mensagem-mãe, cada um em uma frase forte de fundo de funil. Para aqui. O usuário escolhe UMA. Esta big idea rege headline, benefícios, prova e CTA de todas as seções.
+
+**Etapa 2 — menu de grupos de seções:**
+Apresenta 4 grupos e pergunta qual criar:
+
+1. Cabeçalho · Detalhamento do Conteúdo · Para quem é · Benefícios do produto
+2. Urgência/Escassez · Sobre o Instrutor/Empresa · Valor do Produto · Garantia
+3. Reconhecimento de Mercado · Depoimentos e Prova Social · Acesso e Suporte
+4. Call to Action Secundário · Perguntas Frequentes (FAQs) · Urgência Adicional
+
+**Etapa 3 — escrever a seção, incrementar:**
+Para cada seção escolhida, escreve a copy pronta — texto real na voz do avatar, ancorado no N2D e na oferta. Depois da seção, pergunta qual vem a seguir e reapresenta a página acumulada (seções já feitas + a nova). A página cresce incrementalmente.
+
+**Regras de escrita preservadas:**
+- Filosofia "UM de tudo" em toda seção. Nada que disperse o foco.
+- Sem perguntas retóricas no corpo da copy (exceção: menu de navegação e títulos de FAQ).
+- Nenhum dado inventado — números, depoimentos, prêmios reais ou marcados `[INSERIR: ...]`.
+- Linguagem de fundo de funil: leitor já consciente do problema e perto da decisão.
+- Anotações visuais (hero shot, botão, cronômetro) escritas como diretriz para o builder, não como entrega de design.
+
+**O que você recebe:**
+
+Copy em markdown editável, seção por seção, na voz do avatar, pronta para colar no builder. Cada seção com título, copy pronta e anotações visuais entre colchetes. Marcadores `[INSERIR: ...]` para dados que o cliente precisa fornecer.
+
+Ao final: handoff indicando que a copy está pronta para o builder (montar a página) e para publicação. Para refinar o texto, aponta `copy-revisor`.
+
+## Entradas / Saídas
+
+**Entra:** os 4 "uns" (ou avatar/oferta já documentados) + escolha de big idea.
+
+**Sai:** copy completa em markdown, seção por seção, incrementalmente acumulada, salva em `clientes/{cliente}/landing-page/`.
+
+## Usada em quais workflows
+
+- [Campanha Nova](/workflows/campanha-nova) — quando a campanha direciona para uma LP nova.
+- [QBR](/workflows/qbr) — quando a estratégia do período envolve criar ou otimizar landing pages.
+
+## O que NÃO faz
+
+- Não faz o build/publicação do site.
+- Não cria a oferta do zero (precisa de [Oferta: Produtizar](/skills/oferta-produtizar) antes se a oferta não estiver documentada).
+- Não constrói o avatar (precisa de [Persona Neurocomportamental](/skills/persona-neurocomportamental) se não existir).
+- Não escreve anúncio ou carrossel isolado.
+- Não inventa prova — número sem fonte real fica marcado como `[INSERIR: ...]`.
+
+## Fonte
+
+`sistema/skills/performance/pagina-copy-lp/SKILL.md`

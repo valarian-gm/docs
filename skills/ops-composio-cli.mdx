@@ -1,0 +1,83 @@
+---
+title: "Skill: Composio CLI"
+sidebarTitle: "Composio CLI"
+description: "Camada de integração com apps externos (Gmail, Calendar, GitHub e outros) via Composio CLI — smoke tests, execução segura e padrões para crons."
+---
+
+## O que é
+
+A skill que define como a ISIS acessa apps externos via **Composio CLI** quando o MCP nativo não está configurado ou quando o caminho CLI já está autenticado e funcionando. Composio é uma ponte para ferramentas — não uma permissão para agir externamente.
+
+Cobre: verificar autenticação, executar ferramentas read-only, inspecionar schemas, e montar scripts para cronjobs que precisam de contexto de Gmail/Calendar.
+
+## Quando usar
+
+- Você menciona Composio, Composio CLI, contas conectadas, Gmail/Calendar/GitHub via Composio.
+- A ISIS precisa de contexto read-only de um serviço conectado sem configurar credenciais nativas diretamente.
+- Está montando um cronjob que deve ler agenda ou e-mail antes de notificar.
+- O MCP nativo retorna `NOT_AUTHENTICATED` e o Composio CLI está autenticado — CLI é o fallback pragmático.
+
+## Como utilizar
+
+**O que você pede:** a operação desejada no app externo ("lê os últimos e-mails", "verifica agenda de hoje", "busca PRs abertos no GitHub").
+
+**O que a ISIS faz:**
+
+1. **Verifica primeiro** — confere binário, versão, login e conectividade da ferramenta específica antes de qualquer ação.
+2. **Executa read-only como probe** antes de qualquer ação com estado.
+3. Para ações que enviam dados, postam, modificam ou tocam contas de clientes: **apresenta o plano e aguarda confirmação**.
+4. Em cronjobs: monta scripts self-contained que chamam `composio execute ...` e devolvem JSON/texto conciso — sem travar o agente no fluxo.
+
+**O que você recebe:** resultado da operação ou rascunho da ação pendente de aprovação.
+
+<Info>
+`composio whoami` só prova auth da conta CLI. Para garantir que o toolkit específico está conectado, a ISIS roda um smoke test read-only (ex.: `GMAIL_GET_PROFILE`) antes de confiar no acesso.
+</Info>
+
+## Comandos de inspeção seguros
+
+```bash
+# Localizar e identificar o CLI
+command -v composio
+composio --version
+composio whoami
+
+# Smoke test Gmail
+composio execute GMAIL_GET_PROFILE -d '{ user_id: "me" }'
+composio execute GMAIL_FETCH_EMAILS -d '{ user_id: "me", max_results: 3, ids_only: true }'
+
+# Descobrir ferramentas disponíveis
+composio search "list recent gmail emails" --toolkits gmail --limit 5 --human
+composio tools list gmail
+
+# Inspecionar schema antes de executar
+composio execute TOOL_SLUG --get-schema
+```
+
+## Entradas / Saídas
+
+| Campo | Obrigatório | Descrição |
+|---|---|---|
+| `app/toolkit` | sim | gmail · calendar · github · etc. |
+| `operação` | sim | o que fazer (ler, buscar, listar) |
+| `parâmetros` | conforme operação | ex.: `max_results`, `user_id`, filtros de data |
+
+**Sai:** resultado JSON/texto da ferramenta — sumarizado, sem dump de conteúdo sensível.
+
+## Usada em quais workflows
+
+- [`/workflows/abertura-semana`](/workflows/abertura-semana) — leitura de agenda e e-mail para o briefing da semana
+- [`/workflows/rotina-diaria`](/workflows/rotina-diaria) — contexto de e-mail e agenda antes da checagem matinal
+- [`/workflows/onboarding-colaborador`](/workflows/onboarding-colaborador) — verificar acessos de ferramentas conectadas
+
+## O que NÃO faz
+
+- **Não envia e-mails, não posta, não edita eventos** sem confirmação — mesmo com acesso disponível.
+- **Não assume que Composio resolve tudo** — para tráfego pago, a fonte primária é o MCP nativo de Meta Ads, não o Composio.
+- **Não apaga `~/.composio`** ou estado de auth por engano ao remover configurações de MCP.
+- **Não pipe output do CLI direto num interpretador** — captura em arquivo ou variável e parseia separado.
+- **Não dumpa conteúdo sensível** (e-mails, IDs de mensagens, dados de conta) no chat — sumariza só o necessário.
+
+## Fonte
+
+`sistema/skills/ops/ops-composio-cli/SKILL.md`

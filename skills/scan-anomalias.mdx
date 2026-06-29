@@ -1,0 +1,102 @@
+---
+title: "Skill: Scan de Anomalias"
+sidebarTitle: "Scan de anomalias"
+description: "Varre as contas de ads dos clientes ativos e entrega um digest de anomalias priorizado por impacto no dinheiro. Read-only: detecta e reporta com evidência. Não pausa, não mexe em campanha."
+---
+
+## O que é
+
+O radar diário das contas. Varre os dados de mídia dos clientes ativos, detecta desvios relevantes e entrega **um digest priorizado por impacto no dinheiro** — com evidência (número + fonte + janela), severidade e ação sugerida por anomalia.
+
+É **read-only / diagnóstico** até o fim. Detecta, reporta, nunca age. Pausar uma campanha, ajustar verba ou escalar — isso é decisão do operador, não da skill.
+
+Silêncio é válido: sem anomalia relevante, a saída é mínima. Alerta sem evidência é ruído e fica bloqueado.
+
+## Quando usar
+
+- Rotina diária, antes do checkpoint operacional ou de priorizar o dia.
+- "tem algo errado nas contas?", "o que caiu", "rodar o scan", "radar do dia".
+- Passo `scan_marketing` do workflow [Dashboard Anomalias](/workflows/dashboard-anomalias) — quando rodar dentro dele, o orquestrador consolida; aqui só detecta e reporta.
+
+## Como utilizar
+
+**O que você passa:**
+
+Normalmente nada além do gatilho ("roda o scan"). A skill lê o que precisa:
+
+- `clientes/{cliente}/pack.yaml` → KPI primário, baseline e **o que NUNCA usar como métrica** (para não dar falso positivo).
+- Dados de mídia existentes (Meta/Google/GA4) + relatórios internos.
+- Janela padrão: **últimos 7 dias vs. 7 anteriores** (ou baseline do cliente).
+- Escopo padrão: **clientes ativos**.
+
+**O que a ISIS detecta — os detectores oficiais:**
+
+**Marketing (foco desta skill):**
+
+| Detector | O que sinaliza |
+|---|---|
+| `cpl_anormal` | CPL fora do baseline do cliente |
+| `zero_conversas_campanha_ativa` | Campanha rodando e gastando, zero resultado |
+| `spend_pausado_sem_aviso` | Gasto parado/zerado em campanha que deveria estar ativa |
+| `frequencia_alta` | Frequência saturando a audiência |
+| `ctr_baixo` | CTR abaixo do esperado |
+| `criativo_sem_iteracao` | Criativo rodando há muito sem variação |
+
+**Atendimento / financeiro (sinaliza se cruzar no caminho; não é o foco principal):** cliente sem ação em 7 dias, relatório pendente, mensagem sem resposta, QBR/renovação próximo, pagamento atrasado, vencimento de contrato, compliance aberta há 30+ dias.
+
+Nenhum detector novo é inventado aqui. Só os do [Dashboard Anomalias](/workflows/dashboard-anomalias).
+
+**Severidade:**
+
+| Nível | Quando |
+|---|---|
+| **crítico** | Gasto parado/errado, risco financeiro, cliente prioritário impactado |
+| **alerta** | Performance fora do baseline ou cliente sem ação relevante |
+| **aviso** | Ponto de atenção sem urgência |
+| **info** | Registro útil, sem ação imediata |
+
+**O que você recebe:**
+
+Digest enxuto, ordenado por severidade e impacto no dinheiro. Por anomalia:
+
+- Cliente
+- Detector ativado
+- Evidência (número + fonte + janela)
+- Severidade
+- Ação sugerida
+
+Se não houver anomalia relevante: uma linha dizendo isso. Sem enchimento.
+
+## Entradas / Saídas
+
+**Entra:** gatilho de varredura (ou chamada pelo orquestrador do workflow).
+
+**Sai:** digest de anomalias ordenado por severidade e impacto no dinheiro.
+
+## Usada em quais workflows
+
+- [Dashboard Anomalias](/workflows/dashboard-anomalias) — motor de detecção deste workflow.
+- [Check Cliente](/workflows/check-cliente) — como parte do checkpoint periódico de contas.
+
+## Gate de qualidade
+
+`GATE-AUDITORIA` — bloqueia: dado fabricado, atribuição indevida, cliente/contexto errado, claim sem prova. Alerta crítico cliente-facing só passa com score ≥ 80.
+
+## O que NÃO faz
+
+- **Não age.** Detecta e reporta. Pausar/ajustar verba/escalar é decisão do operador.
+- Não usa métrica que o `pack.yaml` proíbe — isso gera falso positivo.
+- Não emite alerta sem evidência — número + fonte + janela são obrigatórios.
+- Não inventa detectors além dos definidos no Dashboard Anomalias.
+- Não ranqueia por ordem de descoberta — ranqueia por impacto no dinheiro.
+
+## Erros que essa skill evita
+
+- Usar custo por conversa em cliente sem pixel (métrica proibida no pack) → falso positivo.
+- Emitir alerta "campanha lenta" sem número concreto → ruído descartado.
+- Pausar uma campanha "pra resolver" → fora de escopo; só recomenda.
+- Misturar dados de clientes distintos no mesmo digest.
+
+## Fonte
+
+`sistema/skills/performance/scan-anomalias/SKILL.md`

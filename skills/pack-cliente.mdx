@@ -1,0 +1,45 @@
+---
+title: "Skill: Pack do Cliente"
+sidebarTitle: "Pack do cliente"
+description: "Monta ou atualiza o pack.yaml — o SSoT enxuto do cliente que cabe numa tela: 3 números, funil, KPI, acessos, bloqueios, prontidão."
+---
+
+## O que é
+Uma **task atômica** que entrega **um** artefato: o `pack.yaml` do cliente — a fonte única de verdade (SSoT), curta o bastante pra caber numa tela. É daqui que todo o resto do sistema lê o cliente: os 3 números do negócio, onde o dinheiro vaza no funil, qual KPI manda, quais acessos existem e o que está bloqueado. Não é o onboarding inteiro (isso é o [Onboarding de cliente](/workflows/onboarding-cliente)), nem a persona (isso é a [persona-neurocomportamental](/skills/persona-neurocomportamental)). Só o pack.
+
+## Quando usar
+- Dentro do [Onboarding de cliente](/workflows/onboarding-cliente) — é o primeiro artefato do cliente novo.
+- No [Check de cliente](/workflows/check-cliente) — pra regularizar um pack incompleto.
+- Avulso: *"monta o pack do {cliente}"*, *"atualiza os números do {cliente}"*, *"o pack do {cliente} tá desatualizado"*.
+
+## Como utilizar
+1. **Você pede** o pack de um cliente e passa o que sabe — modelo de negócio, ticket, margem, contas de anúncio/tracking, onde acha que trava.
+2. **A ISIS parte do template enxuto** e preenche os blocos com o que existe.
+3. **O que falta vira `[A DEFINIR]` explícito** — a lacuna é informação, não buraco preenchido com genérico. Número de negócio faltando vira **bloqueio**.
+4. **Você recebe** o `pack.yaml` salvo na pasta do cliente + o `MAPA.md` do cliente atualizado, com um fechamento que diz os 3 números (ou o que falta) e o gargalo de funil.
+
+<Info>**Princípio:** todo campo responde *"quem lê isto e que decisão muda?"*. Se não muda decisão, não entra no pack. *Follow the money* — o pack existe pra destravar resultado.</Info>
+
+## Por dentro
+Os blocos do núcleo:
+
+| Bloco | O que carrega |
+|---|---|
+| `cliente` | slug, nome, status, modelo de negócio em 1 linha |
+| `economia` (os 3 números) | ticket · margem/taxa de fechamento · CAC/LTV (ou CPR no modelo de lead). Desconhecido → `[A DEFINIR]` e vira bloqueio |
+| `funil` | onde o dinheiro vaza — o gargalo real (checkout, recompra, atendimento, elo conversa→venda). Na maioria dos clientes o gargalo está aqui, não na mídia |
+| `kpi_primario` + `nunca` | a métrica que importa e a que NÃO se usa (ex.: "nunca ROAS em conta de lead") |
+| `acessos` | só o operacional: contas/IDs (Meta, GA4), Asaas, tracking, canais |
+| `decisoes_sticky` · `bloqueios` · `prontidao` | decisões fixas, bloqueios ordenados por impacto no dinheiro, e a prontidão (relatório / escala) |
+
+## Entradas / Saídas
+- **Entra:** o que se sabe do cliente (negócio, números, contas, gargalo percebido).
+- **Sai:** `clientes/{cliente}/pack.yaml` (núcleo enxuto) + `MAPA.md` do cliente atualizado.
+
+## O que NÃO faz
+- **Read-only nas integrações** — não cria nem altera campanha, pixel ou orçamento.
+- **Não inventa métrica.** Separa fato, estimativa e inferência. Dado desconhecido = `[A DEFINIR]`/`[A VALIDAR]`.
+- Não conduz o onboarding inteiro nem escreve a persona — é só o pack.
+
+## Fonte
+`sistema/skills/performance/pack-cliente/SKILL.md`

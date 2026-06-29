@@ -1,0 +1,85 @@
+---
+title: "Workflow: Rotina Diária"
+sidebarTitle: "Rotina diária"
+description: "O detector de anomalias do dia: varre os clientes, destaca só o que saiu do padrão (CPL anormal, zero conversas, spend zerado) e te manda um resumo curto. Não notifica checklist vazio."
+---
+
+## O que é
+A curadoria diária da operação: a ISIS olha o que **mudou desde ontem** nos clientes e destaca **apenas anomalias, riscos e próximos passos reais**. O ponto não é gerar relatório — é reduzir a ansiedade de controle sem virar máquina de notificação. Se não houve nada que mereça sua atenção, ela **não te manda nada**. Checklist vazio não vira mensagem.
+
+## Quando usar
+- **curadoria da manhã** / preparação do dia
+- **pré-reunião** — pra chegar sabendo o que está fora do padrão
+- **investigação de clientes parados**
+
+## Como utilizar
+1. **Roda por curadoria da ISIS** (tipicamente de manhã) ou quando você pede *"rotina diária"* / *"o que mudou nas contas?"*.
+2. **A ISIS escaneia os clientes ativos** na janela de 24h, passando cada um pelos detectores de anomalia.
+3. **Ela prioriza** o que achou por impacto: dinheiro, cliente protegido, risco reputacional, urgência.
+4. **Ela te manda um resumo curto** — poucos bullets, separados por criticidade, com a próxima ação sugerida. **Se não houver anomalia, decisão ou oportunidade clara, ela fica quieta.**
+5. **Você decide o que fazer.** A ISIS **só lê e sugere** — não mexe em cliente, ads ou financeiro.
+
+**O que ter em mãos (inputs):**
+
+| Input | Obrigatório | Padrão |
+|---|---|---|
+| (gatilho) | sim | "rotina diária" — sem mais nada |
+| janela | não | últimas 24h |
+| clientes | não | ativos |
+| incluir financeiro | não | **desligado**; financeiro sensível só em resumo autorizado |
+
+## Os detectores de anomalia
+O coração do fluxo. Cada cliente passa por estes sinais:
+
+| Detector | O que dispara | Severidade | Ação sugerida |
+|---|---|---|---|
+| CPL anormal | CPL acima de 1,5x da média de 30 dias | alerta | investigar criativo/audiência **antes** de mexer |
+| Zero conversas | campanha ativa com 0 conversas/leads por 48h | crítico | verificar tracking, orçamento e criativo |
+| Spend zerado | spend caiu pra zero sem registro de pausa | alerta | checar status da campanha / forma de pagamento |
+| Frequência alta | frequência alta com queda de resultado | aviso | sugerir [iterar criativo](/workflows/iterar-criativo) |
+| Cliente parado | sem timeline/entrega/ação registrada há 7+ dias | aviso | fazer check de status ou próxima entrega |
+| Compliance aberto | flag de compliance aberta há 30+ dias | crítico | bloquear campanha nova até resolver |
+| Relatório pendente | cliente ativo sem relatório no período esperado | alerta | rodar o relatório ou registrar o motivo |
+
+<Info>Os detectores são a regra de "o que é digno de te interromper". Tudo que não cai em nenhum deles fica no balde "sem urgência" e nem chega como mensagem.</Info>
+
+## Por dentro (a sequência)
+
+<Steps>
+  <Step title="Escanear clientes (ISIS)">Lê packs, timelines, relatórios e os gates do sistema. Se um pack não existir, marca como pendência de regularização. Sai com: anomalias por cliente.</Step>
+  <Step title="Priorizar (ISIS)">Ordena por impacto em dinheiro, cliente protegido, risco reputacional e urgência. Separa em críticos, alertas, avisos e um contador de "nada urgente".</Step>
+  <Step title="Gerar resumo (ISIS)">Mensagem curta: 🔴 Crítico · 🟡 Alerta · 🟢 Sem urgência · Próximas ações. Só sai se houver algo que mereça.</Step>
+  <Step title="Registrar quando útil (ISIS)">Salva a rotina do dia num arquivo só quando for rotina formal e houver informação útil. Sem info útil, não cria arquivo.</Step>
+</Steps>
+
+> Os agentes (ISIS, traffic, cs, qa) estão em [Os Agentes](/agentes/visao-geral). A skill que faz a varredura de anomalias é [`scan-anomalias`](/skills/catalogo).
+
+## Entradas / Saídas
+- **Entra:** o estado dos clientes ativos nas últimas 24h (a ISIS coleta).
+- **Sai:**
+  - um **resumo curto** pra você — ou **silêncio**, se não houve nada
+  - opcionalmente, um **registro** do dia (`...rotinas/diaria/<data>.md`), quando for rotina formal e útil
+
+## Onde trava
+Não tem gate formal — tem **regras de notificação** que seguram o ruído:
+
+- **não notifica checklist vazio** — sem anomalia, sem mensagem
+- **só te chama** se houver anomalia, decisão ou oportunidade clara
+- o resumo **tem que caber em poucos bullets**
+
+E **bloqueia** de vez:
+- **inventar métrica sem fonte**
+- **notificar ruído sem ação**
+- **tomar qualquer ação externa sem confirmação**
+
+## O que NÃO faz
+- **Não mexe em cliente, ads ou financeiro** — só lê e sugere.
+- **Não te interrompe à toa** — silêncio é o default quando está tudo no padrão.
+- **Não toca financeiro sensível** sem resumo autorizado.
+- **Não inventa número** — sem fonte, não entra no resumo.
+
+## Exemplo
+Numa manhã, a varredura achou duas coisas: uma campanha ativa com **zero conversas há 48h** (crítico) e um cliente **sem ação registrada há 8 dias** (aviso). Os outros clientes estavam no padrão. A ISIS mandou: *"🔴 Crítico: campanha do cliente X com 0 leads há 48h — cheirar tracking/orçamento antes de mexer. 🟡 Aviso: cliente Y parado há 8 dias, vale um check de status. Resto no padrão."* Nos dias em que tudo está no padrão, ela simplesmente não manda nada.
+
+## Fonte
+`sistema/operacao/workflows/rotina-diaria-operacional.yaml` — esta página é a leitura de operador desse fluxo.

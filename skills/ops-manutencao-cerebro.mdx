@@ -1,0 +1,79 @@
+---
+title: "Skill: Manutenção do Cérebro"
+sidebarTitle: "Manutenção do Cérebro"
+description: "Higiene read-only do repositório de operações — detecta skills quebradas, índices podres, pastas vazias e nomenclatura fora do padrão. Reporta; não apaga nada."
+---
+
+## O que é
+
+O verificador de saúde estrutural do Cérebro. Roda um script determinístico (sem LLM) que inventaria o que está **sujo, vazio, quebrado ou fora do padrão** e devolve um relatório categorizado. Nada é alterado — o script enxerga; você (ou a ISIS, dentro dos limites) decide o que fazer.
+
+Nasceu de um buraco real: o cron de curadoria diária organizava arquivos mas nunca olhava as próprias skills, índices e nomenclatura. Esta skill fecha esse buraco.
+
+## Quando usar
+
+- Cron de curadoria diária — como primeiro passo do inventário (00:01).
+- Após criar, renomear ou mover uma skill.
+- Após mexer em qualquer `_index.md` ou MAPA.
+- Antes de um commit grande que toque a estrutura do repositório.
+
+## Como utilizar
+
+**O que você pede:** normalmente nada — o cron dispara sozinho. Para rodar manualmente: pede "higiene do cérebro" ou "roda a manutenção".
+
+**O que a ISIS faz:**
+
+1. Executa o script Python read-only (sem dependências, stdlib):
+   ```bash
+   python3 cerebro/gestao/operacoes/skills/manutencao-cerebro/scripts/higiene_cerebro.py
+   ```
+2. O script acha a raiz do repositório sozinho — funciona de qualquer pasta.
+3. Sai sempre com código 0 (não quebra o cron mesmo se houver achados).
+4. Lê o relatório inteiro antes de propor qualquer ação.
+5. Age só no inequívoco e reversível (lixo como `.DS_Store`/temporários). O resto vai como relatório.
+
+**O que você recebe:** relatório categorizado com contagem por tipo. No cron, vai pro tópico de operação no Telegram como "higiene do dia: N pontos". Zero pontos = silêncio.
+
+## O que o script checa
+
+| Categoria | O que é | O que significa |
+|---|---|---|
+| **Nomenclatura** | slug da pasta ≠ `name` do frontmatter; `name` ausente | invocação inconsistente — alinhar `slug == name` |
+| **Quebradas** | pasta dentro de `skills/` sem `SKILL.md` | skill pela metade — completar ou remover |
+| **Áreas vazias** | `skills/` de uma área sem nenhuma skill | intencional ou não — verificar |
+| **Fantasmas** | slug citado no `_index.md` sem pasta no disco | índice mente; confirmar antes de remover |
+| **Órfãs** | pasta real sem menção no `_index.md` | falta indexar |
+| **Lixo** | `.DS_Store`, `*.tmp`, `*~`, pastas vazias | pode remover |
+
+## Processo de curadoria com o relatório
+
+1. Ler o relatório inteiro antes de agir.
+2. **Lixo** (`.DS_Store`/temporários): pode remover.
+3. **Órfã**: pode indexar no `_index.md`.
+4. **Nomenclatura**: alinhar `slug == name` é seguro no frontmatter, mas mudar `name` muda o comando de invocação e `related_skills` em outras skills — tratar como lote revisado, não no automático do cron.
+5. **Fantasmas**: **nunca** apagar do índice direto. Confirmar primeiro se a skill existe em outro lugar; se não existe em lugar nenhum, aí remove do índice.
+6. **Quebradas / áreas vazias**: reportar; só mexer com decisão explícita.
+7. **Quando incerto → reportar, não agir.**
+
+## Entradas / Saídas
+
+| Campo | Obrigatório | Descrição |
+|---|---|---|
+| `gatilho` | automático (cron) ou manual | "higiene do cérebro" / "roda a manutenção" |
+
+**Sai:** relatório categorizado (no Telegram e/ou no chat). Sem arquivo de saída persistido — o relatório é o output.
+
+## Usada em quais workflows
+
+- [`/workflows/rotina-diaria`](/workflows/rotina-diaria) — higiene como primeiro passo do cron de curadoria
+
+## O que NÃO faz
+
+- **Não apaga nada** — read-only por design.
+- **Não detecta duplicata semântica** (duas skills que resolvem o mesmo problema) — isso exige julgamento humano.
+- **Não confirma se um fantasma existe em outro repositório** — essa verificação é manual.
+- **Não transforma conversa solta em memória** — não cria memória de progresso durante a curadoria.
+
+## Fonte
+
+`sistema/skills/ops/ops-manutencao-cerebro/SKILL.md`

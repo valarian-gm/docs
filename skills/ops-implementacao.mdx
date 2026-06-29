@@ -1,0 +1,100 @@
+---
+title: "Skill: Implementação Operacional"
+sidebarTitle: "Implementação Operacional"
+description: "Onde registrar cada tipo de informação, limites de acesso a ferramentas, cockpit de Telegram e arquitetura das skills — o mapa de implementação da operação."
+---
+
+## O que é
+
+O mapa de implementação operacional: define **onde cada tipo de informação vai**, como a ISIS usa ferramentas externas com segurança, como o Telegram funciona como cockpit interno, e como as skills estão organizadas no Cérebro.
+
+Não é sobre cadência ou tom — isso vive em outro lugar. Esta skill resolve a pergunta: *"onde isso vai? quem pode fazer o quê? como o Telegram está organizado?"*
+
+## Quando usar
+
+- "onde salvo essa informação?"
+- "como organizo o Telegram da operação?"
+- "quais skills existem e onde ficam?"
+- ao configurar um novo cronjob que precisa acessar Gmail/Calendar
+- ao incorporar um novo cliente ou colaborador e definir onde suas informações vão
+
+## Como utilizar
+
+**O que você pede:** a dúvida de implementação — onde registrar, como organizar, que acesso liberar.
+
+**O que a ISIS faz:**
+
+1. Classifica a informação no nível correto da hierarquia (ver tabela abaixo).
+2. Define o destino e o critério de persistência — nem tudo precisa ser salvo.
+3. Se for configuração de cronjob com acesso a ferramenta: especifica quais toolsets habilitar, como garantir fallback honesto e o que o job nunca pode fazer sem confirmação.
+4. Se for organização de Telegram: define tópico correto por função.
+
+## Hierarquia de contexto — onde cada informação vai
+
+| Nível | Quando usar | Exemplos |
+|---|---|---|
+| **Conversa** | usar agora, não persistir | localização do dia, humor, comentários passageiros |
+| **Contexto temporário** | sobrevive alguns dias, expirou no próximo ciclo | calibração de um cron para a semana |
+| **Memória** | preferências estáveis que ainda importam em 1+ semana | estilo de comunicação, restrições recorrentes |
+| **Incubadora** | ideias em design, hipóteses, playbooks candidatos | workflows planejados mas não criados |
+| **Operação/tarefa** | pendências reais, incidentes, riscos de cliente | ClickUp, boards, financeiro |
+| **Skill/playbook** | formas de trabalhar que estabilizaram e são reutilizáveis | skills no Cérebro |
+
+**Regra:** informação só vai para destino persistente se tiver função persistente. Não salva tudo porque "pode ser útil".
+
+## Cockpit de Telegram — tópicos por função
+
+| Tópico | Para quê |
+|---|---|
+| `Geral` | alinhamento leve e amplo |
+| `Solicitações e Aprovações` | tudo que precisa de decisão sua |
+| `Comercial` | leads, prospecção, propostas |
+| `Financeiro` | cobranças, status de pagamento |
+| `Produção / Entregas` | entregas internas e cross-cliente |
+| `Backlog / Ideias` | ideias que não devem sequestrar o dia |
+| `Sistema / ISIS` | Composio, MCP, automações, bugs |
+| `⭐ {Cliente}` | histórico prático de cada cliente ativo |
+
+Clientes não entram no grupo interno de ops. Canais de cliente ficam separados.
+
+## Acessos via Composio — o que é livre e o que pede OK
+
+**Livre (sem confirmação extra):**
+- inspecionar ferramentas disponíveis
+- ler contexto público ou explicitamente fornecido
+- ler agenda/e-mail para uma rotina autorizada
+- preparar rascunhos e sumarizar estado interno
+
+**Sempre pede OK antes:**
+- enviar mensagens, postar, modificar ads
+- criar, alterar ou cancelar cobranças
+- acessar dados financeiros além de resumo autorizado
+- agir em contas de cliente
+- compartilhar dados com terceiros
+
+## Arquitetura das skills no Cérebro
+
+As skills da operação vivem no **Cérebro** (repositório), não no agente. Estão distribuídas por área: skills transversais de empresa, performance, gestão de operações e comercial. Antes de criar uma skill nova, verificar o `_index.md` da área e o backlog — não duplicar o que já existe.
+
+<Info>
+Cronjobs de curadoria têm memória desabilitada por design (`skip_memory=True`). Se um job precisar persistir algo, grava em skill/Cérebro e reporta o que não pôde salvar — não tenta escrever em memória.
+</Info>
+
+## Entradas / Saídas
+
+Não há inputs fixos — a skill é consultada como referência de implementação. O output é a orientação: destino correto, tópico certo, permissão adequada.
+
+## Usada em quais workflows
+
+- [`/workflows/onboarding-cliente`](/workflows/onboarding-cliente) — onde registrar dados do novo cliente
+- [`/workflows/onboarding-colaborador`](/workflows/onboarding-colaborador) — onde registrar contexto do novo colaborador
+- [`/workflows/rotina-diaria`](/workflows/rotina-diaria) — referência para cronjobs que acessam Gmail/Calendar
+
+## O que NÃO faz
+
+- **Não define cadência, tom ou cronjobs genéricos** — isso vive na skill de modo de operação da ISIS.
+- **Não armazena contexto de colaborador como diário pessoal** — só o que ajuda a trabalhar com a pessoa profissionalmente.
+
+## Fonte
+
+`sistema/skills/ops/ops-implementacao/SKILL.md`

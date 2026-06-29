@@ -1,0 +1,76 @@
+---
+title: "Workflow: WhatsApp Setup"
+sidebarTitle: "WhatsApp setup"
+description: "Conecta uma instância de WhatsApp de ponta a ponta — cria, lê o QR, valida a conexão, configura o webhook e libera na allowlist. Cada passo destrutivo para e pede seu OK."
+---
+
+## O que é
+O fluxo que liga uma instância de WhatsApp do zero até estar no ar: cria a instância na Evolution, mostra o QR pra você escanear, confirma que conectou, configura o webhook que faz a ISIS **receber** as mensagens, libera a instância na allowlist e faz um teste de ponta a ponta. É reativo por design — a ISIS responde quando **@mencionada**, sem disparo em massa. Cada ação que cria ou expõe algo para e pede confirmação.
+
+## Quando usar
+Dispara quando você diz:
+- *"cria/conecta o WhatsApp da ISIS"* / *"sobe a instância do WhatsApp"*
+- *"configura o WhatsApp do {cliente}"* / *"monta o bot de atendimento"*
+
+## Régua (decisões já tomadas)
+Antes de começar, três coisas já estão decididas — você não precisa escolher de novo:
+
+| Decisão | Valor |
+|---|---|
+| Provider | **Baileys** |
+| Número | **da ISIS** (descartável — nunca o número pessoal do cliente) |
+| Acionamento | **reativo**: responde só quando @mencionada, sem disparo em massa |
+| Sensível | **handoff humano** — o que é delicado escala pra pessoa |
+| Infra | roda na sua própria VPS |
+
+## Como utilizar
+1. **Você manda o gatilho** dizendo qual instância quer e qual número conectar. Ex.: *"conecta o WhatsApp da ISIS."*
+2. **A ISIS confirma o plano antes de agir** (Passo 0 — eco do plano): mostra a instância, o número que vai conectar e os passos; espera seu "ok".
+3. **Ela cria a instância e te mostra o QR.** Você escaneia com o celular do número certo. Ela fica esperando o estado virar `open`.
+4. **Ela valida, configura o webhook** (pra começar a receber @menções) e **pede OK pra liberar na allowlist** — esse é o passo que efetivamente "destrava" a instância pra operar.
+5. **Teste de ponta a ponta:** ela manda um texto de teste **pro seu número** e confirma que enviou e recebeu. Aí está no ar.
+
+**O que ter em mãos (inputs):**
+
+| Input | Obrigatório | O que é |
+|---|---|---|
+| `nome_instancia` | sim | nome da instância; precisa não existir ainda |
+| `numero_para_conectar` | sim | o número certo (da ISIS, ou o do bot do cliente) |
+| `webhook_url` | sim | o endpoint que vai receber as mensagens |
+
+## Por dentro (a sequência)
+Cada step é uma chamada à API da Evolution, conduzida pela ISIS. As chamadas em si moram na skill [`whatsapp-evolution`](/skills/catalogo).
+
+<Steps>
+  <Step title="Criar instância (ISIS)">Cria a instância em Baileys com QR habilitado → devolve a instância + o QR em base64.</Step>
+  <Step title="Conectar número (ISIS)">Mostra o QR; você escaneia com o número. Ela aguarda o estado `open`.</Step>
+  <Step title="Validar conexão (ISIS)">Confirma que o `connectionState` está `open`.</Step>
+  <Step title="Configurar webhook (ISIS)">Aponta os eventos certos (mensagem recebida, atualização de conexão, QR e grupos) → a ISIS passa a receber as @menções.</Step>
+  <Step title="Aprovar na allowlist (ISIS, com seu OK)">Adiciona a instância à lista de instâncias aprovadas — a trava de "não tocar instância não aprovada".</Step>
+  <Step title="Teste de ponta a ponta (ISIS)">Envia um texto de teste pro seu número e confirma envio + recebimento.</Step>
+</Steps>
+
+> Os agentes estão explicados em [Os Agentes](/agentes/visao-geral). A regra de quem pode responder o quê está em [Guardrails](/guardrails/visao-geral).
+
+## Entradas / Saídas
+- **Entra:** nome da instância, número a conectar, URL do webhook.
+- **Sai:** uma instância conectada (`state: open`), com webhook configurado, **na allowlist**, e um teste de envio/recebimento confirmado.
+
+## Onde trava
+- **Gate `GATE-WHATSAPP`:** depois de no ar, responder a cliente segue o gate — operacional ela resolve sozinha, **sensível ela escala** pra humano.
+- **A allowlist é a trava-mestra:** a instância só entra na allowlist (passo 5) com **aprovação explícita** sua. Sem isso, ela existe mas não opera.
+- **Bloqueia também:** número errado no QR · webhook sem o endpoint certo · aprovar na allowlist sem OK · ativar resposta a cliente sem handoff definido.
+
+<Warning>Criar, conectar, configurar webhook e aprovar na allowlist são todos provisionamento — **cada um** para e pede seu OK. O eco do plano abre o fluxo; cada ação destrutiva/externa confirma de novo.</Warning>
+
+## O que NÃO faz
+- **Não dispara mensagem em massa** — o modelo é reativo, responde só quando mencionada.
+- **Não usa o número pessoal do cliente** — sempre o número descartável da ISIS.
+- **Não opera instância fora da allowlist** — instância não aprovada é instância muda.
+- **Não responde sozinha o que é sensível** — isso escala pra você.
+
+## Exemplo
+Pediram pra conectar o WhatsApp da ISIS. Ela ecoou o plano, criou a instância em Baileys e mostrou o QR. Você escaneou; ela confirmou `open`. Configurou o webhook, parou e perguntou: *"Conexão de pé e webhook ok. Posso liberar na allowlist?"* Com o OK, liberou e mandou um "teste ISIS ✅" pro seu número, confirmando o ciclo. No ar, reativa, esperando a primeira @menção.
+
+## Fonte
+`sistema/skills/workflows/workflow_whatsapp-setup/SKILL.md` — esta página é a leitura de operador desse workflow.

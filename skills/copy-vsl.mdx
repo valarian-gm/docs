@@ -1,0 +1,97 @@
+---
+title: "Skill: Roteiro de VSL"
+sidebarTitle: "Roteiro VSL"
+description: "Escreve o roteiro palavra-a-palavra de uma VSL (Video Sales Letter) de alta conversão — 7 a 15 min, ~170 palavras/min. Fluxo em duas fases: 5 ideias HLPC (1 checkpoint) e, após aprovação, roteiro completo em 14 passos."
+---
+
+## O que é
+
+Escreve o roteiro completo, palavra por palavra, de uma VSL (Video Sales Letter) de alta conversão: vídeo de 7 a 15 minutos que conduz o espectador do gancho à decisão de compra — calibrado em ~170 palavras/min para ritmo de fala natural.
+
+O fluxo tem **duas fases com um único checkpoint entre elas:**
+
+**Fase 1:** tabela de 5 ideias via HLPC (História · Lição · Plot twist · CTA) — cinco direções narrativas distintas. Você escolhe uma.
+
+**Fase 2:** roteiro completo nos 14 passos — palavra por palavra, com word-budgets por bloco, sugestões visuais no passo 7 e tom de fala declarado por bloco.
+
+## Quando usar
+
+- "Cria a VSL", "roteiro de VSL", "script da VSL", "roteiro do vídeo de vendas"
+- "Roteiro pra gravar e vender", "vídeo de venda" de produto, mentoria ou lançamento
+- Transformar uma oferta ou página de vendas pronta em roteiro falado para vídeo
+- Vídeo de 5 a 15 min que leva da dor à compra
+
+## Como utilizar
+
+**O que você pede:** público-alvo + o que está sendo vendido + objetivo do vídeo + duração alvo.
+
+A ISIS busca avatar e oferta nos arquivos do cliente antes de pedir qualquer coisa.
+
+**Input mínimo (só o que faltar):**
+
+| # | Item | Detalhe |
+|---|------|---------|
+| 1 | Público-alvo (N2D) | Nicho, dor e desejo |
+| 2 | Objetivo da VSL | Clique, compra, WhatsApp, agendamento |
+| 3 | O que está sendo vendido | Produto/serviço, transformação central |
+| 4 | Duração alvo | 5 min (~850 palavras) ou 15 min (~2.550 palavras) |
+
+Se a duração não for informada, a ISIS assume 15 min e confirma.
+
+**O que a ISIS faz — Fase 1:**
+1. Mapeia o público: dores, medos, ganâncias, curiosidades.
+2. Gera tabela com 5 ideias HLPC distintas — cada uma com premissa "E se…", história (H), lição (L), plot twist (P) e CTA (C).
+3. Aguarda você escolher uma antes de continuar.
+
+**O que a ISIS faz — Fase 2:**
+Com a ideia aprovada, escreve o roteiro inteiro de uma vez nos 14 passos — sem gating passo a passo.
+
+Cada bloco:
+- Respeita o orçamento de palavras do preset
+- Cria gancho para o próximo — narrativa fluida
+- Declara o tom de fala no início
+- No passo 7 (Funcionamento), insere sugestões visuais `[entre colchetes]`
+
+Passos 11-12 (Preço, Garantia) vêm da oferta consumida. Se não existirem, saem marcados como `[CONFIRMAR: preço/condições]`.
+
+**O que você recebe:**
+
+| Fase | Entrega |
+|------|---------|
+| Fase 1 | Tabela markdown das 5 ideias HLPC + pedido de escolha |
+| Fase 2 | Roteiro completo em markdown, bloco a bloco, com tom de fala geral no topo e timestamps aproximados |
+
+## Entradas / Saídas
+
+| | Detalhe |
+|---|---------|
+| **Inputs obrigatórios** | Público (N2D), oferta/produto, objetivo, duração |
+| **Fontes internas** | Avatar existente, oferta produtizada |
+| **Saída Fase 1** | 5 ideias HLPC em tabela |
+| **Saída Fase 2** | Roteiro completo palavra a palavra |
+| **Calibragem** | ~170 palavras/min; 5 min ≈ 850 palavras; 15 min ≈ 2.550 palavras |
+| **Idioma** | PT-BR, fala conversacional — para ser dito em voz alta, não lido |
+
+## Usada em quais workflows
+
+- [`/workflows/campanha-nova`](/workflows/campanha-nova) — quando a campanha inclui VSL como peça central
+- [`/workflows/onboarding-cliente`](/workflows/onboarding-cliente) — VSL de apresentação de produto/mentoria
+
+**Handoff ao final:**
+- Revisão da copy da VSL → `/skills/copy-revisor`
+- Avatar e oferta vêm de → `/skills/persona-neurocomportamental` e `/skills/oferta-produtizar`
+
+## O que NÃO faz
+
+- Não desenha a oferta do zero → use `/skills/oferta-produtizar`
+- Não constrói o avatar → use `/skills/persona-neurocomportamental`
+- Não escreve anúncio de feed, carrossel ou copy de página estática
+- Não produz o vídeo — entrega o roteiro para gravação
+
+<Info>
+**Por que o checkpoint na Fase 1?** Escrever uma VSL inteira são 850-2.550 palavras calibradas. Gastar isso na direção narrativa errada desperdicia o trabalho todo. As 5 ideias HLPC garantem que você escolha o ângulo antes de executar.
+</Info>
+
+---
+
+**Fonte:** `sistema/skills/performance/copy-vsl/SKILL.md`

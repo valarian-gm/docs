@@ -1,0 +1,70 @@
+---
+title: "Skill: SDR Virtual"
+sidebarTitle: "SDR virtual"
+description: "Gera o prompt completo de um SDR virtual — pré-vendedor por texto pronto para colar numa automação n8n. Não atende leads; constrói o agente que atende."
+---
+
+## O que é
+
+Uma skill **meta-prompt**: ela não conversa com leads — ela **produz o system prompt de um SDR virtual** (pré-vendedor digital que atende, qualifica e classifica leads por texto no WhatsApp, Instagram DM ou canal equivalente) pronto para colar numa automação n8n. A entrega é um único bloco `txt` autossuficiente, sem campos genéricos, sem vazios.
+
+O SDR gerado simula um pré-vendedor experiente: cria rapport, conduz qualificação **BANT** disfarçada de conversa, pontua o lead num **Lead Scoring** (pesos somando 100%, máximo 100 pontos), classifica em **HOT / WARM / COLD**, agenda via ferramentas externas (nunca por memória), despede desqualificados com classe e responde dúvidas via FAQ.
+
+## Quando usar
+
+- *"Cria o SDR virtual"*, *"monta o agente de qualificação"*, *"pré-vendedor automatizado"*.
+- *"Prompt de SDR pro n8n"*, *"agente que qualifica lead no WhatsApp/Instagram"*.
+- Quando o volume de leads inbound justifica automatizar a triagem e só mandar os quentes para call.
+
+## Como utilizar
+
+A skill opera em **duas camadas**:
+
+**Camada 1 — Coleta estratégica (com você)**
+
+1. A ISIS lê o repositório do cliente antes de perguntar qualquer coisa. Oferta, público, critérios de qualificação — muito do que está em `clientes/{cliente}/` já resolve.
+2. O que faltar, ela coleta de uma vez: nome da empresa, produtos/serviços, faixa de investimento (vira o piso do critério de Budget no BANT) e problemas comuns do lead antes de comprar.
+3. **Um único checkpoint obrigatório:** a persona do SDR (nome, gênero, tom, localidade). É decisão sua — a ISIS propõe, você aprova. Depois desse OK, não há mais paradas.
+
+**Camada 2 — Construção do prompt (a ISIS sozinha)**
+
+Com os dados aprovados, monta:
+
+| Seção | O que contém |
+|---|---|
+| Identidade | Nome, gênero, localidade, tom, objetivo, 4–6 características pessoais |
+| Roteiro estratégico | Rapport → transição → quebra-gelo; uma pergunta por vez |
+| Qualificação BANT | Cada etapa: objetivo + como conduzir + 2 perguntas + 3 respostas-modelo (quente/neutro/frio) |
+| Lead Scoring | Tabela de pesos (soma 100%) + pontuação por resposta (máx 100) + faixas HOT/WARM/COLD + tag CRM |
+| Agendamento | Confirmação de dados, uso de ferramentas de agenda, checklist para CRM/n8n |
+| Despedida de desqualificados | Mensagens para FRIO e MORNO que deixam a porta aberta |
+| FAQ | Serviço, descrição, valor e formas de pagamento da oferta real |
+| Regras invioláveis | Ver abaixo |
+
+**O que você recebe:** um bloco `txt` único, pronto para colar como system prompt no n8n.
+
+<Info>
+**Regras invioláveis que entram verbatim no prompt gerado:** quebra de linha `\n` após cada `.`, `!` ou `?`; uma pergunta por mensagem; sem emojis; nunca citar o nome da solução logo de cara; nunca usar memória para agendar — sempre ferramentas externas; nunca revelar o score ao lead.
+</Info>
+
+## Entradas / Saídas
+
+| | Detalhe |
+|---|---|
+| **Entra** | Nome da empresa + produtos/investimento + problemas comuns do lead + persona aprovada do SDR |
+| **Sai** | Bloco `txt` autossuficiente com: identidade, roteiro, BANT completo, Lead Scoring, agendamento, FAQ e regras invioláveis — salvo em `clientes/{cliente}/sdr/` |
+
+## Usada em quais workflows
+
+Sob demanda — geralmente após [`vendas-script-bdr`](/skills/vendas-script-bdr) (quando a prospecção ativa humana já existe e agora quer automatizar o inbound). O output é insumo direto para um workflow n8n.
+
+## O que NÃO faz
+
+- Não atende leads diretamente — gera o prompt do agente que vai atender.
+- Não escreve o script de prospecção ativa humana — isso é [`vendas-script-bdr`](/skills/vendas-script-bdr).
+- Não monta a oferta, bônus ou garantia — consome a oferta pronta; se faltar, aponta a skill certa.
+- Não entrega o fluxo n8n (nós, webhook, CRM) — entrega o prompt; o workflow n8n é etapa separada.
+
+## Fonte
+
+`sistema/skills/comercial/vendas-sdr-virtual/SKILL.md`

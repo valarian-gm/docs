@@ -1,0 +1,83 @@
+---
+title: "Workflow: Offboarding"
+sidebarTitle: "Offboarding"
+description: "A contraparte do onboarding — quando um cliente ou colaborador sai ou pausa, este fluxo marca o estado desejado e desprovisiona as rotinas automáticas. Preserva o histórico SEMPRE. Mensagem de saída fica em draft."
+---
+
+## O que é
+A **saída**: o fluxo que desliga um cliente ou colaborador que deixou de operar. Onde o [onboarding](/workflows/onboarding-cliente) *provisiona* as rotinas, o offboarding as *desprovisiona*. Mas com uma regra que define tudo: **o cérebro só marca o estado desejado** (flags no `pack.yaml` / `<slug>.yaml`) — quem realmente pausa ou remove os jobs no runtime é a ISIS depois, no Hermes. É orquestração de estado, não execução de delete. A ISIS conduz; o **cs** prepara a saída cliente-facing, o **qa** valida a coerência do estado.
+
+## Quando usar
+Dispara quando você diz:
+- *"offboarding do {cliente}"* / *"cliente saiu"* / *"encerrar cliente Y"*
+- *"pausar cliente X"* (pausa temporária, não encerramento)
+- *"colaborador saiu"* / *"{colab} entrou em standby"* / *"desativar colaborador Z"*
+- sempre que uma entidade ativa para de operar e as rotinas dela precisam parar
+
+## Como utilizar
+1. **Você manda o gatilho** com a entidade e o sentido (saída definitiva, pausa, standby). Ex.: *"pausa o {cliente}, ele suspendeu por 2 meses."*
+2. **A ISIS roda o precheck:** confirma que a entidade existe e que o modo (A/B/C) está claro — se não estiver, ela propõe baseado no gatilho.
+3. **Confirma o plano (Passo 0):** mostra a **entidade-alvo**, o **modo** e o que ele implica, o plano numerado, e te lembra que **o histórico será preservado** e que **os jobs reais só param no runtime**. Você confirma antes de qualquer flag mudar.
+4. **Marca o estado** e prepara a saída. Em silêncio.
+5. **Você recebe** o `pack.yaml` (ou `<slug>.yaml`) com o estado correto e o registro de `desprovisionado_em/por`, mais um draft de mensagem de saída (modos A/B) esperando teu OK.
+
+**Os três modos (escolhe um no Passo 0):**
+| Modo | Gatilho | Estado marcado | Efeito |
+|---|---|---|---|
+| **A — Cliente pausado** | pausa temporária | `status_operacional: pausado` · `automacoes.rotinas.* → false` | sai das entregas; **permanece na auditoria interna**; preserva `entregaveis/` |
+| **B — Cliente encerrado** | saída definitiva | `status_operacional: encerrado` · `automacoes.provisionado: false` | bloqueia entregas externas; preserva `entregaveis/` no Git; jobs por-slug removidos só após 30 dias |
+| **C — Colaborador standby** | colaborador sai/pausa | `status: standby` · `automacoes.provisionado: false` | para as DMs do colaborador |
+
+<Warning>
+**Três red lines não negociáveis:** (1) o cérebro só marca o **estado desejado** — nunca apaga job direto; (2) **nenhuma mensagem de saída ao cliente sem teu OK** — fica em draft; (3) **preservar histórico SEMPRE** — `entregaveis/` (relatórios, estratégia) nunca é apagado, nem em encerramento. Encerrar ≠ deletar.
+</Warning>
+
+## Por dentro (a sequência)
+Steps 2 e 3 são o núcleo: marcam o estado que a ISIS usa no runtime pra parar os jobs reais. É orquestração pura — não se inventa artefato novo no offboarding.
+
+| # | Step | Quem | Ação |
+|---|---|---|---|
+| 1 | Confirmar modo + alvo | ISIS | Passo 0 (eco do plano) — confirmação humana |
+| 2 | **Marcar estado desejado** | ISIS | edita `status_operacional`/`status` + `automacoes` conforme o modo |
+| 3 | **Desprovisionar rotinas (intenção)** | ISIS | `automacoes.rotinas.* → false` (A) ou `provisionado: false` (B/C); registra `desprovisionado_em/por` |
+| 4 | Preservar histórico | ISIS | confirma que `entregaveis/` está intacto e versionado — **nada é apagado** |
+| 5 | Validar offboarding | qa | gate **GATE-OFFBOARDING** — bloqueia se o estado ficar incoerente |
+| 6 | Draft saída (cliente-facing) | cs | draft interno (encerramento/pausa) — **exige tua confirmação**; pula no modo C |
+
+> Os agentes (ISIS, cs, qa) estão explicados em [Os Agentes](/agentes/visao-geral).
+
+### O que acontece depois, no runtime (fora do cérebro)
+Marcado o estado e passado o gate, a ISIS, **no Hermes**:
+- pausa (modo A) ou remove (modo B/C) os jobs daquela entidade;
+- no **modelo orquestrador** (default): não há job por-slug — basta o estado `pausado`/`encerrado`/`standby` pros crons globais deixarem de varrer a entidade. O cérebro só precisa do estado certo;
+- no **modelo por-slug** (exceção): a ISIS pausa/remove os jobs `CLIENTE:<slug>-*` / `COLAB:<slug>-*`; no modo B, **arquiva 30 dias antes de remover** (preserva rollback);
+- a auditoria clientes ↔ crons fecha o loop: entidade inativa com rotina ainda rodando = drift a corrigir.
+
+## Entradas / Saídas
+- **Entra:** entidade (cliente ou colaborador) + modo (A/B/C).
+- **Sai:**
+  - **Modo A:** `pack.yaml` com `status_operacional: pausado` + `automacoes.rotinas.* = false`, `entregaveis/` intacto.
+  - **Modo B:** `pack.yaml` com `status_operacional: encerrado` + `automacoes.provisionado: false`, `entregaveis/` preservado no Git; registro em `sistema/operacao/decisoes/` se cliente sensível.
+  - **Modo C:** `colaboradores/<slug>/<slug>.yaml` com `status: standby` + `automacoes.provisionado: false`.
+  - Em todos: `desprovisionado_em` / `desprovisionado_por` registrados, e draft de saída (A/B) esperando OK.
+
+## Onde trava
+- **Modo ambíguo** — pausa vs encerramento não confirmado.
+- **Slug inexistente.**
+- **`entregaveis/` em risco de perda** — se algo ameaça apagar histórico, trava.
+- **Envio de mensagem de saída sem confirmação.**
+- **Estado incoerente** reprovado no gate (ex.: marcou encerrado mas deixou rotina ativa).
+
+## O que NÃO faz
+- **Não apaga jobs reais** — declara a intenção; a parada acontece no runtime.
+- **Não envia a mensagem de saída** sem teu OK — só draft.
+- **Nunca apaga entregáveis.** Histórico é preservado mesmo em encerramento.
+- **Não inventa artefato novo** — só ajusta estado e prepara a saída.
+
+## Exemplo
+**Entrada:** *"pausa o {cliente}, suspendeu o contrato por 2 meses, deve voltar."*
+
+**O que sai:** a ISIS identifica **modo A (pausa temporária)** e confirma: "vou marcar `{cliente}` como pausado, desligar as rotinas de entrega (relatório, NPS), manter ele na auditoria interna e preservar todos os entregáveis. Os jobs reais eu paro no runtime depois. Ok?". Marca `status_operacional: pausado` e `automacoes.rotinas.* = false` no `pack.yaml`, registra `desprovisionado_em: 2026-06-29`, confirma que `entregaveis/` está intacto, o qa valida que o estado é coerente. Monta um draft *"{contato}, registramos a pausa do contrato — seguimos com tudo guardado pra retomar quando você voltar"* e deixa parado. Quando o cliente voltar, é só reverter o estado.
+
+## Fonte
+`sistema/skills/workflows/workflow_offboarding/SKILL.md` — esta página é a leitura de operador desse workflow.

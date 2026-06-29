@@ -1,29 +1,12 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "almond",
+  "theme": "mint",
   "name": "Projeto ISIS™",
+  "description": "Manual do Motor — o sistema operacional agêntico que liga oferta, criativo, tráfego, dados e relatório numa operação só.",
   "colors": {
     "primary": "#7C3AED",
     "light": "#A78BFA",
     "dark": "#5B21B6"
-  },
-  "favicon": "/favicon.svg",
-  "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
-  },
-  "navbar": {
-    "links": [
-      {
-        "label": "Suporte",
-        "href": "/suporte/contato"
-      }
-    ],
-    "primary": {
-      "type": "button",
-      "label": "Acessar Plataforma",
-      "href": "https://app.valarian.com.br"
-    }
   },
   "navigation": {
     "tabs": [
@@ -32,7 +15,6 @@
         "groups": [
           {
             "group": "Fundamentos",
-            "icon": "scale-balanced",
             "pages": [
               "index",
               "fundamentos/o-que-e",
@@ -43,37 +25,148 @@
           },
           {
             "group": "Arquitetura",
-            "icon": "server",
             "pages": [
               "arquitetura/plataformas"
             ]
           },
           {
             "group": "Os Agentes",
-            "icon": "users",
             "pages": [
-              "agentes/visao-geral"
+              "agentes/visao-geral",
+              "agentes/isis",
+              "agentes/midas",
+              "agentes/traffic",
+              "agentes/cs",
+              "agentes/qa",
+              "agentes/strategist",
+              "agentes/copy",
+              "agentes/design",
+              "agentes/fin",
+              "agentes/scout",
+              "agentes/whats"
             ]
           },
           {
             "group": "Workflows",
-            "icon": "diagram-project",
             "pages": [
-              "workflows/catalogo"
+              "workflows/catalogo",
+              "workflows/campanha-nova",
+              "workflows/relatorio-trafego",
+              "workflows/onboarding-cliente",
+              "workflows/check-cliente",
+              "workflows/qbr",
+              "workflows/offboarding",
+              "workflows/dashboard-anomalias",
+              "workflows/onboarding-colaborador",
+              "workflows/whatsapp-setup",
+              "workflows/iterar-criativo",
+              "workflows/abertura-semana",
+              "workflows/rotina-diaria",
+              "workflows/diagnostico-venda"
+            ]
+          },
+          {
+            "group": "Canais & Integrações",
+            "pages": [
+              "canais/telegram",
+              "canais/slack",
+              "canais/whatsapp",
+              "canais/meta-ads",
+              "canais/asaas",
+              "canais/composio",
+              "canais/clickup",
+              "canais/google-workspace",
+              "canais/git-github",
+              "canais/vercel"
             ]
           },
           {
             "group": "Skills",
-            "icon": "puzzle-piece",
             "pages": [
-              "skills/catalogo"
+              "skills/catalogo",
+              {
+                "group": "Core",
+                "pages": [
+                  "skills/core-isis-operacao",
+                  "skills/core-estrategia-cliente",
+                  "skills/core-ops-agencia",
+                  "skills/core-mesa-clevel",
+                  "skills/core-eficiencia-tokens",
+                  "skills/guardrail-mensagem"
+                ]
+              },
+              {
+                "group": "Comercial",
+                "pages": [
+                  "skills/vendas-sdr-virtual",
+                  "skills/vendas-script-bdr",
+                  "skills/vendas-sprint-aquisicao",
+                  "skills/vendas-proposta",
+                  "skills/retencao-upsell"
+                ]
+              },
+              {
+                "group": "Performance",
+                "pages": [
+                  "skills/auditoria-meta-360",
+                  "skills/auditoria-tracking-ecommerce",
+                  "skills/branding-cliente",
+                  "skills/pack-cliente",
+                  "skills/persona-neurocomportamental",
+                  "skills/oferta-produtizar",
+                  "skills/copy-anuncio",
+                  "skills/copy-revisor",
+                  "skills/copy-humanizar-ia",
+                  "skills/copy-vsl",
+                  "skills/pagina-copy-lp",
+                  "skills/pagina-descricao-seo",
+                  "skills/conteudo-10-angulos",
+                  "skills/conteudo-expandir",
+                  "skills/conteudo-artigo-linkedin",
+                  "skills/conteudo-roteiro-reels",
+                  "skills/conteudo-sequencia-stories",
+                  "skills/conteudo-caixinha-fdf",
+                  "skills/criativo-gerador-andromeda",
+                  "skills/criativo-prompt-ia",
+                  "skills/criativo-carrossel-html",
+                  "skills/static-ad-blueprint",
+                  "skills/image-prompt-architect",
+                  "skills/tracking-checklist",
+                  "skills/scan-anomalias",
+                  "skills/relatorio-trafego-pago",
+                  "skills/relatorio-raio-x-ecommerce",
+                  "skills/relatorio-visao-geral-cliente",
+                  "skills/trafego-escala-infoproduto"
+                ]
+              },
+              {
+                "group": "Ops",
+                "pages": [
+                  "skills/ops-implementacao",
+                  "skills/ops-workflow-builder",
+                  "skills/ops-manutencao-cerebro",
+                  "skills/ops-auditoria-sistema",
+                  "skills/ops-arquitetura-visual",
+                  "skills/ops-ata-reuniao",
+                  "skills/ops-composio-cli",
+                  "skills/financeiro-faturamento",
+                  "skills/whatsapp-evolution",
+                  "skills/crm-evo"
+                ]
+              }
             ]
           },
           {
             "group": "Guardrails",
-            "icon": "shield-halved",
             "pages": [
-              "guardrails/visao-geral"
+              "guardrails/visao-geral",
+              "guardrails/operacao-na-pratica"
+            ]
+          },
+          {
+            "group": "Crons & Rotinas",
+            "pages": [
+              "crons/visao-geral"
             ]
           }
         ]
@@ -81,9 +174,6 @@
     ]
   },
   "footer": {
-    "socials": {
-      "linkedin": "https://linkedin.com/company/valarian"
-    }
-  },
-  "description": "Manual do Motor — o sistema operacional agêntico que liga oferta, criativo, tráfego, dados e relatório numa operação só."
+    "socials": {}
+  }
 }

@@ -1,0 +1,126 @@
+---
+title: "Skill: Static Ad Blueprint"
+sidebarTitle: "Blueprint de anúncio estático"
+description: "Transforma a mensagem de um anúncio no andaime visual de um estático para Meta: conceito validado, esqueleto de layout, wireframe JPG placeholder 1:1 e image_prompt casado. Par wireframe + prompt alimenta o GPT Image 2 no fal.ai."
+---
+
+## O que é
+
+O **andaime** entre a mensagem e a imagem de um anúncio estático. Recebe um ângulo de anúncio (avatar, problema, mecanismo, oferta) e produz dois artefatos casados:
+
+1. **Wireframe JPG 1:1** (1080×1080, modo placeholder) — mapa de slots que mostra O QUE vai em cada posição com rótulos genéricos ("HEADLINE AQUI", "NÚMERO", "[PRODUTO]"), nunca o texto final. O wireframe dá direção de layout e deixa o modelo explorar a foto com mais criatividade.
+2. **image_prompt** amarrado a esse layout — descreve o anúncio inteiro para o GPT Image 2, com o texto exato e as specs tipográficas (px, fonte, cor).
+
+O par alimenta o fal.ai (GPT Image 2), que gera o estático final com texto. Esta skill não renderiza o anúncio final; garante composição travada em vez de prompt solto.
+
+**Onde vive no fluxo:**
+
+```
+Criativo Gerador Andromeda  →  Static Ad Blueprint (ESTA)  →  fal.ai / GPT Image 2
+(mensagem: avatar,              (layout 1:1 + texto exato +    (anúncio final 1:1;
+ problema, mecanismo,            wireframe placeholder +         depois outpainting
+ oferta)                         image_prompt via               para 9:16)
+                                 Image Prompt Architect)
+```
+
+## Quando usar
+
+- "monta o layout de um estático", "prepara o blueprint do anúncio", "monta o esqueleto pro fal/gpt-image".
+- "organiza os blocos do criativo", "gera o wireframe de referência".
+- Estruturar um anúncio de imagem parada antes de gerá-lo.
+- Sempre que o output do [Criativo Gerador Andromeda](/skills/criativo-gerador-andromeda) precisar virar um arquivo de imagem.
+
+## Como utilizar
+
+**O que você passa:**
+
+Se o usuário já rodou o [Criativo Gerador Andromeda](/skills/criativo-gerador-andromeda), a ISIS consome o output diretamente — extrai avatar, problema, mecanismo único e oferta de cada ângulo, sem redefinir nada.
+
+Se não houver mensagem pronta, coleta o mínimo:
+
+| Input | Detalhe |
+|---|---|
+| Oferta/produto | O quê, preço, diferencial/mecanismo único |
+| Avatar + problema principal | Base para selecionar o conceito |
+| Objetivo/funil | Frio / Morno / Quente |
+| Quantidade de criativos | Default: 5 |
+| Marca | Cores e fonte (só para o prompt; o wireframe é neutro) |
+
+**O que a ISIS faz — 7 passos:**
+
+**1. Selecionar conceito por funil:**
+Usa o "Mapa Funil → Conceitos" (29 conceitos, cada um com mecânica, layout e image_spec). Empilha 2–3 conceitos por criativo, cada um com um motivo diferente de compra (regra de stacking). Garante diversidade entre criativos.
+
+Tradução mensagem → conceito:
+- Mecanismo único → conceitos "how it works", "ingredient spotlight"
+- Oferta → "price anchor", "bundle", "urgency", "gift stack"
+- Problema → "problem callout"
+- Prova/avatar → "testimonial", "UGC", "authority"
+
+**2. Mapear para esqueleto de layout:**
+Escolhe a planta de layout pelo conceito (32 plantas cobrindo todos os 29 conceitos). A planta traz a anatomia de blocos no grid 1:1 — onde vai header, image slots, texto, CTA, rating. É anatomia de referência, não pixel-exato.
+
+**3. Montar o blueprint spec (JSON):**
+Para cada criativo, JSON com blocos em bandas verticais não-sobrepostas, canvas `[1080, 1080]`. Papéis disponíveis: `HEADLINE`, `TEXT`, `IMAGE_SLOT`, `CTA`, `PRICE`, `RATING`, `LOGO`, `BADGE`, `BG`, `STAT_HERO`, `HERO_PRODUCT`, `OFFER_BADGE`. O campo `text` de cada bloco é o RÓTULO genérico — não o texto final.
+
+**4. Renderizar o wireframe:**
+Script determinístico com flag `--clean` (sem bordas de debug, fundo livre). Saída 1080×1080. Se houver colisão de blocos, corrige e roda de novo.
+
+**5. Gerar o image_prompt casado (via Image Prompt Architect):**
+Para cada criativo, escreve o image_prompt do ANÚNCIO INTEIRO via [Image Prompt Architect](/skills/image-prompt-architect), aplicando:
+- **Registro** (mutuamente exclusivo): amador/UGC, casual/editorial, profissional, estúdio, produto, paparazzi.
+- **Gate de realismo + regra-mãe de correlação**: UMA fonte de luz, todos os artefatos derivam dela.
+- **Performance facial** (quando há rosto): protocolo dos três terços, gatilho situacional.
+- **Re-light forçado** (quando há produto): forma/cor/rótulo travados, sombra de contato.
+
+O texto exato de cada bloco vai no prompt, com spec tipográfica: px, peso, fonte, cor em hex.
+
+**6. Gerar prompt de outpainting 9:16:**
+Depois que o 1:1 fechar, um segundo prompt recebe a imagem 1:1 como entrada fixa e só estende o fundo para cima e para baixo até 9:16. O texto fica congelado na imagem 1:1 — nunca vaza na expansão.
+
+**O que você recebe (por criativo):**
+
+- Wireframe JPG 1:1 placeholder.
+- image_prompt do passo 1 (geração 1:1).
+- Prompt do passo 2 (outpainting 9:16).
+- Uma linha explicando os conceitos empilhados, o registro escolhido e o porquê.
+
+## Entradas / Saídas
+
+**Entra:** ângulo de anúncio (avatar + problema + mecanismo + oferta) do Criativo Gerador Andromeda, ou elicitação mínima.
+
+**Sai:** wireframe JPG 1:1 (placeholder) + image_prompt casado (1:1 + outpainting 9:16) por criativo.
+
+## Premissas técnicas validadas em campo
+
+1. **GPT Image 2 escreve texto fiel** — sem glitch, ortografia e kerning corretos quando o texto está bem especificado.
+2. **Wireframe placeholder rende melhor que wireframe com texto real** — dá direção de layout mas deixa o modelo explorar a foto com mais criatividade.
+3. **O prompt DEVE passar pela Image Prompt Architect** — prompt improvisado sai com cara de IA.
+4. **9:16 com texto espremido no quadrado 1:1 central não funciona** — o GPT empurra o bloco para fora do quadrado seguro. Solução: gerar 1:1 fechado, expandir depois por outpainting.
+
+## Usada em quais workflows
+
+- [Campanha Nova](/workflows/campanha-nova) — etapa de criativos, logo após o Criativo Gerador Andromeda.
+- [Iterar Criativo](/workflows/iterar-criativo) — quando a iteração envolve um novo estático.
+
+## O que NÃO faz
+
+- Não define a mensagem do anúncio — isso é o [Criativo Gerador Andromeda](/skills/criativo-gerador-andromeda).
+- Não improvisa o prompt de cabeça — usa sempre o [Image Prompt Architect](/skills/image-prompt-architect).
+- Não gera o anúncio final — entrega o wireframe + prompt para o fal.ai.
+- Não gera prompt de foto solta sem layout — para isso use [Image Prompt Architect](/skills/image-prompt-architect) direto.
+- Não gera carrossel nem vídeo UGC.
+
+## Erros que essa skill evita
+
+| Erro | Correto |
+|---|---|
+| Gerar direto em 9:16 com texto | Gerar 1:1 fechado → outpainting para 9:16 |
+| Escrever o texto real no wireframe | Placeholder com rótulos; texto exato só no prompt |
+| Misturar dois registros (candid + bokeh de softbox) | Um registro mutuamente exclusivo |
+| Rosto sem performance facial | Protocolo dos três terços + gatilho situacional |
+| Produto colado na cena | Re-light forçado + sombra de contato |
+
+## Fonte
+
+`sistema/skills/performance/static-ad-blueprint/SKILL.md`

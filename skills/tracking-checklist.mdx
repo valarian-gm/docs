@@ -1,0 +1,97 @@
+---
+title: "Skill: Tracking Checklist"
+sidebarTitle: "Tracking checklist (pré-campanha)"
+description: "Checklist de tracking pré-campanha: valida pixel Meta + CAPI/dedupe, GA4, GTM, eventos de conversão e UTMs antes de subir mídia. Entrega um veredito — PRONTO / SUBIR COM RESSALVA / NÃO SUBIR. Read-only."
+---
+
+## O que é
+
+O **pré-flight de tracking** — valida o que precisa estar de pé **antes** de subir mídia. Entrega um único veredito (pronto para subir ou não), com a tabela dos 6 blocos de checagem, a lista dos bloqueadores e a lista das ressalvas.
+
+É **read-only**: lista o que falta e o que destrava cada pendência. Não cria pixel, não cria evento, não mexe no GTM.
+
+<Info>
+**Não confundir com auditoria de tracking.** Esta é a checagem rápida de pré-subida — passa/não-passa. Se o checklist reprovar em vários itens e o cliente já tem tráfego rodando, o handoff é para a skill `auditoria-tracking-ecommerce`, que faz a varredura completa e o diagnóstico de vazamento.
+</Info>
+
+## Quando usar
+
+- "checa o tracking antes de subir", "pré-flight do {cliente}", "tá tudo rastreado pra subir?".
+- Gate de tracking no workflow [Campanha Nova](/workflows/campanha-nova) — roda antes de criar campanha/conjunto/anúncio.
+
+## Como utilizar
+
+**A ISIS não reinterroga.** Antes de pedir qualquer coisa ao usuário, lê `clientes/{cliente}/pack.yaml → acessos`:
+
+- `pixel_capi` → status do pixel de compra e se CAPI/dedupe foram validados.
+- `ga4` → property canônica (ignora as demais).
+- `meta_ads` → conta de anúncios e dataset/pixel ID associado.
+- `shopify` / plataforma → onde os eventos disparam (fonte de verdade de receita).
+- Funil do pack → quais eventos de conversão importam para ESTA campanha (o gargalo declarado).
+
+Se falta o acesso para verificar um item: marca `[NÃO VERIFICÁVEL]` e diz o que precisa para checar. Nunca assume "tá ok".
+
+**Os 6 blocos de checagem:**
+
+| # | Bloco | O que valida |
+|---|---|---|
+| 1 | **Pixel Meta (base)** | Pixel/dataset existe, está na conta certa e dispara `PageView` no site. ID bate com o do pack. |
+| 2 | **CAPI + dedupe** | Conversions API ativa (server-side) com `event_id` igual ao do browser. Sem dedupe, eventos duplicam ou somem no iOS. *Ponto cego clássico — `pixel_capi` quase sempre vem "NÃO validado".* |
+| 3 | **Eventos de conversão** | O evento de otimização da campanha está disparando: e-commerce → `Purchase`/`AddToCart`/`InitiateCheckout` com `value` + `currency`; lead → `Lead`/`generate_lead`. O evento precisa existir ANTES de subir. |
+| 4 | **GA4** | Property canônica recebendo dados; evento-chave marcado como conversão; sem property fantasma poluindo. |
+| 5 | **GTM (se houver)** | Container publicado (não em rascunho); tags de pixel/GA4 nos gatilhos certos; sem tag órfã/duplicada. Se o tracking é hardcoded sem GTM → `N/A`. |
+| 6 | **UTMs padronizadas** | Convenção definida e consistente — `utm_source`/`utm_medium`/`utm_campaign` em minúsculas, sem espaço, padrão único. UTM bagunçada = atribuição que não fecha depois. |
+
+Para cada item: `OK` / `FALTA` / `[NÃO VERIFICÁVEL]` + 1 linha do que destrava.
+
+Validação de pixel e eventos: ferramentas Meta read-only do ambiente — só leitura. Validação de browser/GTM fica com o cliente (Meta Pixel Helper, Tag Assistant, DebugView) — a skill sinaliza o que ele precisa conferir, não roda no navegador dele.
+
+**O que você recebe:**
+
+```
+VEREDITO: PRONTO PRA SUBIR / SUBIR COM RESSALVA / NÃO SUBIR
+
+Tabela dos 6 blocos:
+| Bloco          | Status    | Destrava                          |
+|----------------|-----------|-----------------------------------|
+| Pixel Meta     | OK        | —                                 |
+| CAPI + dedupe  | FALTA     | Configurar CAPI no Events Manager |
+| ...            | ...       | ...                               |
+
+Bloqueadores (impedem subir):
+- [lista]
+
+Ressalvas (sobe, mas registra a perda):
+- [lista] (ex.: "CAPI ausente = atribuição pior, não impeditivo de teste")
+```
+
+## Entradas / Saídas
+
+**Entra:** slug do cliente (a skill lê o `pack.yaml`). Eventualmente: período/objetivo da campanha que vai subir.
+
+**Sai:** veredito + tabela dos 6 blocos + separação bloqueadores/ressalvas.
+
+## Usada em quais workflows
+
+- [Campanha Nova](/workflows/campanha-nova) — gate de tracking antes de criar campanha (etapa 3 do fluxo).
+- [Check Cliente](/workflows/check-cliente) — como parte do checkpoint periódico.
+
+## O que NÃO faz
+
+- Não cria pixel, evento, tag nem UTM.
+- Não mexe em conta ativa.
+- Não faz auditoria profunda de uma loja já rodando (isso é `auditoria-tracking-ecommerce`).
+- Não compara número Meta × GA4 e reprova por divergência — divergência de janela/atribuição é esperada; não é falha de tracking.
+
+## Erros que essa skill evita
+
+| Erro | Correto |
+|---|---|
+| "Pixel ativo = tracking ok" | CAPI/dedupe e evento de otimização são itens separados |
+| Bater Meta × GA4 e reprovar por divergência | É sanidade, não conciliação — divergência de janela é esperada |
+| Implementar a correção aqui | Só lista e faz handoff para `auditoria-tracking-ecommerce` |
+| Assumir status de item não verificável | Marca `[NÃO VERIFICÁVEL]` e diz o acesso que falta |
+
+## Fonte
+
+`sistema/skills/performance/tracking-checklist/SKILL.md`

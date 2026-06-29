@@ -1,0 +1,92 @@
+---
+title: "Skill: Auditoria de Sistema"
+sidebarTitle: "Auditoria de Sistema"
+description: "Varredura read-only adversarial do sistema operacional inteiro — cérebro, ClickUp, Drive, crons e acessos — para achar o que está quebrado, travado ou sangrando."
+---
+
+## O que é
+
+A auditoria que ninguém pede até precisar. Varre as 7 camadas do sistema operacional (Git/cérebro, ClickUp, Drive, crons, acessos, fluxo operacional, guardrails) caçando **o que está quebrado, travado ou impedindo** — e mede 10 critérios de sucesso com nota objetiva.
+
+Não é checklist de "tá tudo ok?". É uma tentativa ativa de **provar que algo falha**. Diagnóstico sem tocar — quem decide agir é você.
+
+O critério-mãe do sistema:
+
+> **#10 — Alavancagem:** se a engenharia não devolve horas pro que dá dinheiro, falhou — por mais bonita que seja.
+
+## Quando usar
+
+- "audita o sistema", "tem algo travado?"
+- antes ou depois de mudança estrutural grande (merge de branch, novo cliente em lote, troca de plano)
+- como motor da auditoria mensal de consistência
+- quando algo está se comportando de forma estranha e você não sabe de onde vem
+
+## Como utilizar
+
+**O que você pede:** pode ser "audita" sem parâmetros (escopo total) ou especificar uma camada ("olha só os crons", "verifica as credenciais").
+
+**O que a ISIS faz:**
+
+1. Roda **fan-out adversarial** — um verificador por camada, em paralelo, cada um cético. O default é pessimista: tenta provar que quebra, não confirmar que está ok.
+2. Cada verificador trabalha com **evidência ao vivo** (comando/saída), não com o que o arquivo afirma — o sistema já mentiu antes.
+3. Um verificador final pergunta: *"o que ficou de fora — modalidade não checada, claim não verificado?"*
+4. Prioriza por risco: o que vaza dinheiro/dado primeiro; cosmético por último.
+5. Grava o log datado e apresenta o placar + achados.
+
+**O que você recebe:** log em `cerebro/gestao/operacoes/auditorias/{data}/auditoria.md` com placar dos 10 critérios + fichas de achado ordenadas por severidade.
+
+## As 7 camadas auditadas
+
+| Camada | O que caça |
+|---|---|
+| **Consistência 3 sistemas** | slug que não bate Git × ClickUp × Drive; carteira divergente |
+| **Integridade do cérebro** | refs quebradas, MAPAs desatualizados, docs órfãos, branch não mesclado |
+| **Saúde dos crons** | `last_status=error`, órfãos, deliver falhando, horários colidindo |
+| **Acessos/credenciais** | token vencido, integração off, permissão errada |
+| **Fluxo operacional** | tarefa presa, pendência sem dono, financeiro vencido |
+| **Guardrails/segurança** | ação cliente-facing sem aprovação; credencial exposta em arquivo |
+| **Capacidade/limites** | cron estourando contexto; teto de plano atingido |
+
+## Os 10 critérios de sucesso (a régua)
+
+| # | Critério | O que mede |
+|---|---|---|
+| 1 | Uma verdade | 3 sistemas batem — zero divergência silenciosa |
+| 2 | Destino inequívoco | todo artefato tem 1 dono; sem duplicação |
+| 3 | Automação confiável | crons rodam e entregam (`last_status=ok`) |
+| 4 | Sinal, não spam | cada alerta gera uma ação — não é ignorado |
+| 5 | Velocidade de detecção | problema → aviso em <24h (operacional) / <1 semana (consistência) |
+| 6 | Cobertura de automação | quanto roda sem você ter que lembrar |
+| 7 | Recuperabilidade | dá pra reverter — git + Trash + branch |
+| 8 | Guardrails firmes | zero ação destrutiva/externa sem OK; zero vazamento |
+| 9 | Escala | custo de +1 cliente ou +1 pessoa tende a zero |
+| 10 | **Alavancagem** | o sistema devolve horas pro que dá dinheiro |
+
+## Entradas / Saídas
+
+| Campo | Obrigatório | Descrição |
+|---|---|---|
+| `escopo` | opcional | total (default) ou camada específica |
+| `data` | automático | do dia em que roda |
+
+**Sai:** `cerebro/gestao/operacoes/auditorias/{data}/auditoria.md` com:
+1. Cabeçalho (data, escopo, quem rodou)
+2. Placar dos 10 critérios (nota + justificativa)
+3. Fichas de achado por severidade: `crítico · alto · médio · cosmético`
+4. Top 3 a atacar + o que ficou pra aprofundar
+
+## Usada em quais workflows
+
+- [`/workflows/rotina-diaria`](/workflows/rotina-diaria) — versão leve de verificação de crons
+- [`/workflows/abertura-semana`](/workflows/abertura-semana) — checagem do estado do sistema antes da semana começar
+- [`/workflows/dashboard-anomalias`](/workflows/dashboard-anomalias) — insumo para detectar desvios
+
+## O que NÃO faz
+
+- **Não conserta nada durante a auditoria** — achado vira ficha; correção é decisão separada.
+- **Não renderiza valor de token/credencial** no log — nome da variável aparece; valor real, nunca.
+- **Não afirma sem evidência** — claim sem prova vai como "hipótese a verificar".
+
+## Fonte
+
+`sistema/skills/ops/ops-auditoria-sistema/SKILL.md`

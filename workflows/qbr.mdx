@@ -1,0 +1,80 @@
+---
+title: "Workflow: QBR (Revisão Trimestral)"
+sidebarTitle: "QBR"
+description: "Consolida 60-90 dias de resultado, conecta com a meta e desemboca na decisão do próximo ciclo — renovar, escalar, ajustar. É a entrega de alto valor que segura cliente. Não é o relatório semanal."
+---
+
+## O que é
+O **QBR (Quarterly Business Review)**: a revisão que mostra o **valor acumulado de um trimestre** e abre a conversa do próximo ciclo — renovar, escalar ou ajustar. Diferente do relatório semanal, ele não fala da semana: fala da **direção** — progresso composto dos 90 dias, comparado com o trimestre anterior, conectado com a meta, com um plano dos próximos 90. A ISIS orquestra; o **traffic** coleta o trimestre, o **fin** traz o contexto financeiro (opcional), o **strategist** monta a análise e a recomendação de renovação, o **cs** monta a apresentação, o **qa** valida. É entrega de alto valor — **envio e agendamento de reunião só com teu OK.**
+
+## Quando usar
+Dispara quando você diz:
+- *"QBR do {cliente}"* / *"revisão trimestral"*
+- *"antes da renovação / reajuste do {cliente}"*
+- *"antes da reunião estratégica importante"*
+- *"o cliente precisa ver o valor acumulado"*
+
+**Quando NÃO usar:** cliente operado há menos de 60 dias (use diagnóstico inicial ou relatório mensal) — ou quando não há dados mínimos confiáveis. Se o que você quer é o resumo da semana, é o [relatório de tráfego](/workflows/relatorio-trafego), não o QBR.
+
+## Como utilizar
+1. **Você manda o gatilho** com o cliente. Ex.: *"monta o QBR do {cliente}, vamos renovar mês que vem."*
+2. **A ISIS roda o precheck:** confirma que o cliente é operado há 60+ dias (ideal 90), que os dados são confiáveis (investimento, leads/conversas/vendas rastreáveis) e que o envio/agendamento ficam em draft. Lacuna de dado vira `[A PREENCHER]`, nunca narrativa inventada.
+3. **Confirma o plano (Passo 0):** mostra cliente, período (trimestre + comparativo) e os passos, espera teu "ok".
+4. **Roda a sequência:** coleta do trimestre + comparativo → contexto financeiro → análise comparativa → montagem do QBR → decisão renovar/expandir → gate.
+5. **Você recebe** o `qbr.md` (a revisão), o `plano-90d.md` (o próximo ciclo) e o `qa-verdict.yaml`. Mais a recomendação de renovação e o draft da conversa.
+6. **Você libera o envio e agenda a reunião** — a ISIS não faz nem um nem outro sem OK.
+
+**O que ter em mãos (inputs):**
+| Input | Obrigatório | Observação |
+|---|---|---|
+| `cliente` | sim | operado há 60+ dias (ideal 90) |
+| dados do trimestre | sim | investimento, leads/conversas/vendas rastreáveis |
+| contexto financeiro | opcional | plano, MRR, inadimplência (via Asaas read-only) |
+
+<Warning>
+**O QBR não promete resultado futuro.** Ele mostra o que aconteceu (real ou `(estimado)`) e a direção. Narrativa prometendo número futuro é bloqueio do gate — vende confiança honesta, não previsão mágica.
+</Warning>
+
+## Por dentro (a sequência)
+Steps 1→3 montam a história do trimestre; o step 5 é onde o QBR vira retenção.
+
+| # | Step | Quem | O que faz / skill |
+|---|---|---|---|
+| 1 | Coleta do trimestre + comparativo | traffic | [`relatorio-trafego-pago`](/skills/relatorio-trafego-pago) (dados, read-only) — 90d + 90d anteriores |
+| 2 | Contexto financeiro *(opcional)* | fin | Asaas read-only — plano, MRR, inadimplência; **não cria/cancela/envia cobrança** |
+| 3 | Análise comparativa | strategist | [`core-estrategia-cliente`](/skills/core-estrategia-cliente) — narrativa, destaques, plano 90d, riscos, meta |
+| 4 | Montagem do QBR | cs | [`relatorio-visao-geral-cliente`](/skills/relatorio-visao-geral-cliente) — apresentação HTML |
+| 5 | Decisão renovar/expandir | strategist · cs | [`retencao-upsell`](/skills/retencao-upsell) — recomendação + draft da conversa |
+| 6 | Validar | qa | gate **GATE-RELATORIO-TRAFEGO-PAGO** — bloqueia se score < 80 |
+
+> Os agentes (ISIS, traffic, fin, strategist, cs, qa) estão explicados em [Os Agentes](/agentes/visao-geral).
+
+## Entradas / Saídas
+- **Entra:** cliente operado 60+ dias + dados confiáveis do trimestre (+ contexto financeiro, se houver).
+- **Sai** (em `clientes/{slug}/qbr/{periodo}/`):
+  - `qbr.md` — a revisão do trimestre (+ versão HTML de apresentação)
+  - `plano-90d.md` — o próximo ciclo
+  - `qa-verdict.yaml`
+  - recomendação de renovação/expansão + draft da conversa (esperando OK)
+
+## Onde trava
+- **GATE-RELATORIO-TRAFEGO-PAGO < 80.**
+- **Dado sem fonte** — número não rastreável não entra; vira `[A PREENCHER]` ou `(estimado)`.
+- **Cliente operado há pouco sem aviso** — QBR de quem você opera há 3 semanas não conta uma história de trimestre.
+- **Narrativa prometendo resultado futuro** — bloqueio.
+- **Financeiro sem fonte confirmada.**
+- **Envio sem confirmação** — draft fica parado.
+
+## O que NÃO faz
+- **Não envia o QBR nem agenda a reunião** sem teu OK explícito — gera draft (`mensagem-draft.md`).
+- **Não toca em cobrança** — o step financeiro é Asaas read-only.
+- **Não substitui o relatório semanal** — é a foto do trimestre, não da semana.
+- **Não promete futuro.**
+
+## Exemplo
+**Entrada:** *"monta o QBR do {cliente}, renovação chegando."*
+
+**O que sai:** a ISIS confirma cliente, trimestre (Q1 vs Q4 anterior) e os passos. O traffic puxa os 90 dias: investimento subiu de R$ 12k pra R$ 18k, CPL caiu de R$ 41 pra R$ 29, leads dobraram. O fin traz que o cliente está adimplente, MRR estável. O strategist escreve a narrativa: "no primeiro trimestre você consolidou o canal de aquisição; o CPL caindo enquanto a verba subia é o sinal de que a máquina ganhou eficiência" — com plano 90d focado em escalar o conjunto vencedor e testar um novo ângulo. O [`retencao-upsell`](/skills/retencao-upsell) recomenda renovação com upsell de produção de criativo, e monta o draft da conversa. O qa dá 86. Você recebe o `qbr.md`, o `plano-90d.md` e o draft — e decide quando enviar e quando marcar a reunião.
+
+## Fonte
+`sistema/skills/workflows/workflow_qbr/SKILL.md` — esta página é a leitura de operador desse workflow.

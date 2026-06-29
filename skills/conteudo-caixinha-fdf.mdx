@@ -1,0 +1,83 @@
+---
+title: "Skill: Caixinha de Perguntas (FdF)"
+sidebarTitle: "Caixinha FdF"
+description: "Cria a sequência de Stories de fundo de funil ancorada em uma caixinha de perguntas estratégica no Instagram — roteiro de 3 Stories, a pergunta da caixinha e 10 perguntas reais com respostas de autoridade."
+---
+
+## O que é
+
+Monta uma sequência de Instagram Stories de fundo de funil em torno de uma caixinha de perguntas estratégica — o mecanismo que faz o seguidor sair da audiência passiva e levantar a mão com a própria dor real, abrindo conversa de conversão.
+
+A entrega é um documento markdown com cinco partes em ordem:
+
+1. **Diagnóstico N2D** — nicho, dor e desejo do cliente, afiados.
+2. **3 a 5 contextos estratégicos** — ângulos de Story com intenção de venda (urgência oculta, erro comum, quebra de crença, desejo inesperado, quebra de objeção).
+3. **Roteiro de 3 Stories** — Story 1 (Dor + Conexão), Story 2 (Amplificação + causa real), Story 3 (Solução implícita + CTA para a caixinha). Cada slide com 2-4 linhas de copy emocional e específica.
+4. **A pergunta da caixinha** — uma única pergunta central, instigante e direta.
+5. **Tabela de 10 perguntas + 10 respostas** — perguntas reais de fundo de funil com respostas de autoridade (educam e convertem).
+
+<Info>
+**N2D é obrigatório.** A ISIS nunca gera o conteúdo sem o N2D definido. Se houver cliente nomeado, busca em `clientes/{cliente}/` antes de perguntar. Se não conseguir inferir, pede em uma linha e para.
+</Info>
+
+## Quando usar
+
+- "Monta a caixinha de perguntas", "stories de caixinha", "caixinha estratégica"
+- "Story pra puxar pergunta", "roteiro de stories de venda", "stories de fundo de funil"
+- Transformar um N2D em sequência de Stories que gera interação qualificada antes de uma oferta
+
+Não usar para: construir a persona/avatar (→ [persona-neurocomportamental](/skills/persona-neurocomportamental)), carrossel de feed, ou desenhar a oferta.
+
+## Como utilizar
+
+**O que você pede:** o N2D do cliente — "Eu ajudo [nicho] que não consegue [dor] a [desejo]." Se houver cliente nomeado, só o slug já resolve.
+
+**O que a ISIS faz:**
+
+1. **Diagnóstico N2D** — preenche e apresenta o N2D afiado. Se estiver vago, afina antes de continuar.
+
+2. **Contextos estratégicos (3 a 5)** — propõe ângulos distintos para a mesma dor. Exemplos de tipo:
+   - *Urgência oculta:* "O tempo está jogando contra você."
+   - *Erro comum:* "Você faz isso achando que ajuda, mas atrapalha."
+   - *Quebra de crença:* "Acham que depois dos 30 não dá mais…"
+   - *Desejo inesperado:* "Dá pra emagrecer comendo pão."
+   - *Quebra de objeção:* "Já tentei de tudo e nada funciona pra mim."
+
+   **Checkpoint:** você escolhe um contexto antes de a ISIS gerar o roteiro.
+
+3. **Roteiro de 3 Stories** — cada slide com 2-4 linhas, emocional, real e específico. Sem genérico.
+
+4. **A pergunta da caixinha** — uma única pergunta central.
+
+5. **Tabela 10 × 10** — 10 perguntas reais de fundo de funil (com "como / o que / por que") e 10 respostas estratégicas com autoridade e intenção de conversão — não FAQ seco.
+
+**O que você recebe:**
+
+Documento completo com as 5 partes. Pronto para usar no Instagram sem adaptação.
+
+## Entradas / Saídas
+
+| Campo | Tipo | Obrigatório |
+|---|---|---|
+| N2D ou slug do cliente | texto | Sim |
+| Contexto escolhido | número ou descrição | Sim (checkpoint) |
+
+| Saída | Descrição |
+|---|---|
+| N2D afiado | Base do conteúdo |
+| Contextos (3-5) | Ângulos para escolha |
+| Roteiro de 3 Stories | Copy completo por slide |
+| Pergunta da caixinha | Uma pergunta central |
+| Tabela 10x10 | Perguntas reais + respostas de autoridade |
+
+## O que NÃO faz
+
+- Não gera conteúdo sem N2D definido — bloqueia e pede antes de continuar.
+- Não aceita N2D vago ("ajudo pessoas a serem melhores") — afina até ter especificidade real.
+- Não pula o checkpoint do contexto — a escolha do ângulo define o roteiro inteiro.
+- Não produz perguntas falsas ou genéricas na tabela — precisam soar como alguém real enviando na caixinha.
+- Não invade escopo de avatar/persona nem de desenho de oferta.
+
+---
+
+**Fonte:** `sistema/skills/performance/conteudo-caixinha-fdf/SKILL.md`

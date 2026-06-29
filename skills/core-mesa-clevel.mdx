@@ -1,0 +1,79 @@
+---
+title: "Skill: Mesa C-Level"
+sidebarTitle: "Mesa C-Level"
+description: "Diagnóstico executivo com 6 perspectivas (Vision, COO, CMO, CAIO, CTO, CIO) — sem teatro de cargo, com decisão prática e redução de carga mental."
+---
+
+## O que é
+
+Uma skill que usa perspectivas executivas como **lentes de raciocínio** para chegar a uma decisão prática — não como personagens que fazem discurso. Quando a pergunta atravessa múltiplas áreas (estratégia + operação + marketing + IA, por exemplo), a mesa dá profundidade sem virar reunião corporativa interminável. Quando a pergunta é de uma área só, a ISIS usa só a lente relevante e não força o resto.
+
+As 6 lentes disponíveis: **Vision** (direção, apostas, trade-offs), **COO** (operação, processo, gargalo, delegação), **CMO** (oferta, funil, criativo, aquisição), **CAIO** (IA, automação, agentes, ROI de IA), **CTO** (produto, arquitetura, build vs. buy), **CIO** (sistemas, integrações, segurança, LGPD).
+
+## Quando usar
+
+- Decisão que atravessa mais de uma área: estratégia + operação, marketing + IA, produto + compliance.
+- *"Analisa pela ótica do squad"*, *"mesa C-Level"*, *"o que os executivos diriam?"*, *"quero uma visão completa"*.
+- Priorização de iniciativas com trade-offs não óbvios.
+- Decisão de build vs. buy, entrada em novo mercado, redesenho de oferta, escolha de ferramenta/vendor crítico.
+- Diagnóstico de gargalo quando não está claro se o problema é de marketing, operação ou tecnologia.
+
+## Como utilizar
+
+**O que você manda:** a situação, decisão ou dilema — pode ser um parágrafo, uma pergunta, um contexto de reunião. Sem template obrigatório.
+
+**O que a ISIS faz:**
+
+1. Identifica quais lentes são relevantes para a pergunta.
+2. Aplica cada lente com as perguntas-chave correspondentes (sem jargão corporativo).
+3. Emite uma **decisão recomendada** — não uma lista de opções sem conclusão.
+4. Aponta riscos e próximos passos.
+
+**Formato padrão de resposta (quando usa a squad inteira):**
+
+```
+Diagnóstico — o que está acontecendo em linguagem simples.
+
+Leitura C-Level
+- Vision: [direção e aposta]
+- CMO: [oferta, mensagem, gargalo de marketing]
+- COO: [processo, gargalo operacional]
+- CAIO: [faz sentido automatizar? ROI, risco]
+- CTO/CIO: [somente se houver impacto técnico/sistemas]
+
+Decisão recomendada — o que eu faria agora e por quê.
+
+Riscos — principais.
+
+Próximos passos — numerados, acionáveis.
+```
+
+**Modo subagente:** quando a tarefa é pesada e multi-perspectiva, a ISIS pode despachar subagentes com missão curta e delimitada (CMO, COO, CAIO, CIO) — cada um analisa só sua área e retorna diagnóstico + recomendação + métrica. A síntese final fica com a ISIS.
+
+**Critério de boa resposta:** deixa claro o que está acontecendo, qual lente importa, qual decisão gera dinheiro/clareza/controle, o que fazer agora, e o que não fazer.
+
+<Info>
+**Anti-padrão crítico:** listar frameworks sem decisão. A mesa existe pra decidir, não pra catalogar perspectivas. Se a resposta não tem uma recomendação clara no final, refatora.
+</Info>
+
+## Entradas / Saídas
+
+| | Detalhe |
+|---|---|
+| **Entra** | Situação, decisão ou dilema em texto livre |
+| **Sai** | Diagnóstico + leitura por lentes relevantes + decisão recomendada + riscos + próximos passos |
+
+## Usada em quais workflows
+
+Sob demanda — chamada quando a decisão é complexa o suficiente para merecer múltiplas perspectivas. Útil antes de `/workflows/qbr` (decisão de expansão de escopo), antes de `/workflows/offboarding` (avaliação de impacto) ou em situações de priorização estratégica da agência.
+
+## O que NÃO faz
+
+- Não faz teatro de cargo — sem "como CMO world-class...", sem saudações longas, sem teoria sem decisão.
+- Não recomenda IA por fascínio técnico — CAIO avalia impacto x viabilidade; se regra simples resolve, regra simples.
+- Não trata a agência como empresa enterprise — respostas são calibradas para operação leve com equipe enxuta.
+- Não cria vários subagentes quando uma análise simples resolve.
+
+## Fonte
+
+`sistema/skills/core/core-mesa-clevel/SKILL.md`

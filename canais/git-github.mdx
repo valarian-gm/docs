@@ -1,0 +1,35 @@
+---
+title: "Git / GitHub — Versionamento do cérebro"
+sidebarTitle: "Git / GitHub"
+description: "Onde o cérebro vive versionado: regras, skills, agentes, contexto e dados de cliente em Git. Toda decisão e fonte de verdade tem cópia auditável."
+---
+
+## O que é
+O Git/GitHub é onde o **cérebro vive versionado**: regras, skills, agentes, contexto, configuração e dados de cliente, tudo em Git. É a **fonte de verdade** do sistema — a regra constitucional é que tudo que roda no runtime tenha cópia canônica versionada (nada de skill solta só ao vivo). Quando o assunto é "onde está a verdade", a resposta é o repo.
+
+## Como conecta
+Via **git nativo** (branch principal `main`). O versionamento é parte da construção do cérebro, não uma integração externa de runtime. Mudanças entram como commits descritivos; pasta nova só com correspondência no `MAPA.md`.
+
+## Como se usa
+No dia a dia de **construção** (editar regra, criar skill, atualizar contexto de cliente), o trabalho termina em commit. Convenções da operação:
+- **Git só quando necessário** — agrupar mudanças relacionadas, não commitar a cada micro-edição.
+- **Atualizar o `MAPA.md`** ao adicionar/remover pasta ou skill.
+- **Datas relativas viram absolutas** ao registrar.
+- **Não duplicar** — preferir pointer a copiar.
+
+<Info>O repo também registra o "pulso" da operação: commits/push servem de heartbeat — sinal de que o cérebro está vivo e atualizado, com histórico auditável de cada decisão.</Info>
+
+## Guardrail do canal
+**Credencial nunca entra no repo.** Valor de token/key jamais é gravado em arquivo versionado — segredos moram fora do repo, no runtime seguro, e só aparecem por referência em tempo de execução. Dado de cliente vai pro repo/pack/artefato de forma controlada; o que é sensível segue as red lines do SOUL. Princípios gerais em [Guardrails](/guardrails/visao-geral).
+
+## Read-only vs escrita
+- **Leitura (sem pedir):** ler qualquer arquivo do repo, navegar histórico, consultar MAPA e fontes canônicas.
+- **Escrita / ação externa (exige cuidado e, quando afeta produção/cliente, OK):** commit e **push** mudam a fonte de verdade compartilhada — agrupados, descritivos, com MAPA atualizado.
+
+## O que NÃO faz / fronteira
+- **Não grava segredo** em arquivo versionado, nunca.
+- **Não cria pasta no root** sem correspondência no MAPA.
+- **Não commita a cada micro-edição** — agrupa o que é relacionado.
+
+## Fonte
+`sistema/agentes/isis/TOOLS.md` · `AGENTS.md` (raiz). Fonte enxuta sobre o canal — descrição honesta ao que registram.

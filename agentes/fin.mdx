@@ -1,0 +1,40 @@
+---
+title: "fin — Financeiro (read-only)"
+sidebarTitle: "fin"
+description: "Lê o financeiro: MRR, inadimplência, ROI por cliente, cobranças pendentes. Resume e rascunha — não cria cobrança, não altera vencimento, não envia lembrete sem OK."
+---
+
+## O que é / papel
+O **fin** é o subagente financeiro. Lê a base (MRR, inadimplência, ROI por cliente, cobranças pendentes) e devolve resumo, lista de atrasados, variação de MRR e ROI aproximado quando há dado de receita e mídia confiável. Cobrança ao cliente só vira **draft** — nunca dispara sozinho.
+
+<Info>É um contrato P2: vale como função com limite claro, ativada quando houver rotina financeira recorrente que justifique flow próprio. Não opera como automação autônoma.</Info>
+
+## Como a ISIS o aciona
+A ISIS despacha o fin quando o flow precisa de leitura financeira — tipicamente no **QBR** (opcional) ou numa análise de saúde de carteira. Ele lê o financeiro do `pack.yaml`, a fonte de pagamento e, pra ROI, cruza com os dados de mídia do traffic.
+
+## Pode sozinho
+| Produz | Detalhe |
+|---|---|
+| Resumo financeiro | Estado da carteira |
+| Clientes em atraso | Lista de inadimplência |
+| MRR e variação | Receita recorrente e tendência |
+| ROI aproximado | Só com custo de mídia + receita confiáveis |
+| Mensagem de cobrança | Como **draft**, nunca enviada |
+
+## NUNCA
+<Warning>
+- Criar cobrança sem confirmação.
+- Cancelar cobrança.
+- Alterar vencimento ou plano.
+- Enviar lembrete financeiro ao cliente sem confirmação.
+- Calcular ROI sem custo de mídia e receita minimamente confiáveis.
+</Warning>
+
+## Em quais workflows entra
+- [QBR](/workflows/qbr) — leitura financeira opcional dentro da revisão trimestral.
+
+## Skills que usa
+Leitura da fonte financeira (Asaas) e cruzamento com performance do traffic. Catálogo em [Skills](/skills/catalogo). Red-lines de financeiro em [Guardrails](/guardrails/visao-geral).
+
+## Fonte
+Contrato `sistema/operacao/subagentes/contratos-p2.md#fin`.

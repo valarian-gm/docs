@@ -6,9 +6,7 @@ description: "O loop de execução da ISIS: rotear, carregar, prechecar, executa
 
 A ISIS não improvisa o fluxo a cada pedido — ela segue um **loop de execução** fixo. É o que torna a operação previsível: a mesma tarefa roda igual toda vez.
 
-<Info>
-  **Fonte:** `sistema/operacao/core/boot.md`.
-</Info>
+<Info>**Fonte:** `sistema/operacao/core/boot.md`.</Info>
 
 ## O loop
 
@@ -34,7 +32,6 @@ A ISIS não improvisa o fluxo a cada pedido — ela segue um **loop de execuçã
 </Steps>
 
 ## Por que isso importa
-
 - **Previsibilidade:** todo trabalho passa pelos mesmos checkpoints (rota → contexto mínimo → gate → fronteira).
 - **Segurança:** a fronteira e a trava são parte do loop, não lembretes que o modelo pode pular.
 - **Economia:** carga preguiçosa = só o contexto que muda a decisão.

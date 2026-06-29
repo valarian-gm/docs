@@ -1,0 +1,43 @@
+---
+title: "WhatsApp — Atendimento & client-ops"
+sidebarTitle: "WhatsApp"
+description: "Mensageria WhatsApp via Evolution API (Baileys) num servidor próprio, mais o Evo CRM como painel de funil e conversa. Atendimento e operação de cliente — com handoff humano obrigatório no sensível."
+---
+
+## O que é
+O WhatsApp é o canal de **atendimento e client-ops**: mandar e receber mensagem/mídia/áudio, subir e conectar números (instâncias), checar status, e — pelo CRM acoplado — ler o histórico de conversa e mover o lead no funil. São duas peças que se encaixam: a **Evolution API** (o cano que conecta o número e troca mensagem) e o **Evo CRM** (o painel: inbox multi-canal + pipeline de leads que o ClickUp não cobre).
+
+## Como conecta
+- **Evolution API (Baileys):** roda num **servidor próprio (VPS)**. Conectar um número é escanear um **QR code** gerado pela API. Autentica por uma chave no header `apikey` — injetada em runtime, nunca digitada nem renderizada.
+- **Evo CRM (EvoAI):** também self-hosted; autentica por header `api_access_token` (não é Bearer). Um token só, da operação inteira.
+
+<Warning>A chave da Evolution é **master**: abre o servidor inteiro e alcança *todas* as instâncias. Por isso a trava **não** é a chave — é a **allowlist** de instâncias aprovadas. Instância fora da lista = bloqueio absoluto, mesmo que a chave tecnicamente chegue nela. Token nunca aparece em log/chat/comando; em shell, sempre referência literal que o ambiente expande.</Warning>
+
+## Como se usa
+- **Atendimento:** responder dúvida simples e status de um lead, ler o histórico multi-canal de um contato, checar em que estágio do funil ele está.
+- **Operação de número:** subir instância nova, gerar QR pra conectar, checar se o número está `open` (conectado) antes de mandar qualquer coisa.
+- **Funil:** listar pipelines/estágios, ver leads por estágio, registrar nota/contato.
+
+Você pede no canal certo: *"como tá o lead do fulano"*, *"puxa a conversa desse contato"*, *"conecta um número novo pra esse cliente"*.
+
+## Guardrail do canal
+Carrega dado de cliente — então a trava `resolve-canal` valida **canal × cliente × conta** antes de qualquer dado sair, **fail-closed**. Além disso, regras específicas do canal:
+
+1. **Allowlist primeiro.** Só instâncias aprovadas são tocadas. Fora da lista = red line.
+2. **Escopo por cliente no CRM.** A instância do CRM é uma só; o isolamento é **lógico** (por pipeline/label/atributo do contato). Lead de um cliente **nunca** vaza pro outro.
+3. **Handoff humano no sensível.** Responder cliente = só o operacional leve sozinha (status, dúvida simples). Cobrança, promessa, decisão = **escala pra você**.
+4. **Provisionar pede OK:** criar/deletar instância, logout, criar grupo, mexer em participante/foto. Ela prepara e **para**.
+
+Detalhe em [Guardrails](/guardrails/visao-geral) e [Operar sem vazar](/guardrails/operacao-na-pratica).
+
+## Read-only vs escrita
+- **Leitura (sem pedir):** checar status da instância, ler contatos/conversas/funil, puxar histórico.
+- **Escrita / ação externa (exige OK):** enviar mensagem ao lead (qualquer coisa que o cliente veja), criar/excluir instância, criar grupo, mover lead de estágio. Toda escrita é seguida de uma verificação read-only que confirma o resultado.
+
+## O que NÃO faz / fronteira
+- **Sem disparo em massa** e **sem auto-resposta a terceiros** — proibido.
+- **Não toca instância fora da allowlist**, nem com a chave master na mão.
+- **Não cruza leads entre clientes** dentro do CRM compartilhado.
+
+## Fonte
+`sistema/skills/ops/whatsapp-evolution/SKILL.md` · `sistema/skills/ops/crm-evo/SKILL.md`.

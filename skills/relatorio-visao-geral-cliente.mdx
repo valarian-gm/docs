@@ -1,0 +1,90 @@
+---
+title: "Skill: Relatório Visão Geral Cliente"
+sidebarTitle: "Visão geral para cliente"
+description: "Gera uma apresentação de diagnóstico + plano para o cliente em HTML com design system próprio (dark âmbar) — navegável por botões, com descobertas, análise de vendas, recompra, combos e plano de alavancas."
+---
+
+## O que é
+
+Gera o **relatório de apresentação de diagnóstico + plano** para entregar ao cliente. É a "capa" que transforma a análise profunda (RFM, cohort, cesta, recompra) em algo navegável, impressionante e **cliente-safe** — sem expor notas internas, P&L de prejuízo nem fee da agência.
+
+O design segue o **design system do produto**: fundo escuro âmbar, fontes Plus Jakarta Sans + Cormorant Garamond, hierarquia visual rígida com um ponto focal por bloco. O arquivo é um HTML autônomo — abre por duplo clique, sem dependências locais.
+
+Usa os dados do [Raio-X Ecommerce](/skills/relatorio-raio-x-ecommerce) como insumo principal.
+
+## Quando usar
+
+- Apresentar ao cliente o diagnóstico + plano de uma operação (ecommerce ou performance).
+- Depois de uma análise de raio-x — quando os achados precisam de uma "capa" navegável.
+- QBR — para consolidar o período e apresentar as alavancas do próximo ciclo.
+
+## Como utilizar
+
+**Pré-requisito:** os dados devem vir de uma análise já feita. Esta skill monta a apresentação; não coleta dados do zero. O insumo é o output do [Raio-X Ecommerce](/skills/relatorio-raio-x-ecommerce) (RFM, curva ABC, cohort, cesta, recompra, combos).
+
+**O que você passa:**
+
+- Slug do cliente + data da análise.
+- Nível de transparência desejado para o cliente (confirmar com o operador antes de gerar).
+- Dados verificados: todos os números precisam ser reconciliados com a loja antes (separar brinde de pago).
+
+**O que a ISIS faz — estrutura do relatório:**
+
+| Seção | Conteúdo |
+|---|---|
+| **Hero** | Wordmark da agência + título serif + dek (1 frase de promessa) |
+| **Nav sticky** | Botões-âncora para todas as seções — mini-menu fixo |
+| **Resumo** | "O que fizemos" (3 fontes) + foto atual (1 número-herói + linha quieta de stats) |
+| **Descobertas** | Cada uma: número-herói gigante (âmbar) + título + frase calma |
+| **Análise de vendas** | Curva ABC (barras), papel do produto, cesta, RFM (tabela de 6 grupos) |
+| **Recompra** | Timeline do ciclo (D+25 / D+45 / D+75) |
+| **Combos** | Montados a partir da afinidade real da cesta de compras |
+| **Roteiros** | Mensagens em bolhas de chat, com nome de exemplo |
+| **Plano** | Alavancas 01/02/03 + "já pronto" + próximos passos |
+
+**Design system (não inventar cores):**
+
+| Token | Valor | Papel |
+|---|---|---|
+| `--cv` | `#0c0b09` | Fundo |
+| `--sf` | `#16140f` | Superfície |
+| `--am` | `#d4803a` | Accent (números-herói e destaques — nunca decoração) |
+| `--am2` | `#f0a050` | Accent secundário |
+| `--t1` | `#efe9df` | Texto principal |
+| `--t2` | `#9b9388` | Texto de apoio |
+| `--t3` | `#615b52` | Labels |
+
+Hierarquia de ouro: UM ponto focal por bloco. Âmbar reservado **só** para números-herói — nunca como decoração. Contraste de escala forte, corpo leve e calmo, muito whitespace.
+
+**O que você recebe:**
+
+`clientes/{cliente}/estrategia/{data}/visao-geral.html` — HTML autônomo, abre por duplo clique, com Google Fonts via CDN.
+
+## Entradas / Saídas
+
+**Entra:** dados verificados da análise (RFM, cohort, cesta, recompra, P&L) + slug + data + nível de transparência.
+
+**Sai:** `visao-geral.html` salvo em `clientes/{cliente}/estrategia/{data}/`. Publicação só com confirmação explícita.
+
+## Regras de operação
+
+- **Cliente-safe por padrão:** nunca expor fee da agência, P&L de prejuízo, nem indicação de que o relatório anterior estava errado. Confirmar nível de transparência antes de gerar.
+- **Números reais e verificados** — reconciliar com a loja; separar brinde de pago.
+- **Publicar só com confirmação** — salvar é automático; publicar para URL externa é ação que requer OK explícito.
+
+## Usada em quais workflows
+
+- [QBR](/workflows/qbr) — apresentação trimestral de diagnóstico + plano.
+- [Onboarding de Cliente](/workflows/onboarding-cliente) — apresentação dos primeiros achados.
+- [Check Cliente](/workflows/check-cliente) — quando o cliente precisa de uma visão consolidada da operação.
+
+## O que NÃO faz
+
+- Não coleta dados — precisa do output do Raio-X Ecommerce como insumo.
+- Não publica sem confirmação — salva interno e aguarda OK.
+- Não expõe informações internas da agência (fee, P&L de prejuízo, notas de operação).
+- Não inventa números — toda cifra tem fonte; sem fonte, a seção fica em branco com `[VERIFICAR]`.
+
+## Fonte
+
+`sistema/skills/performance/relatorio-visao-geral-cliente/SKILL.md`

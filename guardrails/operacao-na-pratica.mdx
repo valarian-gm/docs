@@ -1,0 +1,56 @@
+---
+title: "Operação na prática"
+sidebarTitle: "Operar sem vazar"
+description: "As regras de ouro pra operar o sistema sem vazar dado nem quebrar nada — e o checklist antes de responder qualquer coisa de cliente."
+---
+
+Este é o lado prático dos [Guardrails](/guardrails/visao-geral): o que um operador (humano ou agente) precisa ter na cabeça pra usar o sistema sem criar incêndio. São lições do uso real.
+
+## As regras de ouro
+
+<AccordionGroup>
+  <Accordion title="Trava de código não é opcional — roda antes de tudo">
+    Instrução escrita ("não vaze dado") falha sob pressa. Antes de consultar API, ler dado bruto, responder número, expor ID ou diagnosticar: roda a trava `resolve-canal`. Se deixar pra "lembrar", uma hora alguém pede rápido, o agente tenta ajudar, e nasce vazamento embrulhado em eficiência.
+  </Accordion>
+  <Accordion title="O canal de origem manda mais que a intenção de quem pede">
+    Mesmo que o dono peça, se o pedido veio do **canal do cliente A** e o dado é do **cliente B**, bloqueia. Fórmula: **usuário autorizado ≠ canal autorizado**.
+  </Accordion>
+  <Accordion title="Em Slack/Telegram multiusuário, guardrail vem primeiro">
+    A ordem é: (1) obedecer `guardrail-mensagem`; (2) resolver o canal; (3) só então consultar o dado. Inverter a ordem = o vazamento já aconteceu "só internamente" — e depois alguém cola no canal errado.
+  </Accordion>
+  <Accordion title="Publicar/enviar pra fora nunca é automático">
+    Gerar relatório, diagnóstico, resumo financeiro, cobrança ou mensagem pro cliente **não autoriza enviar**. Comunicação externa exige aprovação explícita. "Gera e joga no cliente no susto" = incêndio com CSS bonito.
+  </Accordion>
+  <Accordion title="Dado de cliente não mora na memória do agente">
+    Memória do agente é pra preferência estável, regra operacional e convenção. Dado de cliente vai pra repo / pack / relatório / artefato — nunca solto na memória durável.
+  </Accordion>
+  <Accordion title="Erro de LLM ≠ erro do sistema">
+    Um job pode falhar por limite/crédito do provedor de IA. Isso não significa que o script quebrou, a integração caiu ou o dado sumiu — só que a etapa com modelo não rodou. Diagnosticar sem essa distinção é fofoca técnica.
+  </Accordion>
+  <Accordion title="Registro derivado não se edita à mão">
+    `canais-clientes.yaml` é **gerado** dos packs. Mexeu no canal de um cliente? Edita o `pack.yaml` dele e roda `build-canais.py` (+ `--check`). Editar o derivado na mão diverge na hora.
+  </Accordion>
+  <Accordion title="Sessão antiga carrega contexto velho">
+    Depois de mudar skill/config/boot: abre thread nova (ou reset/restart). Senão você acha que "não funcionou", mas está falando com um contexto pré-histórico. Tecnologia moderna: mágica, até virar cache.
+  </Accordion>
+</AccordionGroup>
+
+## Checklist — antes de responder qualquer dado de cliente
+
+```
+[ ] Estou em Slack/Telegram/WhatsApp (grupo/thread)?
+[ ] O pedido envolve cliente, conta, campanha, financeiro, métrica ou ID?
+[ ] Identifiquei qual é o cliente?
+[ ] Tenho o canal de origem?
+[ ] Rodei o resolve-canal?
+[ ] Deu ALLOW?
+[ ] A conta consultada é do mesmo cliente?
+[ ] Posso responder NESTE canal?
+```
+
+Qualquer "não sei" → **fail-closed**. Frase segura:
+
+> *"Esse pedido mistura cliente/canal. Vou bloquear aqui pra não vazar bastidor."*
+
+## Por que isso vende
+Um sistema que **não vaza** e **não age irreversível sozinho** é o que separa "playground de IA" de operação que toca dinheiro e reputação de cliente. Estas regras são o motivo de o sistema ser confiável em produção — não enfeite, fundação.

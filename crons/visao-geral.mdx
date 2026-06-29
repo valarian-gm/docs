@@ -1,0 +1,74 @@
+---
+title: "Crons & Rotinas"
+sidebarTitle: "Visão geral"
+description: "Como a proatividade do sistema funciona: crons agendados, heartbeat, e o catálogo das rotinas que rodam sozinhas."
+---
+
+A operação não espera você pedir. **Rotinas agendadas** (crons) fazem o sistema agir sozinho — checkup de manhã, relatório de segunda, radar de anomalias — e entregam no canal certo.
+
+<Info>**Fonte:** `sistema/rotinas/` (definições) + `sistema/rotinas/crons.md` (catálogo). O estado real dos jobs vive no scheduler do runtime.</Info>
+
+## Cron vs heartbeat
+- **Cron** — horário exato (ex.: segunda 06:00), tarefa isolada, entrega direta. Pra coisa que tem hora certa.
+- **Heartbeat** — pulso com folga (janela, não horário cravado); o agente decide se age ou fica quieto. Pra vigiar sem encher. (Ver [a ISIS](/agentes/visao-geral) e o `HEARTBEAT`.)
+
+## Três tipos de job
+| Tipo | O que é |
+|---|---|
+| `agent` | roda LLM + prompt + skills. Pra tarefa que exige raciocínio. |
+| `script-only` | roda um script e entrega o resultado; **sem LLM**. Determinístico, barato. |
+| `pipeline` | mistura script + contexto + skill orientada. Pra fluxo com etapas. |
+
+> Armadilha: o **nome** do job pode conter "agent" e ainda ser `script-only`. A fonte confiável é o campo `no_agent`, não o nome.
+
+## Como ler o nome de um job
+Convenção: `ESCOPO — domínio — rotina — cadência — modo`. Ex.: `AGENCIA — financeiro — saude-asaas — 5-10-15-20-25-30-09h — script`. Bate o olho e você sabe de quem é, o que faz, quando roda e como.
+
+## Onde os jobs entregam
+- **Telegram DM/home** — comunicação direta com o operador (o destino mais seguro).
+- **Telegram grupo/tópico** — operacional; exige guardrail quando envolve cliente/financeiro.
+- **Canal de origem** — onde o job foi criado.
+- **Local** — gera artefato pra publicação/envio depois (não manda direto pro cliente).
+
+## Catálogo das rotinas (anonimizado)
+
+### Agenda / operação pessoal (entrega: Telegram DM)
+| Rotina | Quando | O que faz |
+|---|---|---|
+| Checkup matinal | diário 07:00 | resume agenda, pendências e a prioridade prática do dia |
+| Planejamento da manhã | dias úteis 11:10 | plano curto: prioridades, cortes, risco do dia |
+| Checkpoint da tarde | dias úteis 16:50 | escolhe a tarefa principal do bloco, corta dispersão |
+| Fechamento do dia | dias úteis 20:45 | separa pendência real de ruído; define a 1ª ação de amanhã |
+| Preparação de reunião | quinta 11:15 | checklist, objetivo, risco e oportunidade da reunião recorrente |
+| Revisão semanal | sexta 19:30 | dinheiro, clientes, leads, entregas, gargalos → top 3 da semana |
+
+### Financeiro (entrega: tópico operacional)
+| Rotina | Quando | O que faz |
+|---|---|---|
+| Saúde financeira (Asaas) | dias 5/10/15/20/25/30 09:00 · `script` | leitura **read-only**: cobranças, inadimplência, status. Criar/enviar cobrança **não** é automático — exige aprovação. |
+
+### Curadoria & Cérebro
+| Rotina | Quando | O que faz |
+|---|---|---|
+| Organização diária | diário 00:01 · `agent` | curadoria, organização e manutenção leve do cérebro |
+| Push heartbeat | de hora em hora · `script` | dá push no repo **só** se a branch local estiver à frente (não faz commit por você) |
+| Invariantes de mídia | diário 00:17 · `script` | confere mídia pesada no Git; fica silencioso quando está tudo ok |
+
+### Clientes & carteira
+| Rotina | Quando | O que faz |
+|---|---|---|
+| Tarefas atrasadas (ClickUp) | diário 21:15 | consulta atrasos e resume risco operacional |
+| Reconciliação de carteira | segunda 10:20 · `script` | reconcilia clientes entre as fontes |
+| Sync de contexto (ClickUp) | segunda 10:45 · `script` | atualiza a visão operacional |
+| Saúde de clientes / MRR | sexta 10:30 | atualiza visão de saúde e recorrência |
+| Auditoria de consistência | segunda 10:40 · `pipeline` | checa coerência entre as fontes |
+| Check-in mensal + follow-up | 1º dia útil 09:00 / +5 dias úteis | lembrete e follow-up de check-in com cliente |
+| Organizar gravações (Drive) | diário 20:30 · `script` | organiza gravações/anotações de reunião |
+
+### Por cliente — Meta Ads (um job por cliente)
+| Rotina | Quando | O que faz |
+|---|---|---|
+| Penhasco diário | dias úteis 07:00 | monitor **read-only** dos anúncios do cliente; detecta queda/anomalia → canal de origem |
+| Relatório semanal | segunda 06:00 | gera o relatório/artefatos do cliente (entrega **local**, pra validar antes de mandar) |
+
+> A arquitetura é **um job por cliente por rotina** — isolado, pra não misturar dado de cliente. Ver [Guardrails](/guardrails/visao-geral).

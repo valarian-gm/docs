@@ -1,0 +1,30 @@
+---
+title: "Google Workspace — Gmail, Calendar, Drive, Sheets"
+sidebarTitle: "Google Workspace"
+description: "Gmail, Calendar, Drive e Sheets acessados via Composio. Leitura livre; enviar e-mail, criar evento ou escrever em planilha exige teu OK."
+---
+
+## O que é
+O Google Workspace — **Gmail, Calendar, Drive e Sheets** — é acessado **pelo Composio**, não por integração própria. É a camada de e-mail, agenda, arquivos e planilhas da operação. Não tem um conector dedicado: entra no mesmo gateway que padroniza as apps externas.
+
+## Como conecta
+Via **Composio** (HTTP MCP). Cada app Google autentica por dentro do Composio — credencial **injetada em runtime**, valor nunca renderizado. O fluxo é o mesmo de qualquer app do gateway: **pesquisar a tool** antes de executar.
+
+## Como se usa
+Você pede em linguagem natural e a ISIS acha a tool do app certo: *"vê se chegou e-mail do cliente"*, *"agenda a reunião de quinta"*, *"joga esses números numa planilha"*, *"acha o arquivo X no Drive"*. Leitura é o uso natural; qualquer coisa que saia pra fora (mandar e-mail, criar evento que convida gente) é ação externa.
+
+<Info>Esta página descreve o que existe pela fonte: Google Workspace **via Composio**. A profundidade de cada app (campos, tools específicas) é resolvida na hora pela busca de tools do Composio — não há um manual app-por-app no repo.</Info>
+
+## Guardrail do canal
+E-mail, agenda e planilha carregam dado de cliente — a trava `resolve-canal` valida **canal × cliente × conta** antes de a ISIS responder dado, **fail-closed**. E comunicação externa (e-mail, convite de evento) **nunca é automática**: exige aprovação. Detalhe em [Guardrails](/guardrails/visao-geral) e [Operar sem vazar](/guardrails/operacao-na-pratica).
+
+## Read-only vs escrita
+- **Leitura (sem pedir):** ler e-mail, consultar agenda, abrir planilha, buscar arquivo no Drive.
+- **Escrita / ação externa (exige OK):** enviar e-mail, criar/alterar evento, escrever em planilha, mexer em arquivo compartilhado. Verificada depois.
+
+## O que NÃO faz / fronteira
+- **Não envia e-mail nem convida pra evento** sozinha.
+- **Não tem conector próprio** — tudo passa pelo Composio.
+
+## Fonte
+`sistema/integracoes/composio.md` (Google Workspace via Composio). Fonte enxuta — descrição limitada ao que ela registra.

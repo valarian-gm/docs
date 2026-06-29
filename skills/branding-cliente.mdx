@@ -1,0 +1,88 @@
+---
+title: "Skill: Branding de Cliente"
+sidebarTitle: "Branding de Cliente"
+description: "Captura ou define a identidade de marca de um cliente — produz DESIGN.md (brandbook), tokens.json (design tokens W3C) e preview.html (visual). Base que toda peça criativa e copy consomem."
+---
+
+## O que é
+
+A base que todo criativo e toda copy do cliente consomem. Produz, em `clientes/{cliente}/branding/`, três arquivos:
+
+- **DESIGN.md** — o brandbook: alma, paleta, tipografia, iconografia, motion, social media, do's & don'ts, compliance e audit de contraste.
+- **tokens.json** — design tokens W3C prontos para consumo por outras skills.
+- **preview.html** — brandbook visual completo com as 12 seções obrigatórias.
+
+Dois modos de operação:
+
+- **EXTRAIR (default)** — a marca já existe; o trabalho é documentar com precisão, não inventar. Fontes: logo oficial, site, redes sociais, material existente.
+- **CRIAR** — marca nova. A ISIS propõe e apresenta para aprovação antes de gravar qualquer arquivo.
+
+<Info>
+**Regra de ouro:** o formato tem seções obrigatórias (todas sempre presentes), mas o conteúdo de cada uma é expressão da marca — motion, iconografia, cor e voz combinam com a comunicação do cliente, nunca copiados de outra marca. O template é o esqueleto; a alma é da marca.
+</Info>
+
+## Quando usar
+
+- Antes do primeiro criativo ou landing page de um cliente sem branding documentado.
+- No onboarding, quando o cliente já chega com marca (logo, site, Instagram) — capturar agora evita retrabalho em cada peça.
+- Quando alguém pede: "monta o branding de `{cliente}`", "extrai a paleta do logo", "qual o tom de voz da marca", "brand kit".
+
+## Como utilizar
+
+**Pré-requisito:** o avatar do cliente (`clientes/{cliente}/persona/avatar_{SLUG}.md`) deve existir. O mood e o tom de voz do brandbook ancoram no avatar. Se não existir, rodar [persona-neurocomportamental](/skills/persona-neurocomportamental) antes.
+
+**O que você pede:**
+- Nome/slug do cliente
+- Modo: `extrair` (default) ou `criar`
+- URLs e materiais disponíveis (site, Instagram, logo)
+
+**O que a ISIS faz (modo EXTRAIR):**
+
+1. Lê o avatar do cliente para entender o público e o tom esperado.
+2. Faz fetch do site (home + páginas de serviço) e redes sociais para capturar como a marca já fala.
+3. Extrai a paleta com hex exato — do CSS do site ou do arquivo do logo. O que não der para cravar entra como "estimativa visual (pendente extração exata)".
+4. Identifica a família tipográfica do wordmark/site. Sem confirmação, descreve a categoria e sugere equivalente no Google Fonts.
+5. Documenta o tom de voz com base em como a marca já escreve — legendas, headlines, CTAs.
+6. Grava os três arquivos em `clientes/{cliente}/branding/`.
+
+**O que a ISIS faz (modo CRIAR):**
+
+Mesmo fluxo, mas ao final apresenta a proposta para aprovação antes de gravar. Nada vai para o disco sem OK explícito.
+
+**O que você recebe:**
+
+- `DESIGN.md` — brandbook completo com frontmatter de tokens e bloco `ai_prompt` para uso em criativos
+- `tokens.json` — design tokens consumíveis por [criativo-gerador-andromeda](/skills/criativo-gerador-andromeda) e [image-prompt-architect](/skills/image-prompt-architect)
+- `preview.html` — visualização estática do brandbook
+
+## Entradas / Saídas
+
+| Campo | Tipo | Obrigatório |
+|---|---|---|
+| Slug do cliente | texto | Sim |
+| Modo | `extrair` ou `criar` | Não (padrão: `extrair`) |
+| Site / URLs de referência | URLs | Recomendado |
+| Avatar existente | `avatar_{SLUG}.md` | Sim (pré-requisito) |
+
+| Saída | Caminho |
+|---|---|
+| `DESIGN.md` | `clientes/{cliente}/branding/DESIGN.md` |
+| `tokens.json` | `clientes/{cliente}/branding/tokens.json` |
+| `preview.html` | `clientes/{cliente}/branding/preview.html` |
+
+## Usada em quais workflows
+
+- [Onboarding de cliente](/workflows/onboarding-cliente) — step de branding após persona
+- [Campanha nova](/workflows/campanha-nova) — step 1 (consumido por criativo-gerador-andromeda)
+- [Iterar criativo](/workflows/iterar-criativo) — referência de identidade para ajustes
+
+## O que NÃO faz
+
+- Não gera imagem nem criativo — entrega a base e devolve o fluxo para [criativo-gerador-andromeda](/skills/criativo-gerador-andromeda).
+- Não escreve copy — para isso, use [pagina-copy-lp](/skills/pagina-copy-lp) ou [copy-anuncio](/skills/copy-anuncio).
+- Não substitui diagnóstico de avatar/persona — use [persona-neurocomportamental](/skills/persona-neurocomportamental) para isso.
+- Modo CRIAR nunca grava sem aprovação explícita.
+
+---
+
+**Fonte:** `sistema/skills/performance/branding-cliente/SKILL.md`

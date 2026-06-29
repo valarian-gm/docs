@@ -1,0 +1,68 @@
+---
+title: "Skill: Financeiro — Faturamento"
+sidebarTitle: "Financeiro — Faturamento"
+description: "Monta fatura, define termos de pagamento e prepara aviso de vencimento — sempre como rascunho para você aprovar."
+---
+
+## O que é
+
+A skill que monta o **pacote de cobrança** de um cliente: fatura, termos de pagamento e texto de aviso (pré-vencimento e lembrete de atraso). Tudo como **rascunho** — nada é emitido nem enviado sem o seu OK.
+
+O Asaas é a fonte de verdade financeira, acessado em **modo leitura**. A skill prepara; você decide.
+
+## Quando usar
+
+- "monta a fatura do {cliente}"
+- "prepara a cobrança de [mês]"
+- "termos de pagamento pro contrato do {cliente}"
+- "aviso de vencimento pra amanhã"
+- "lembrete de atraso — o {cliente} não pagou"
+
+## Como utilizar
+
+**O que você pede:** o cliente e o período de referência. Se quiser sobrepor valor ou data de vencimento, diz — senão a ISIS usa o que está no pack.
+
+**O que a ISIS faz:**
+
+1. Puxa `clientes/{cliente}/pack.yaml` → `acessos.asaas` (customer_id, valor mensal, status de pendências).
+2. Consulta o Asaas (read-only) para confirmar cobranças em aberto.
+3. Preenche o modelo padrão (descrição específica do serviço + período, valor, vencimento, termos: multa 2% + juros 1%/mês pro rata).
+4. Monta os textos de aviso (pré-vencimento ~5 dias antes; lembrete pós-vencimento com encargos).
+5. Salva o rascunho em `clientes/{cliente}/financeiro/fatura-{periodo}.md`.
+6. **Para aqui.** Mostra o rascunho e aguarda o OK para qualquer ação com efeito externo.
+
+**O que você recebe:** rascunho completo (fatura + textos de aviso) no chat, com o caminho do arquivo salvo.
+
+<Info>
+Dado ausente para fechar valor ou vencimento? A ISIS marca `[A DEFINIR]` e sinaliza — nunca inventa número.
+</Info>
+
+## Entradas / Saídas
+
+| Campo | Obrigatório | Descrição |
+|---|---|---|
+| `cliente` | sim | slug do cliente (para buscar o pack) |
+| `período` | sim | mês/ano de referência (ex.: "06/2026") |
+| `valor` | opcional | sobrepõe o fee do pack se informado |
+| `vencimento` | opcional | sobrepõe o dia padrão se informado |
+
+**Sai:** rascunho em `clientes/{cliente}/financeiro/fatura-{periodo}.md` + textos de aviso prontos para aprovação.
+
+**NÃO sai:** nenhuma cobrança emitida, nenhum e-mail/WhatsApp enviado ao cliente.
+
+## Usada em quais workflows
+
+- [`/workflows/rotina-diaria`](/workflows/rotina-diaria) — verificação de cobranças vencidas e próximas do vencimento
+- [`/workflows/qbr`](/workflows/qbr) — contexto financeiro do trimestre
+- [`/workflows/offboarding`](/workflows/offboarding) — fechar pendências financeiras ao encerrar cliente
+
+## O que NÃO faz
+
+- **Não emite cobrança** no Asaas — isso exige OK explícito e é ação separada.
+- **Não envia fatura nem aviso ao cliente** sem aprovação.
+- **Não calcula imposto automaticamente** (ISS/PIS/COFINS) — só inclui retenção se o caso do cliente exigir.
+- **Não inventa número** — se faltar dado, marca `[A DEFINIR]`.
+
+## Fonte
+
+`sistema/skills/ops/financeiro-faturamento/SKILL.md`

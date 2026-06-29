@@ -1,0 +1,58 @@
+---
+title: "Skill: Retenção e Upsell"
+sidebarTitle: "Retenção e upsell"
+description: "Decide se o caminho é renovar ou expandir um cliente ativo — e entrega o roteiro da conversa ancorado nos números reais dele."
+---
+
+## O que é
+
+Uma skill que lê a saúde do cliente (resultado, prontidão, gargalos abertos) e entrega **um artefato**: o draft da conversa de renovação ou de expansão de escopo. A decisão de renovar vs. upsell é tirada dos dados do cliente — pack, relatórios, estratégia — não de palpite. Cliente-facing por definição: a ISIS gera o draft e só dispara com OK explícito.
+
+## Quando usar
+
+- QBR agendada ou revisão trimestral de um cliente ativo.
+- Renovação chegando a 60–90 dias (não 15 — tarde demais).
+- Suspeitando que o cliente tem espaço pra crescer escopo mas querendo confirmar antes de propor.
+- Pedido como *"dá pra fazer upsell no {cliente}?"*, *"expansão do {cliente}"*, *"proposta de renovação"*, *"QBR"*.
+
+## Como utilizar
+
+**O que você manda:** o nome (ou slug) do cliente. Sem formulário — a skill lê o que já existe.
+
+**O que a ISIS faz:**
+
+1. Puxa `pack.yaml` do cliente (os 3 números, KPI primário, `prontidao.escala`, `alavancas`, margem), o último relatório disponível e a estratégia mais recente.
+2. Pontua a saúde em 3 eixos — Resultado, Prontidão e Engajamento — com evidência real de cada um.
+3. Emite um **veredito**: saudável + prontidão OK → caminho de expansão; resultado fraco, prontidão travada ou alavanca crítica aberta → caminho de retenção.
+4. Monta o roteiro completo da conversa/QBR: diagnóstico de saúde + recomendação + roteiro de abordagem com antecipação de objeções.
+5. Salva o draft em `clientes/{cliente}/comercial/retencao-{data}.md` e apresenta para revisão.
+
+**O que você recebe:** o draft completo. Números reais ou marcados `(estimado)`/`[A DEFINIR]` — nunca inventado.
+
+<Info>
+**Prontidão manda.** Se `prontidao.escala` for "NÃO" no pack, a skill foca em reter e estabilizar. Não propõe upsell por cima de problema não resolvido.
+</Info>
+
+## Entradas / Saídas
+
+| | Detalhe |
+|---|---|
+| **Entra** | Slug/nome do cliente (a skill lê pack + relatórios + estratégia do repositório) |
+| **Sai** | Draft em `clientes/{cliente}/comercial/retencao-{data}.md`: saúde do cliente (3 eixos pontuados) + veredito (reter vs. expandir) + roteiro da conversa/QBR |
+
+Se faltar dado para o health score, a skill marca `[A DEFINIR]` e sinaliza — não inventa número para inflar a recomendação.
+
+## Usada em quais workflows
+
+Chamada diretamente no fluxo `/workflows/qbr` (revisão trimestral) e como etapa de handoff do `/workflows/check-cliente` quando o resultado aponta espaço de expansão.
+
+## O que NÃO faz
+
+- Não envia nem agenda nada — draft primeiro, ação só com OK.
+- Não acessa conta de anúncios nem altera campanha ativa.
+- Não monta a proposta formal de novo escopo — se a expansão virar documento comercial, faz handoff para [`vendas-proposta`](/skills/vendas-proposta).
+- Não recria pack, persona ou relatório do zero — consome o que já existe; sinaliza o que falta.
+
+## Fonte
+
+`sistema/skills/comercial/retencao-upsell/SKILL.md`

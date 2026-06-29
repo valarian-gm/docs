@@ -5,7 +5,7 @@ description: "A lei do sistema: cada fato mora em um lugar. O mapa de onde cada 
 ---
 
 <Note>
-  A **lei** do sistema. Antes de criar, salvar ou decidir qualquer coisa, você bate aqui. Existe pra matar o emaranhado: sem clareza não há venda nem escala. Toda dúvida de "onde isso mora?" se resolve nesta página.
+A **lei** do sistema. Antes de criar, salvar ou decidir qualquer coisa, você bate aqui. Existe pra matar o emaranhado: sem clareza não há venda nem escala. Toda dúvida de "onde isso mora?" se resolve nesta página.
 </Note>
 
 Princípio-âncora: **cada fato mora em UM lugar.** Se a mesma informação está em dois lugares, um dos dois está errado.
@@ -16,15 +16,12 @@ Princípio-âncora: **cada fato mora em UM lugar.** Se a mesma informação est�
   <Card title="Um fato, um lugar" icon="location-dot">
     Cada informação tem uma única fonte de verdade. Duplicou, divergiu.
   </Card>
-
   <Card title="Derivado é gerado" icon="robot">
     Artefato derivado é produzido por script, nunca editado à mão.
   </Card>
-
   <Card title="O que roda mora no repo" icon="box-archive">
     Skill ou script que governa operação tem cópia canônica versionada. Nada de faca solta na gaveta.
   </Card>
-
   <Card title="Fronteira é trava, não confiança" icon="lock">
     Fronteira de cliente é fail-closed e validada por código determinístico, não pela boa vontade do modelo.
   </Card>
@@ -35,12 +32,12 @@ Princípio-âncora: **cada fato mora em UM lugar.** Se a mesma informação est�
 A tabela que mata o flip-flop de "às vezes salvo aqui, às vezes ali".
 
 | Fato | Fonte de verdade (escreve AQUI) | Derivado (NUNCA edita à mão) |
-| --- | --- | --- |
+|---|---|---|
 | Dado do cliente (canal, conta, ticket, persona) | `clientes/<slug>/pack.yaml` | registro de canais, índices |
 | Persona / identidade do agente | `sistema/agentes/<agente>/SOUL.md` · `IDENTITY.md` | — |
 | Guardrails / regras | `sistema/skills/core/` · `sistema/operacao/regras/` | — |
 | Skills | `sistema/skills/<categoria>/<skill>/SKILL.md` | wrappers / registros |
-| Workflows | um dono só: skill `workflow_`**ou** YAML | o outro é pointer |
+| Workflows | um dono só: skill `workflow_` **ou** YAML | o outro é pointer |
 | Crons / rotinas | `sistema/rotinas/*.md` | catálogo `crons.md` |
 | Conhecimento por nicho | `sistema/operacao/segmentos/<segmento>/` | — |
 | Empresa / estratégia | `empresa/` | — |
@@ -48,6 +45,13 @@ A tabela que mata o flip-flop de "às vezes salvo aqui, às vezes ali".
 ## 3. A regra de decisão
 
 Antes de criar ou salvar qualquer coisa, nesta ordem:
+
+<Steps>
+  <Step title="Já tem dono?">Olha o mapa acima. Se o fato já tem casa, escreve lá. Fim.</Step>
+  <Step title="Não tem dono óbvio?">O MAPA da pasta prevê onde? Se sim, escreve lá.</Step>
+  <Step title="O MAPA não prevê?">Atualiza o MAPA (ou esta constituição) primeiro. Depois cria.</Step>
+  <Step title="É derivado de outra fonte?">Não escreve à mão. Roda o script que gera.</Step>
+</Steps>
 
 ## 4. Por que isto existe
 

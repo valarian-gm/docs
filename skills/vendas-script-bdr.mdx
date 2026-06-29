@@ -1,0 +1,56 @@
+---
+title: "Skill: Script BDR (BUNCH)"
+sidebarTitle: "Script BDR"
+description: "Gera um roteiro completo de prospecção outbound pela metodologia BUNCH — pronto para o BDR ler e aplicar no direct, WhatsApp ou LinkedIn."
+---
+
+## O que é
+
+Uma skill que produz **um roteiro de prospecção outbound** para um BDR ou pré-vendedor usar numa conversa real — Instagram Direct, WhatsApp, LinkedIn ou chat. O roteiro usa a metodologia **BUNCH (Budget, Urgency, Need, Champion, Human Fit)**, mas a ordem no papel não é a da sigla: começa por Human Fit (criar conexão antes de qualificar) e segue até Budget e Champion. O padrão é prático e treinável — o BDR lê e aplica, sem parecer script de call center.
+
+## Quando usar
+
+- *"Cria o script do BDR"*, *"roteiro de prospecção"*, *"script de abordagem outbound"*.
+- *"Perguntas para qualificar lead frio"*, *"script para abordar no Instagram/WhatsApp/LinkedIn"*.
+- *"Cadência de outbound"*, *"mensagem de abertura + follow-up"*.
+- Qualquer situação em que um humano vai prospectar ativamente por mensagem e precisa de um roteiro estruturado.
+
+## Como utilizar
+
+**O que você manda:** N2D no formato *"Eu ajudo [nicho] que [dor principal] a alcançar [desejo maior]"* + canal de abordagem (Instagram, WhatsApp, LinkedIn, e-mail). Isso basta.
+
+**O que a ISIS faz:**
+
+1. Verifica se já existe avatar/N2D documentado no repositório. Se existir, usa — não recoleta.
+2. Se o N2D estiver vago, propõe uma versão afiada e confirma em uma frase antes de escrever.
+3. Monta o roteiro completo na ordem conversacional: **Human Fit → Need → Urgency → Budget → Champion**.
+4. Cada etapa tem: bloco de abertura personalizada para o canal, 2–5 perguntas no tom do nicho/dor, gatilho de rapport para a próxima etapa.
+5. Entrega transição para call/proposta e 1–3 mensagens de follow-up para silêncio.
+6. Salva em `clientes/{cliente}/vendas/script-bdr.md` quando há cliente nomeado.
+
+**O que você recebe:** documento markdown completo — cabeçalho (nicho, público, canal) + as 5 etapas BUNCH na ordem conversacional + transição + follow-up.
+
+<Info>
+**Human Fit não é opcional.** A etapa exige 3 a 5 perguntas leves antes de qualquer qualificação — é o que abre o lead. Script que pula direto para Need fecha o lead na primeira mensagem.
+</Info>
+
+## Entradas / Saídas
+
+| | Detalhe |
+|---|---|
+| **Entra** | N2D (nicho + dor + desejo) + canal de abordagem; contexto extra se houver (produto, material da empresa) |
+| **Sai** | Roteiro em markdown: cabeçalho + 5 etapas BUNCH (Human Fit → Need → Urgency → Budget → Champion) + transição para ação + follow-up (1–3 mensagens) |
+
+## Usada em quais workflows
+
+Sob demanda — geralmente chamada depois de definir o público (via persona) e antes de uma sprint de prospecção ativa. Se a intenção for automatizar a abordagem num bot, o handoff é para [`vendas-sdr-virtual`](/skills/vendas-sdr-virtual).
+
+## O que NÃO faz
+
+- Não escreve copy de anúncio — isso vai para as skills de performance.
+- Não monta a oferta nem o avatar do zero — se faltar, sinaliza e aponta a skill certa antes de seguir.
+- Não gera o agente automatizado de qualificação inbound — isso é [`vendas-sdr-virtual`](/skills/vendas-sdr-virtual).
+
+## Fonte
+
+`sistema/skills/comercial/vendas-script-bdr/SKILL.md`

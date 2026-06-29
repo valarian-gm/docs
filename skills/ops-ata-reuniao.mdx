@@ -1,0 +1,77 @@
+---
+title: "Skill: Ata de Reunião"
+sidebarTitle: "Ata de Reunião"
+description: "Transforma transcrição, gravação ou notas brutas em ata estruturada com resumo, pontos-chave, decisões e checklist de ações."
+---
+
+## O que é
+
+A skill que converte o conteúdo de **uma reunião** — transcrição, gravação já transcrita ou notas brutas — em uma **ata estruturada em markdown**. O entregável permite que qualquer pessoa ausente entenda o que foi discutido, o que foi decidido e o que precisa ser feito a seguir.
+
+Padrão de qualidade: **factual e meticuloso**. Registra fatos e decisões, sintetiza sem narrar minuto a minuto, e nunca injeta opinião.
+
+<Info>
+**Ata ≠ SOP.** Esta skill gera o registro de uma reunião pontual. Para criar um procedimento padronizado e reutilizável a partir do conteúdo de uma reunião, a skill certa é outra. Se o pedido for "documenta como esse processo funciona de forma recorrente", é SOP — não ata.
+</Info>
+
+## Quando usar
+
+- "faz a ata", "ata da reunião", "ata da call"
+- "documenta o que foi decidido"
+- "registra a reunião", "organiza isso" (ao colar uma transcrição)
+- "monta o checklist da reunião", "o que ficou de ação"
+- ao fechar qualquer call de cliente ou reunião interna que precisa virar registro durável
+
+## Como utilizar
+
+**O que você pede:** o conteúdo da reunião — transcrição, gravação transcrita ou notas brutas. Quanto mais cru, melhor; a ISIS faz a síntese.
+
+**O que a ISIS faz:**
+
+1. Extrai data, participantes, tópicos, decisões e ações das falas/notas.
+2. Sintetiza em cinco partes fixas (ordem abaixo).
+3. Marca `responsável: a definir` / `prazo: a definir` quando a fala não deixou claro — nunca inventa.
+4. Salva em local durável e informa o caminho.
+
+**Estrutura da ata (sempre nesta ordem):**
+
+1. **Título + data** — ex.: `# Ata — Reunião [assunto] — 2026-06-10`
+2. **Resumo** — propósito e principais tópicos (1 parágrafo)
+3. **Pontos-chave** — lista hierárquica dos tópicos, agrupados por assunto
+4. **Decisões + justificativas** — cada decisão com a razão documentada na conversa
+5. **Checklist da próxima semana** — ações com responsável e prazo
+
+**O que você recebe:** documento markdown salvo no caminho certo, com o caminho informado na resposta.
+
+## Entradas / Saídas
+
+| Campo | Obrigatório | Descrição |
+|---|---|---|
+| `conteúdo da reunião` | sim | transcrição, gravação transcrita ou notas brutas |
+| `contexto` | recomendado | cliente, assunto, data (infere do conteúdo se ausente) |
+
+**Destinos de salvamento:**
+
+| Contexto | Caminho |
+|---|---|
+| Reunião de cliente | `clientes/{cliente}/atas/ata-{data}.md` |
+| Reunião interna | `cerebro/gestao/operacoes/atas/ata-{assunto}-{data}.md` |
+
+**Nunca salva em `/tmp`.** Se o contexto for ambíguo, pergunta onde salvar antes de gravar.
+
+## Usada em quais workflows
+
+- [`/workflows/qbr`](/workflows/qbr) — registro das decisões do QBR trimestral
+- [`/workflows/onboarding-cliente`](/workflows/onboarding-cliente) — ata da call de kickoff
+- [`/workflows/check-cliente`](/workflows/check-cliente) — registro de alinhamentos de risco
+
+## O que NÃO faz
+
+- **Não gera SOP** — procedimento padronizado/reutilizável é outra skill.
+- **Não inventa participantes, decisões, números ou prazos** que não estejam no material.
+- **Não narra a reunião inteira** — sintetiza o que importa.
+- **Não injeta opinião** — só fatos e decisões documentadas.
+
+## Fonte
+
+`sistema/skills/ops/ops-ata-reuniao/SKILL.md`

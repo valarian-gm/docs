@@ -1,0 +1,68 @@
+---
+title: "Skill: Proposta Comercial"
+sidebarTitle: "Proposta comercial"
+description: "Monta a proposta que fecha — vendendo o A→B do cliente, não uma lista de serviços. Consome diagnóstico e pack prontos; entrega o documento."
+---
+
+## O que é
+
+Uma skill que transforma diagnóstico, pack e oferta em **um documento de proposta comercial** estruturado para fechar. A lógica é simples: a proposta não fala do que a agência faz — mostra para onde o número do cliente vai, com o investimento como ponte. Enxuta, decisão-first. Draft sempre; envio só com OK explícito.
+
+## Quando usar
+
+- Depois de uma call de qualificação ou diagnóstico, quando é hora de formalizar a oferta.
+- Pedido como *"monta a proposta"*, *"proposta pro {cliente}"*, *"fechar o {prospect}"*, *"proposta de serviço"*.
+- Quando o diagnóstico já existe e o próximo passo é o documento.
+
+## Como utilizar
+
+**O que você manda:** nome/slug do prospect e qualquer contexto extra que ainda não esteja no repositório (diagnóstico, resultado de call, faixa de preço acordada).
+
+**O que a ISIS faz:**
+
+1. Lê o que já existe: `pack.yaml` (os 3 números, funil, gargalo, KPI — o "A" atual), a persona do decisor, diagnóstico/auditoria se houver, e a oferta estruturada se existir.
+2. Monta o documento seguindo a estrutura abaixo.
+3. Salva o draft em `clientes/{cliente}/comercial/proposta-{data}.md`.
+4. Apresenta para revisão — nunca envia sem OK.
+
+**Estrutura do documento entregue:**
+
+| Seção | O que contém |
+|---|---|
+| Sumário executivo | 4 linhas: A atual (números dele), B prometido, investimento, ROI projetado |
+| O desafio | A dor com os números reais do prospect |
+| A solução | Pilares amarrados ao gargalo — não catálogo genérico |
+| Escopo | Quantificado: nº de campanhas, criativos, LPs, sequências |
+| Investimento | 3 tiers (Essencial / Otimizado / Premium) com diferencial por nível |
+| ROI projetado | Cenário conservador, marcado `(estimado)` |
+| Cronograma | Marcos por mês: setup → operação → otimização |
+| Prova | 1 case real comparável, se existir — sem fabricar |
+| Próximos passos | Aceite + o que destrava o início |
+
+**O que você recebe:** o draft completo em markdown, pronto para revisão antes de enviar ao prospect.
+
+<Info>
+Faltando dado para o ROI? A skill marca `[A DEFINIR]` e sinaliza. Número inventado para impressionar é red line — não acontece aqui.
+</Info>
+
+## Entradas / Saídas
+
+| | Detalhe |
+|---|---|
+| **Entra** | Slug/nome do prospect; contexto da call/diagnóstico quando disponível |
+| **Sai** | Draft em `clientes/{cliente}/comercial/proposta-{data}.md`: proposta completa estruturada em 9 seções |
+
+## Usada em quais workflows
+
+Acionada no final do `/workflows/check-cliente` quando o veredito é "qualificado para proposta", e também como handoff do [`retencao-upsell`](/skills/retencao-upsell) quando a expansão vira documento formal.
+
+## O que NÃO faz
+
+- Não envia ao cliente — draft primeiro, envio só com OK.
+- Não constrói pack, persona, oferta ou estratégia do zero — consome o que já existe; faz handoff se faltar.
+- Não define preço sem base no pack — cifra improvisada não entra.
+- Não reescreve diagnóstico ou estratégia — usa os prontos.
+
+## Fonte
+
+`sistema/skills/comercial/vendas-proposta/SKILL.md`

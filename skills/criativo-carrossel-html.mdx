@@ -1,0 +1,120 @@
+---
+title: "Skill: Carrossel de Instagram (HTML)"
+sidebarTitle: "Carrossel HTML"
+description: "Produz carrosséis de Instagram como arquivo HTML standalone com preview interativo e exportação por slide em JPG 1080x1350 via Canvas API nativo. Dois modos: Fast Briefing (educativo/topo) e Strategic Copy Mode (vendas/fundo de funil) com diagnóstico de ângulo e seleção de headline antes de gerar os slides."
+---
+
+## O que é
+
+Transforma um tema, ângulo de campanha ou posicionamento em um carrossel de Instagram polido. O artefato entregue é um único arquivo HTML standalone com:
+
+- Preview interativo no browser (360x450px, ratio 4:5)
+- Exportação de cada slide como JPG 1080x1350 via Canvas API nativo — sem dependências externas de exportação
+- Navegação por dots, arrows, teclado e swipe
+- Padrão: 8 slides (ajustável a pedido)
+
+<Info>
+Esta skill usa **Canvas API nativo** para exportação. Nunca html2canvas. A regra é técnica e inegociável — html2canvas quebra em fontes customizadas e iframes.
+</Info>
+
+## Quando usar
+
+- "Cria o carrossel", "faz um carrossel pra esse tema", "carrossel de Instagram"
+- "Carrossel educativo / de vendas / de lançamento"
+- "Exporta os slides prontos pra postar"
+- Transformar um ângulo de campanha ou um conteúdo em slides
+
+## Dois modos de operação
+
+### Fast Briefing Protocol — topo de funil / educativo
+
+Modo rápido. A ISIS infere, assume e vai direto para os slides + HTML.
+
+Confirma ou infere 5 itens: tom do conteúdo, direção visual, posicionamento do handle, paleta, posicionamento do criador. Se o contexto já existir (cliente mapeado, briefing disponível), nem pergunta — só executa.
+
+### Strategic Copy Mode — padrão para vendas / fundo de funil
+
+Roda um processo estratégico de copy **antes** de gerar qualquer slide. Tem dois checkpoints.
+
+**As três leis do carrossel que converte:**
+- **Atrair** — curiosidade, controvérsia, medo ou ganância no slide 1
+- **Engajar** — cada slide termina com cliffhanger
+- **Converter** — CTA claro e único no slide final
+
+## Como utilizar (Strategic Copy Mode)
+
+**O que você pede:** público (N2D) + material-fonte a converter (oferta, tema, ângulo existente).
+
+**O que a ISIS faz — passo a passo:**
+
+| Passo | O que acontece |
+|-------|---------------|
+| 1 | Coleta ICP como N2D + material-fonte |
+| 2 | **CHECKPOINT:** tabela de diagnóstico estratégico — 10 linhas com Foco / Dor-Desejo / Promessa Implícita / Potencial Estratégico. Aguarda você escolher uma linha |
+| 3 | Gera 10 headlines usando 5 modelos: Pergunta direta / Se...então... / Contraintuitivo / Lista / Descoberta |
+| 4 | **CHECKPOINT:** aguarda você escolher a headline antes de continuar |
+| 5 | Gera os slides + HTML com o ângulo e a headline escolhidos |
+| 6 | Entrega o segundo artefato: legenda do post + 1-5 stories de aquecimento |
+
+**O que você recebe:**
+- Arquivo `.html` completo (preview + exportação por slide)
+- Legenda do post + stories de aquecimento
+
+## Entradas / Saídas
+
+| | Detalhe |
+|---|---------|
+| **Inputs** | Público (N2D), material-fonte ou ângulo, paleta preferida (opcional) |
+| **Saída principal** | Arquivo HTML standalone — preview interativo + exportação JPG 1080x1350 |
+| **Saída secundária** | Legenda do post + 1-5 stories de aquecimento |
+| **Padrão de slides** | 8 slides (ajustável) |
+| **Exportação** | Canvas API nativo, escala 3x, sem html2canvas |
+| **Fontes externas** | Só Google Fonts — sem outras dependências JS |
+
+## Estruturas de slide disponíveis
+
+**Editorial 8-slide** — padrão para educativo/topo:
+
+| Slide | Função |
+|-------|--------|
+| 1 | Capa: headline de impacto + handle + promessa implícita |
+| 2 | Contexto: situação ou tensão real |
+| 3 | Reframe: por que a visão comum está incompleta |
+| 4 | Prova / insight memorável |
+| 5 | Erro que o público ainda comete |
+| 6 | Virada: jeito melhor de pensar ou agir |
+| 7 | Próximo passo prático e específico |
+| 8 | CTA: salvar / compartilhar / comentar / seguir |
+
+**PASTOR** — padrão para vendas/fundo (7-10 slides):
+Problema → Agitação → Solução → Transformação → Oferta → Resposta (CTA)
+
+## Regras de copy dos slides
+
+- Nada de labels genéricos ("O Problema", "A Solução", "Inimigo Silencioso")
+- Nada de numeração visível de slides ("1/8") salvo pedido explícito
+- Situações cotidianas concretas — não abstrações
+- Títulos fortes com texto de apoio curto
+- Hard limit: **≤35 palavras por slide** (excluindo título)
+- Slides 1-7 terminam com cliffhanger, transição ou loop aberto
+
+## Usada em quais workflows
+
+- [`/workflows/campanha-nova`](/workflows/campanha-nova) — carrossel como criativo de topo ou fundo de funil
+- [`/workflows/iterar-criativo`](/workflows/iterar-criativo) — recriar slides de carrossel após análise de performance
+- [`/workflows/check-cliente`](/workflows/check-cliente) — carrossel de aquecimento ou reativação
+
+**Handoff natural:**
+- Stories de aquecimento para o carrossel → `/skills/conteudo-sequencia-stories`
+- Ângulo de campanha → `/skills/criativo-gerador-andromeda` (skill canônica de geração de criativos)
+
+## O que NÃO faz
+
+- Não gera o ângulo do criativo do zero → use `/skills/criativo-gerador-andromeda`
+- Não escreve copy de anúncio de feed → use `/skills/copy-anuncio`
+- Não produz o vídeo do Reels → use `/skills/conteudo-roteiro-reels`
+- Não hospeda nem sobe o arquivo — entrega o `.html` para você baixar e exportar os slides
+
+---
+
+**Fonte:** `sistema/skills/performance/criativo-carrossel-html/SKILL.md`

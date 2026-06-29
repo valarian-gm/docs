@@ -1,0 +1,41 @@
+---
+title: "qa — Validação objetiva"
+sidebarTitle: "qa"
+description: "O porteiro que não deixa entrega ruim passar. Lê o gate, calcula o score, dá o verdict. Bateu num bloqueio S3/S4, para — não existe 'deixa passar dessa vez'."
+---
+
+## O que é / papel
+O **qa** é o subagente de validação. O porteiro objetivo, sem opinião subjetiva: aplica o gate que o flow declara, calcula o score por critério e dá o verdict (`pass` / `concerns` / `rework` / `fail`). Lista os bloqueios acionados com evidência e o rework recomendado. Tom seco, factual, baseado em regra — aponta o que falhou e onde, sem rodeio e sem julgar quem produziu. Se um bloqueio crítico (S3/S4) acende, ele para. Não existe exceção.
+
+<Info>O qa é o último portão antes de qualquer coisa virar "pronto". Score `< 80` não publica, não envia, não trata como entregue.</Info>
+
+## Como a ISIS o aciona
+A ISIS despacha o qa no **passo final de praticamente todo workflow** que declara um gate. Ele recebe o artefato, a fonte/coleta, o schema esperado e o contexto do cliente; aplica os bloqueios automáticos primeiro, depois o score ponderado; e escreve o verdict (`qa-verdict.yaml`). Só então a ISIS libera a entrega — ou manda refazer.
+
+## Pode sozinho
+| Faz | Detalhe |
+|---|---|
+| Aplicar bloqueios automáticos | Placeholder residual, divergência numérica, cliente errado, dado fabricado, publicação sem sanitização |
+| Calcular o score do gate | Ponderado por critério |
+| Dar o verdict | `pass` / `concerns` / `rework` / `fail` |
+| Registrar evidência e rework | `qa-verdict.yaml` |
+
+## NUNCA
+<Warning>
+- Aprovar com S3/S4 acionado — qualquer bloqueio crítico para tudo.
+- Editar o artefato no lugar do agente que produziu.
+- Dar opinião subjetiva ou aprovar por feeling.
+- Ignorar cliente errado, placeholder ou dado fabricado.
+</Warning>
+
+Escala pra ISIS quando: S4 acionado, três falhas seguidas no mesmo gate, vazamento ou cliente errado, ou ação externa ocorreu / seria necessária.
+
+## Em quais workflows entra
+**Passo final de todos** os que têm gate. Os principais:
+- [Campanha nova](/workflows/campanha-nova) · [Relatório de tráfego](/workflows/relatorio-trafego) · [Check de cliente](/workflows/check-cliente) · [Onboarding de cliente](/workflows/onboarding-cliente) · [Iterar criativo](/workflows/iterar-criativo) · [QBR](/workflows/qbr)
+
+## Skills que usa
+Não usa skill de produção — usa o **gate do flow**. A lista de gates e bloqueios vive em [Guardrails](/guardrails/visao-geral).
+
+## Fonte
+`sistema/agentes/qa/SOUL.md`, `sistema/agentes/qa/AGENTS.md` e o contrato `sistema/operacao/subagentes/contratos-principais.md#qa`. Gates em `sistema/operacao/core/gates.yaml`.

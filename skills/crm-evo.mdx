@@ -1,0 +1,72 @@
+---
+title: "Skill: CRM Evo"
+sidebarTitle: "CRM Evo"
+description: "Operar o Evo CRM (EvoAI) — consultar leads, ler conversas multi-canal e mover cards no pipeline."
+---
+
+## O que é
+
+A ponte da ISIS com o **Evo CRM** (EvoAI — arquitetura tipo Chatwoot, self-hosted). O ClickUp cuida de tarefas; o CRM cuida de **inbox de conversa + funil de relacionamento**. Esta skill cobre três operações:
+
+- **Contatos/leads** — listar, buscar, detalhar, criar, anotar.
+- **Conversas + mensagens** — ler histórico multi-canal de um contato; responder (pede OK).
+- **Pipeline** — listar funis e estágios, mover lead, ver itens por estágio.
+
+A instância é compartilhada (um servidor, um token), mas o escopo por cliente é **lógico** — pipeline/label/atributo. Dado de um cliente nunca aparece no contexto de outro.
+
+## Quando usar
+
+- "qual o histórico do lead X?"
+- "o {cliente} tem algum lead novo no funil?"
+- "move o contato Y pro estágio de proposta"
+- "cria um contato no CRM pra [nome]"
+- "qual o status das conversas abertas?"
+
+## Como utilizar
+
+**O que você pede:** cliente-alvo (ou lead específico) + a operação desejada (listar, buscar, mover, anotar).
+
+**O que a ISIS faz:**
+
+1. Confirma a qual cliente/pipeline o lead pertence (guardrail de escopo).
+2. Executa a operação de leitura ou prepara o rascunho da escrita.
+3. Para operações de escrita que o cliente verá (enviar mensagem, mover estágio): **apresenta o rascunho e aguarda OK**.
+4. Toda escrita é seguida de GET de confirmação — reporta o ID resultante.
+
+**O que você recebe:**
+
+- Leitura: dados do lead/conversa/funil formatados, sem dump bruto.
+- Escrita: confirmação do ID gravado + resumo da ação realizada.
+
+<Info>
+Leitura é livre (contatos, conversas, funil). Escrita cliente-facing — enviar mensagem, mover estágio — sempre pede confirmação antes de executar.
+</Info>
+
+## Entradas / Saídas
+
+| Campo | Obrigatório | Descrição |
+|---|---|---|
+| `cliente` | sim | para filtrar o escopo correto (pipeline/label) |
+| `operação` | sim | listar · buscar · detalhar · criar · mover · anotar · responder |
+| `lead/contato` | conforme operação | nome, e-mail, telefone ou ID do contato |
+| `estágio destino` | para mover | UUID do estágio (buscar primeiro no pipeline) |
+| `conteúdo` | para anotar/responder | texto da nota interna ou da resposta ao lead |
+
+**Sai:** dados formatados (leitura) ou ID + resumo (escrita).
+
+## Usada em quais workflows
+
+- [`/workflows/check-cliente`](/workflows/check-cliente) — checar funil e conversas abertas de um cliente
+- [`/workflows/onboarding-cliente`](/workflows/onboarding-cliente) — criar contato no CRM ao ativar um cliente
+- [`/workflows/rotina-diaria`](/workflows/rotina-diaria) — revisão de leads abertos
+
+## O que NÃO faz
+
+- **Não dispara em massa** nem automatiza jornadas sem aprovação explícita.
+- **Não opera instâncias de WhatsApp** — isso é a skill [`/skills/whatsapp-evolution`](/skills/whatsapp-evolution). O CRM é o painel de conversa; o Evolution é o cano de envio.
+- **Não cruza dados entre clientes** — escopo lógico por pipeline/label é inegociável.
+- Enquanto `move_to_stage` não tiver variante confirmada (PATCH vs POST), a ISIS apresenta o comando para o usuário validar antes de executar.
+
+## Fonte
+
+`sistema/skills/ops/crm-evo/SKILL.md`

@@ -6,22 +6,18 @@ description: "O que é um MAPA, como funciona e onde estão. O sistema de navega
 
 Um **MAPA.md** é o arquivo de navegação de cada pasta importante. É o que impede o cérebro de virar um monte de arquivos que ninguém acha — o problema que mata sistemas conforme crescem.
 
-<Info>
-  **Fonte:** regra 0 (MAPA-first) em `AGENTS.md` · `MAPA.md` raiz · princípio "MAPAs distribuídos" do método-base. Há **47 MAPAs** no cérebro hoje.
-</Info>
+<Info>**Fonte:** regra 0 (MAPA-first) em `AGENTS.md` · `MAPA.md` raiz · princípio "MAPAs distribuídos" do método-base. Há **47 MAPAs** no cérebro hoje.</Info>
 
 ## O que um MAPA responde
-
 1. **Onde estou** — o que esta pasta é.
 2. **O que existe aqui** — conteúdo, subpastas, arquivos-chave.
 3. **Onde colocar** coisa nova — a regra de organização da pasta.
 4. **Qual é a fonte canônica** — qual arquivo é a verdade.
 
 ## Como funciona — MAPAs distribuídos
-
 Em vez de **um** arquivo gigante que cresce até ninguém manter, cada pasta tem **seu** MAPA local, em cascata:
 
-```text
+```
 MAPA.md (raiz: NEGÓCIO vs MOTOR)
  └─ sistema/MAPA.md
      ├─ sistema/operacao/MAPA.md
@@ -33,14 +29,12 @@ clientes/MAPA.md → clientes/<slug>/MAPA.md
 A ISIS recupera contexto **pelo mapa**, não por busca bruta — lê o MAPA da pasta, sabe onde ir.
 
 ## A regra: MAPA-first
-
 > Antes de criar pasta/arquivo/skill: leia o MAPA da raiz e o da subpasta. Se o MAPA **não prevê** a estrutura, **atualize o MAPA primeiro**. Nunca cria pasta sem correspondência no MAPA.
 
-Isso é o que mantém o sistema linear — e está elevado a lei na [Constituição](/fundamentos/a-constituicao): _cada fato mora em um lugar; o MAPA diz onde_.
+Isso é o que mantém o sistema linear — e está elevado a lei na [Constituição](/fundamentos/a-constituicao): *cada fato mora em um lugar; o MAPA diz onde*.
 
 ## Convenção de um MAPA
-
-- Cabeçalho "X — Mapa" \+ o que a pasta é.
+- Cabeçalho "X — Mapa" + o que a pasta é.
 - Estrutura (árvore ou tabela) do que tem dentro.
 - Regras de organização e fontes canônicas.
 - Sem "isto não é..." nem comparação com outras pastas. Histórico só registra mudança relevante (data ISO).

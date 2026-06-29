@@ -1,0 +1,101 @@
+---
+title: "Skill: Criativo Gerador Andromeda"
+sidebarTitle: "Criativo gerador"
+description: "Gera um pacote completo de criativos Meta Ads diversificados — ângulos por avatar, briefs A→B, copy e prompts de produção — calibrado para o algoritmo Andromeda."
+---
+
+## O que é
+
+A skill canônica de criação de criativos da metodologia ISIS. Ela aplica a lógica do algoritmo Andromeda (o criativo escolhe o público, não a segmentação) com uma camada de copy extraída do método Schwartz — níveis de consciência, gancho de 3 fases (Reconhecimento → Promessa Contraintuitiva → Reconfiguração da Realidade) e estruturas narrativas HICKS e Epiphany Bridge. A saída é um **pacote diversificado de criativos**: ângulos distintos para avatares distintos, cada um com brief completo e prompt de produção.
+
+A diversificação aqui é real, não cosmética. A Meta trata variações superficiais (mesmo hook, CTA diferente) como o mesmo criativo. O pacote precisa de ângulos, formatos, narrativas e estética genuinamente diferentes.
+
+## Quando usar
+
+- Criar criativos novos para uma campanha (frio, remarketing, sazonalidade).
+- Diversificar o portfólio de uma conta que está testando as mesmas peças há semanas.
+- Preparar o pacote de criativos dentro do workflow [Campanha Nova](/workflows/campanha-nova).
+- Iterar sobre criativos no workflow [Iterar Criativo](/workflows/iterar-criativo).
+- Qualquer vez que o usuário pedir "cria criativos", "novos ângulos", "gera anúncios", "quero testar peças diferentes".
+
+## Como utilizar
+
+**O que você passa:**
+
+| Input | Obrigatório | Notas |
+|---|---|---|
+| Produto ou serviço | sim | O que é, o que faz, como funciona |
+| Objetivo da campanha | sim | Conversão, Lead, Awareness, Tráfego |
+| Estágio do funil | sim | Frio (prospecting) / Retargeting / Ambos |
+| Verba diária | recomendado | Define quantos criativos gerar |
+| Dados de criativos que já performaram | opcional | Ponto de partida para aprendizado |
+| Restrições de formato/tom | opcional | Formatos proibidos, concorrentes, etc. |
+
+**O que a ISIS faz (na ordem):**
+
+1. Lê o avatar do cliente em `clientes/{cliente}/persona/avatar_*.md` — se existir, o ângulo nasce de lá, não de achismo.
+2. Calcula o plano de verba: quantos criativos a verba suporta (mínimo R$5–8/criativo/dia para o Andromeda aprender).
+3. Mapeia 3 a 5 avatares distintos do produto.
+4. Gera 1 ângulo conceitual genuíno por avatar — não variações, lentes narrativas diferentes.
+5. Determina o nível de consciência de cada avatar (Schwartz) antes de escolher o gancho.
+6. Monta o brief completo por criativo + prompt de produção no formato do tipo (estático, carrossel ou vídeo).
+7. Roda o checklist de diversidade antes de entregar.
+
+**O que você recebe:**
+
+Um pacote por ângulo no formato:
+
+```
+CRIATIVO [N] — [Nome do Ângulo]
+AVATAR-ALVO / TIPO DE ÂNGULO / FORMATO
+HOOK (primeiros 3 segundos)
+CORPO / NARRATIVA
+CTA
+PROMPT DE PRODUÇÃO (específico por formato)
+POR QUE É DIFERENTE DOS OUTROS
+```
+
+Mais: plano de verba calculado e instruções de como testar no Andromeda (ferramenta de Teste de Criativos, 20% do orçamento por 7 dias, elimina o perdedor).
+
+## Entradas / Saídas
+
+**Entra:** briefing mínimo (produto, objetivo, funil, verba, avatar se existir).
+
+**Sai:** pacote de criativos em markdown, com briefs A→B por ângulo gravados em `clientes/{cliente}/criativos/briefs-*.md`.
+
+## Guardrails de criativo (aplicados automaticamente)
+
+Esta skill aplica guardrails validados em campo — eles sobrepõem o genérico:
+
+1. **Ancore no avatar.** Se existe `avatar_*.md`, o ângulo nasce da dor dele.
+2. **Brief A→B por ângulo** (8 itens): com quem fala · situação atual · ponto A (dor) · ponto B (desejo) · como o produto conecta A→B · mensagem textual · mensagem visual · gatilho pra parar/clicar.
+3. **Curto MAS concreto, nunca vazio.** Frase-herói curta que não diz o quê/pra quem/por quê é descartada.
+4. **Hierarquia textual obrigatória:** headline (gancho 3s) + copy de apoio (credibilidade + claims oficiais) + bullets. Sem linha solta, sem parede de texto.
+5. **Subtexto, não explícito.** Evoque o gatilho; não declare "estou ativando seu gatilho de urgência".
+6. **Conceito visual único por ângulo.** Proibido repetir fundo/composição em todos os criativos do pacote.
+7. **Claims apenas oficiais** (site/material do cliente) + identidade visual da marca.
+8. **Benchmark real** via biblioteca de anúncios dos concorrentes antes de criar.
+
+## Formatos de produção suportados
+
+**Estático:** headline (máx 8 palavras, bold) + copy de apoio (1–3 linhas) + CTA. Conceitos disponíveis: contraste/antes-depois, herói de produto, frase de impacto, meme adaptado, prova social, pergunta direta, formato editorial. Proporção 4:5 ou 9:16. Para gerar a imagem, encadeia com [Static Ad Blueprint](/skills/static-ad-blueprint) e [Image Prompt Architect](/skills/image-prompt-architect).
+
+**Carrossel:** 4–6 slides, lógica de cliffhanger entre slides (cada um deixa uma pergunta não respondida). Serve para validar mensagens antes de produzir vídeo — se não converter no carrossel, não vai converter no UGC.
+
+**Vídeo:** tipos HC15 (hook 15s → manda pra VSL), UGC 30s, UGC 60s, Educacional/Eureka 60–90s, React, Diferentão estético. Cada tipo tem estrutura própria, duração e estilo de edição.
+
+## Usada em quais workflows
+
+- [Campanha Nova](/workflows/campanha-nova) — etapa de criativos (em paralelo com copy).
+- [Iterar Criativo](/workflows/iterar-criativo) — quando há dados de performance e precisa diversificar.
+
+## O que NÃO faz
+
+- Não publica, não sobe para o Gerenciador, não mexe em campanha ativa.
+- Não gera a imagem final — entrega o brief e o prompt; a geração é da [Image Prompt Architect](/skills/image-prompt-architect) + fal.ai.
+- Não define estratégia de campanha — recebe objetivo e funil, não cria do zero.
+- Não gera mais criativos do que a verba consegue alimentar (R$5–8/criativo/dia é o piso).
+
+## Fonte
+
+`sistema/skills/performance/criativo-gerador-andromeda/SKILL.md`

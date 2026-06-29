@@ -1,0 +1,66 @@
+---
+title: "Workflow: Campanha Nova"
+sidebarTitle: "Campanha nova"
+description: "Monta um pacote completo de campanha (estratégia, copy, criativos, tracking, plano de leitura) pronto pra um humano revisar e subir. Não publica ads."
+---
+
+## O que é
+Um fluxo que monta o **pacote completo de uma campanha nova** — estratégia, tracking, copy e criativos — já validado por um gate de qualidade e pronto pra você revisar e subir no Gerenciador. A ISIS orquestra; os subagentes especializados fazem cada parte. **Você continua sendo quem aperta "publicar".**
+
+## Quando usar
+Dispara quando você diz, no canal certo:
+- *"sobe campanha nova pro {cliente}"* / *"monta uma campanha pro {cliente}"*
+- *"nova oferta / lançamento / sazonalidade"*
+- *"novo público ou objetivo"*
+- *"campanha pra aquisição própria"*
+
+## Como utilizar
+1. **Você manda o gatilho** com o mínimo: cliente, objetivo, oferta e um contexto curto. Ex.: *"monta uma campanha de LEADS pro {cliente}, oferta é a consulta de avaliação, público frio na região."*
+2. **A ISIS confirma o plano antes de agir** (Passo 0 — eco do plano): mostra cliente, objetivo e oferta, e espera teu "ok". Você vê o que vai acontecer antes de acontecer.
+3. **Ela roda a sequência** (abaixo) — estratégia → tracking → copy ∥ criativos → validação → pacote.
+4. **Você recebe um pacote** na pasta do cliente: `campanha.md` (o plano), `copy.yaml`, `criativos-spec.yaml`, `tracking-checklist.md` e `plano-leitura-7d.md`.
+5. **Você revisa e sobe** no Gerenciador. A ISIS **não** publica — a decisão de gastar dinheiro é sua.
+
+**O que ter em mãos (inputs):**
+| Input | Obrigatório | Valores |
+|---|---|---|
+| `cliente` | sim | o cliente-alvo |
+| `objetivo` | sim | LEADS · MESSAGES · SALES · TRAFFIC · ENGAGEMENT · AWARENESS |
+| `oferta` | sim | produto/serviço/condição |
+| `contexto` | sim | 1–3 frases de por que essa campanha existe |
+| `público` | recomendado | frio · quente · remarketing · lookalike · base |
+| `budget sugerido` | opcional | sugestão **não** autoriza mexer na conta |
+
+## Por dentro (a sequência)
+Cada etapa tem um dono e chama uma skill. Em paralelo: copy ∥ criativos.
+
+| # | Etapa | Quem | Skills que usa |
+|---|---|---|---|
+| 1 | Carrega contexto (pack, branding, compliance) | ISIS | [`branding-cliente`](/skills/catalogo) se faltar identidade |
+| 2 | Estratégia (posicionamento, mecanismo, ICP, KPIs) | strategist | [`core-estrategia-cliente`](/skills/catalogo) · [`persona-neurocomportamental`](/skills/catalogo) |
+| 3 | Tracking checklist (pixel, evento, UTMs) | traffic | [`tracking-checklist`](/skills/catalogo) · [`auditoria-tracking-ecommerce`](/skills/catalogo) |
+| 4 | Copy (ângulos, variações, compliance) | copy | [`copy-anuncio`](/skills/catalogo) → [`copy-revisor`](/skills/catalogo) |
+| 5 | Criativos (briefs A→B, estáticos) | design | [`criativo-gerador-andromeda`](/skills/catalogo) · [`static-ad-blueprint`](/skills/catalogo) · [`image-prompt-architect`](/skills/catalogo) |
+| 6 | Validação (gate) | qa | **GATE-CAMPANHA** — bloqueia se nota < 80 |
+| 7 | Monta o pacote final | cs | — |
+
+> Os agentes (ISIS, strategist, traffic, copy, design, qa, cs) estão explicados em [Os Agentes](/agentes/visao-geral).
+
+## Entradas / Saídas
+- **Entra:** o briefing mínimo (tabela acima).
+- **Sai** (em `clientes/{cliente}/campanhas/{data}-{nome}/`): `campanha.md` · `copy.yaml` · `criativos-spec.yaml` · `tracking-checklist.md` · `plano-leitura-7d.md` · `qa-verdict.yaml`.
+
+## Onde trava
+- **GATE-CAMPANHA** roda antes de montar o pacote; nota < 80 **bloqueia**.
+- Bloqueia também: campanha **sem pixel**; claim sem prova; cliente/contexto errado; compliance crítico sem revisão.
+- Se o cliente não passou no `check-cliente` (≥ 80), ela manda fazer o [onboarding/check](/workflows/catalogo) antes.
+
+## O que NÃO faz
+- **Não publica, não sobe, não pausa, não altera budget** em nenhum anúncio. Isso é irreversível e só acontece pela sua mão, com OK explícito.
+- Geração pesada de imagem fica fora do pacote estratégico (é execução separada).
+
+## Exemplo
+🚧 *Exemplo real (anonimizado) virá da ISIS no runtime — "pediram uma campanha de LEADS → ela montou estratégia + 6 ângulos de copy + 4 briefs de criativo + checklist de tracking → entregou o pacote pra revisão".* (Aguardando a contribuição da ISIS viva.)
+
+## Fonte
+`sistema/skills/workflows/workflow_campanha-nova/SKILL.md` — esta página é a leitura de operador desse workflow.

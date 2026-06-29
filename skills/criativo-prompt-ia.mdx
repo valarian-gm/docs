@@ -1,0 +1,86 @@
+---
+title: "Skill: Criativo Prompt IA"
+sidebarTitle: "Prompt IA (imagem/vídeo)"
+description: "Gera um único prompt técnico fotorrealista em inglês para modelos de IA de imagem ou vídeo (fal.ai, Veo, Sora, Kling, Midjourney). Produz o prompt — não submete nem gera a imagem."
+---
+
+## O que é
+
+Especialista em construir **um único prompt técnico, contínuo e fotorrealista** pronto para alimentar um modelo de IA de imagem ou vídeo. Funciona a partir de uma ideia textual ou de uma imagem de referência e segue uma estrutura de 6 blocos que ativa os padrões de dados da IA — priorizando autenticidade, imperfeições naturais e descrição técnica em vez de adjetivos subjetivos.
+
+O output é **o prompt em inglês**. Quem submete ao fal.ai é a skill `gerar-imagens-fal`. Esta skill para no prompt e faz handoff.
+
+<Info>
+**UGC vs. premium/editorial.** Esta skill é forte em **UGC autêntico** (imperfeição, "cara de celular", grain). Para criativo de anúncio premium/editorial — com layout de headline + apoio + bullets, identidade de marca e persona exigente — o registro correto usa JSON estruturado e câmera/luz nomeada. Nesse caso, considere [Image Prompt Architect](/skills/image-prompt-architect), que tem os dois registros e o gate de realismo.
+</Info>
+
+## Quando usar
+
+- "cria o prompt da imagem", "monta o prompt pra IA", "prompt fotorrealista", "prompt de foto/vídeo"
+- "descreve essa cena pra IA gerar", "transforma essa ideia num prompt"
+- Geração de prompt para fal.ai, Veo, Sora, Kling, Midjourney
+- Quando outra skill (criativo, carrossel, reels, VSL) precisa de um prompt de imagem pronto para gerar a peça
+
+## Como utilizar
+
+**O que você passa:**
+
+A coleta é dinâmica — a ISIS faz perguntas na sequência certa, adaptando conforme você responde:
+
+1. Imagem ou vídeo?
+2. (Se vídeo) Qual narração/diálogo e sons ambientes?
+3. Tem imagem de referência? (Se sim, manda — as perguntas seguintes são puladas.)
+4. (Se não tem imagem) Qual referência visual? Descreva a ideia.
+
+**Atalho:** se a primeira mensagem já for uma imagem, as perguntas são puladas. A ISIS analisa e confirma se já pode montar o prompt com base nela.
+
+**O que a ISIS faz:**
+
+- Se a entrada é uma **imagem de referência**: análise visual exata do que é visível, abstração de características sensíveis (prioridade para roupa, postura, expressão, ambiente, iluminação), prompt construído 100% a partir da imagem.
+- Se a entrada é uma **ideia textual**: visualização técnica/fotográfica/cinematográfica construída a partir dos 6 blocos abaixo.
+
+**Estrutura de saída — 6 blocos (em inglês, parágrafo contínuo):**
+
+| Bloco | O que contém |
+|---|---|
+| 1 | Tipo de mídia + dispositivo/estilo + sujeito (roupa, postura, expressão) |
+| 2 | Ação + ambiente específico e familiar |
+| 3 | Iluminação (direção/ângulo) + lente/câmera simulada |
+| 4 | Estilo fotográfico + realismo (imperfeições intencionais) + mood |
+| 5 | `Audio:` — só se for vídeo com diálogo; diálogo no idioma original entre tags |
+| 6 | `Negative:` — o que evitar ("studio setup", "perfect lighting", "legible visible text") |
+
+**O que você recebe:**
+
+1. Uma linha em PT-BR confirmando tipo (imagem/vídeo) e base (ideia ou imagem de referência).
+2. O prompt final em inglês, em bloco de código.
+3. Handoff indicando que `gerar-imagens-fal` é quem submete ao fal.ai.
+
+## Entradas / Saídas
+
+**Entra:** ideia textual ou imagem de referência + preferências de tipo (foto/vídeo) e áudio quando for vídeo.
+
+**Sai:** prompt técnico único em inglês (parágrafo contínuo + linhas `Audio:` e `Negative:` quando aplicável).
+
+## Regras de geração preservadas
+
+- **Autenticidade > polimento.** Imperfeições intencionais: "slightly shaky", "autofocus hunting", "visible skin pores", "slight grain". Perfeição técnica é sinal de alerta de IA.
+- **Sem adjetivos subjetivos/vagos** ("beautiful", "amazing", "great"). Só descrição técnica e visual.
+- **Complexidade gerenciável:** evitar múltiplos focos, multidões, interações complexas. A IA falha com texto legível, mãos em objetos pequenos, reflexos complexos.
+- **Diálogo curto:** idealmente ≤ 8 segundos para evitar fala acelerada.
+- **O output é em inglês** — exceção explícita e intencional à regra PT-BR. Toda interação permanece PT-BR; só o prompt final é em inglês.
+
+## Usada em quais workflows
+
+- [Campanha Nova](/workflows/campanha-nova) — quando a skill de criativos precisa de um prompt de imagem.
+- [Iterar Criativo](/workflows/iterar-criativo) — para gerar versões alternativas de uma peça existente.
+
+## O que NÃO faz
+
+- Não submete nem gera a imagem (isso é `gerar-imagens-fal`).
+- Não cria brief de criativo de tráfego — para isso use [Criativo Gerador Andromeda](/skills/criativo-gerador-andromeda).
+- Não monta o layout/composição do anúncio — para isso use [Static Ad Blueprint](/skills/static-ad-blueprint).
+
+## Fonte
+
+`sistema/skills/performance/criativo-prompt-ia/SKILL.md`

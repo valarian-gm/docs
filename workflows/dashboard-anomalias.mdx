@@ -1,0 +1,82 @@
+---
+title: "Workflow: Dashboard de Anomalias"
+sidebarTitle: "Dashboard de anomalias"
+description: "O radar diário das contas — varre marketing, financeiro e atendimento, consolida um digest priorizado por impacto no dinheiro, valida e reporta. Read-only: detecta e reporta, não age."
+---
+
+## O que é
+O **radar**: um fluxo que varre as contas dos clientes ativos em três frentes — marketing, financeiro e atendimento — detecta anomalias, consolida num **digest único priorizado por impacto no dinheiro** e te entrega uma fila curta de ações sugeridas. Cada alerta vem com evidência (número + fonte + janela), severidade e ação. A ISIS orquestra; o **traffic** varre mídia, o **fin** varre financeiro, o **cs** varre atendimento, o **qa** valida. **É read-only — esta é a red line.** Detecta e reporta; anomalia vira ficha na fila. **Agir é decisão separada sua.**
+
+## Quando usar
+Dispara quando você diz:
+- *"dashboard de anomalias"* / *"tem algo estranho nas contas?"* / *"queda brusca de performance"*
+- *"rodar o radar do dia"* / *"o que caiu"*
+- antes do checkpoint operacional ou de priorizar o dia
+- como rotina diária de monitoramento das contas ativas
+
+## Como utilizar
+1. **Você manda o gatilho** e, opcionalmente, o escopo. Ex.: *"roda o radar do dia."* O escopo default é `ativos`; aceita `protegidos`, `todos` ou `lista_manual`.
+2. **A ISIS roda o precheck:** define o conjunto a varrer e confirma que cada cliente tem `pack.yaml` com KPI primário e métricas proibidas. Sem âncora → risco de falso positivo; ela sinaliza a limitação de dado e segue.
+3. **Confirma o plano (Passo 0):** mostra o plano numerado, o escopo de clientes e a janela de comparação, espera teu "ok".
+4. **Roda os três scans** em silêncio e consolida.
+5. **Você recebe** o `ANOMALIAS.md` (radar ordenado por severidade e impacto no dinheiro), o `snapshots/<data>.json` (a varredura estruturada) e a `FILA-ACOES.md` (fila curta, cada ação com cliente, evidência e o que fazer).
+
+**O que ter em mãos (inputs):**
+| Input | Obrigatório | Valores |
+|---|---|---|
+| `clientes_escopo` | não (default `ativos`) | `ativos` · `protegidos` · `todos` · `lista_manual` |
+| janela de comparação | não | padrão definido no Passo 0 |
+
+<Info>
+**Silêncio é resultado válido.** Sem anomalia relevante, a saída é mínima — o radar não enche linguiça pra parecer útil. Um dia sem alerta crítico é um dia em que as contas estão saudáveis, e ela te diz isso em uma linha.
+</Info>
+
+## Por dentro (a sequência)
+O motor dos steps 1–3 é a task [`scan-anomalias`](/skills/scan-anomalias) (read-only, detecta e reporta com evidência). O step 4 funde os três scans num digest ranqueado.
+
+| # | Step | Quem | O que faz / skill |
+|---|---|---|---|
+| 1 | Scan marketing | traffic | [`scan-anomalias`](/skills/scan-anomalias) (foco mídia) |
+| 2 | Scan financeiro *(opcional)* | fin | [`scan-anomalias`](/skills/scan-anomalias) (escopo financeiro) — **proibido criar/enviar/alterar cobrança** |
+| 3 | Scan atendimento/operação | cs | [`scan-anomalias`](/skills/scan-anomalias) (escopo atendimento) |
+| 4 | Consolidar digest | ISIS | agrega e ranqueia os três scans por impacto no dinheiro |
+| 5 | Validar | qa | gate **GATE-AUDITORIA** — bloqueia alerta sem evidência / cliente errado |
+| 6 | Reportar | ISIS | dashboard + fila de ações (anomalia vira ficha; **não age**) |
+
+> Os agentes (ISIS, traffic, fin, cs, qa) estão explicados em [Os Agentes](/agentes/visao-geral).
+
+### Severidade (como o radar prioriza)
+| Nível | O que dispara |
+|---|---|
+| **crítico** | gasto parado/errado, risco financeiro, cliente protegido impactado, ação externa indevida |
+| **alerta** | performance fora do baseline, ou cliente sem ação relevante |
+| **aviso** | ponto de atenção sem urgência |
+| **info** | registro útil, sem ação imediata |
+
+## Entradas / Saídas
+- **Entra:** escopo de clientes + janela de comparação.
+- **Sai** (em `empresa/operacao/dashboard/`):
+  - `ANOMALIAS.md` — radar consolidado, ordenado por severidade e impacto no dinheiro
+  - `snapshots/<data>.json` — snapshot estruturado da varredura
+  - `FILA-ACOES.md` — fila curta de ações sugeridas (cada uma com cliente, evidência, ação)
+
+## Onde trava
+- **Alerta sem evidência** (número + fonte + janela) — não vira ficha.
+- **Cliente / contexto errado.**
+- **Dado financeiro sem fonte.**
+- **Ação externa disfarçada de "sugestão"** — bloqueio duro.
+- **Ruído sem ação sugerida** — alerta que não vira decisão é ruído.
+- **Métrica proibida pelo `pack.yaml`** do cliente — se o pack diz que aquela métrica não conta pra aquele cliente, ela não vira alerta (evita falso positivo).
+
+## O que NÃO faz
+- **Não age. Não pausa campanha, não ajusta verba, não cria/envia/altera cobrança, não envia nada ao cliente.** Executar qualquer ação sugerida é decisão separada sua.
+- **Não disfarça ação externa de "sugestão"** — o que ele entrega é uma fila pra você decidir, não um botão escondido.
+- O step financeiro (2) é **explicitamente proibido** de tocar em cobranças.
+
+## Exemplo
+**Entrada:** *"roda o radar do dia."*
+
+**O que sai:** a ISIS confirma escopo `ativos`, janela dia vs média dos 7 dias anteriores. Os três scans rodam e o digest sai ordenado: **crítico** — campanha do {cliente A} com gasto de R$ 0 nas últimas 18h (orçamento pausado por baixo saldo no cartão), impacto direto no dinheiro; **alerta** — CPL do {cliente B} subiu 40% vs baseline, ainda sem causa clara; **aviso** — taxa de resposta no WhatsApp do {cliente C} caiu no fim de semana. A `FILA-ACOES.md` lista cada uma com a evidência e a ação sugerida ("avisar {cliente A} do saldo do cartão"). E a ISIS **não tocou em nada** — você decide o que fazer com a fila.
+
+## Fonte
+`sistema/skills/workflows/workflow_dashboard-anomalias/SKILL.md` — esta página é a leitura de operador desse workflow.

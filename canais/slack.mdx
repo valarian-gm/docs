@@ -1,0 +1,41 @@
+---
+title: "Slack — Comunicação interna"
+sidebarTitle: "Slack"
+description: "A camada de comunicação interna do time: cada colaborador conversa com a ISIS pelo canal do seu cliente. Multiusuário — onde o guardrail de canal é mais crítico."
+---
+
+## O que é
+O Slack é a **camada de comunicação interna** do time. Diferente do Telegram (cockpit do dono), aqui entram **vários colaboradores**, e cada um normalmente é dono de um cliente. A conversa com a ISIS acontece no canal daquele cliente. É o canal multiusuário — e por isso é onde o guardrail de canal pesa mais.
+
+## Como conecta
+Via **bot token** do Slack. O app do Slack autentica com um token injetado em runtime — você não vê o valor. Cada colaborador é identificado pelo **user-id da plataforma** (quem o Slack diz que ele é), nunca pelo que ele escreve no texto.
+
+<Info>O mapa **canal → cliente não mora numa tabela editável à mão.** A fonte de verdade é o `pack.yaml` de cada cliente (campo `canais.slack`); um registro consolidado é **gerado** por script a partir dos packs. Mexeu no canal de um cliente? Edita o pack e regenera — nunca o derivado.</Info>
+
+## Como se usa
+Cada colaborador fala com a ISIS no **canal do seu cliente**, e ela responde naquele escopo: status da campanha, contexto, dúvida operacional, rascunho. Tem canal por cliente e canal de área (financeiro, por exemplo, só com você). A regra é simples: **cada canal fala só do seu tema**. Assunto fora do escopo do canal → a ISIS redireciona ou bloqueia.
+
+## Guardrail do canal
+Aqui é o ponto mais sensível do sistema, porque é multiusuário. A decisão de **responder ou não** é tomada por uma trava determinística, não pela boa vontade da ISIS. A fórmula é **QUEM × ONDE × O QUÊ**:
+
+| Eixo | O que é | De onde vem |
+|---|---|---|
+| **QUEM** | colaborador autenticado | user-id da plataforma — *nunca* o texto da mensagem |
+| **ONDE** | canal de origem | canal → escopo (qual cliente) |
+| **O QUÊ** | ação + cliente-alvo | o que foi pedido, sobre qual cliente |
+
+A trava `resolve-canal` valida **canal × cliente × conta** antes de qualquer dado sair. Default **fail-closed**: na dúvida, bloqueia e pergunta ao dono. Pedir dado do cliente B no canal do cliente A = bloqueado, mesmo vindo de pessoa autorizada — **usuário autorizado ≠ canal autorizado**. Detalhe em [Guardrails](/guardrails/visao-geral) e [Operar sem vazar](/guardrails/operacao-na-pratica).
+
+<Warning>Multiusuário é onde o vazamento "só interno" nasce: alguém pede rápido, o agente tenta ajudar fora do escopo, e depois aquilo cola no canal errado. A ordem é sempre guardrail → resolve canal → só então o dado.</Warning>
+
+## Read-only vs escrita
+- **Leitura (sem pedir):** ler o canal, puxar contexto do cliente daquele canal, resumir, rascunhar resposta.
+- **Escrita / ação externa (exige OK):** mandar qualquer coisa que saia pro cliente ou pra fora do escopo interno. Comunicação externa nunca é automática.
+
+## O que NÃO faz / fronteira
+- **Não cruza dados entre clientes** — cada canal é uma caixa fechada.
+- **Não responde por user-id não reconhecido** nem confia em "eu sou fulano" escrito no texto.
+- **Não envia pra fora** sem aprovação.
+
+## Fonte
+`sistema/integracoes/slack.md`.

@@ -1,0 +1,46 @@
+---
+title: "Telegram — Cockpit principal"
+sidebarTitle: "Telegram"
+description: "O canal onde você fala com a ISIS no dia a dia: um grupo com tópicos por área e por cliente. É a mesa de comando da operação."
+---
+
+## O que é
+O Telegram é o **cockpit principal** — onde você fala com a ISIS no dia a dia e onde ela devolve resumos, aprovações e relatórios. Não é um chat solto: é **um grupo único organizado em tópicos** (forum topics). Cada tópico é uma "sala": umas por área da operação (Aprovações, Financeiro, Comercial, Produção, Backlog, Sistema), outras por cliente. O tópico de onde a mensagem chega define **sobre o que** aquela conversa pode falar.
+
+## Como conecta
+Via **bot do Telegram**. O bot autentica com um token que o runtime injeta sozinho — você nunca digita, cola ou vê o valor. Em linguagem de operador: o canal já vem ligado, você só usa.
+
+<Warning>O token do bot (`TELEGRAM_BOT_TOKEN`) é credencial. Nunca aparece em chat, comando, log ou print — nem mascarado. Chamada direta de API com token "borrado" simplesmente falha (401/404); o envio certo passa pelas tools internas, que injetam o segredo em runtime.</Warning>
+
+## Como se usa
+Os tópicos são divididos por **área** e por **cliente**:
+
+| Tópico | Pra quê |
+|---|---|
+| **Geral** | Conversa solta, sem cliente específico |
+| **Aprovações** | Onde a ISIS pede teu OK antes de agir (publicar, enviar, mexer em conta) |
+| **Comercial** | Funil de vendas, leads, propostas |
+| **Financeiro** | MRR, cobranças, inadimplência (só teu) |
+| **Produção** | Entregas: criativos, landing, tracking |
+| **Backlog** | Ideias em maturação |
+| **Sistema** | Coisas do próprio motor (a ISIS, crons, infra) |
+| **⭐ \{cliente\}** | Um tópico por cliente — tudo daquele cliente vive ali |
+
+No dia a dia você pede no tópico certo: *"resume os atrasos"* no Financeiro, *"como tá a campanha"* no tópico do cliente, *"sobe campanha nova"* no tópico daquele cliente. A ISIS responde ali mesmo, e quando precisa do teu aval (envio externo, publicação, ação irreversível) joga a solicitação em **Aprovações**.
+
+<Info>Relatórios entregues por tópico de cliente carregam o link público sanitizado do período — o tópico vira o histórico de entregas daquele cliente.</Info>
+
+## Guardrail do canal
+**O tópico é a fronteira.** A trava determinística `resolve-canal` cruza **canal × cliente × conta** antes de a ISIS responder qualquer dado: se a pergunta chega no tópico do cliente A mas o dado é do cliente B, ela **bloqueia** — mesmo que você seja o dono pedindo. Default **fail-closed**: na dúvida, não responde e pergunta. O tópico Financeiro só fala de financeiro; tópico de cliente só fala daquele cliente. Detalhe em [Guardrails](/guardrails/visao-geral) e [Operar sem vazar](/guardrails/operacao-na-pratica).
+
+## Read-only vs escrita
+- **Leitura (sem pedir):** ler o que você mandou, puxar contexto do cliente do tópico, resumir, montar rascunho, responder número que ela já tem permissão de ver naquele canal.
+- **Escrita / ação externa (exige OK explícito):** enviar mensagem em nome da operação pra fora, publicar relatório, disparar qualquer coisa que saia do grupo. Isso some no tópico **Aprovações** primeiro.
+
+## O que NÃO faz / fronteira
+- **Não é o livro-caixa nem a fonte de verdade.** Financeiro mora no Asaas, tarefa no ClickUp, contexto no repo. O Telegram é cockpit e resumo — não substitui a fonte.
+- **Não responde dado fora do escopo do tópico.** Pediu dado do cliente B no tópico do A? Bloqueia.
+- **Não age sozinha pra fora** sem passar por Aprovações.
+
+## Fonte
+`sistema/integracoes/telegram-rapido.md` · `sistema/integracoes/telegram-topicos.json` (mapa de tópicos por cliente/área).

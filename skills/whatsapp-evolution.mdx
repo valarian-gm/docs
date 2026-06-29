@@ -1,0 +1,89 @@
+---
+title: "Skill: WhatsApp Evolution"
+sidebarTitle: "WhatsApp Evolution"
+description: "Operar WhatsApp via Evolution API — enviar mensagens e mídia, criar e conectar instâncias, checar status e gerenciar grupos."
+---
+
+## O que é
+
+A skill de mensageria WhatsApp. O servidor **Evolution API** roda na VPS e expõe a interface para a ISIS enviar mensagens, criar instâncias, verificar conexões e gerenciar grupos.
+
+A chave de autenticação é **master** — abre o servidor inteiro. Por isso a trava real não é a chave em si, mas a **allowlist de instâncias aprovadas**: a ISIS só opera o que está nessa lista, mesmo tendo acesso técnico a tudo.
+
+## Quando usar
+
+- "manda uma mensagem pro {cliente} no WhatsApp"
+- "sobe uma instância nova pra [número]"
+- "gera o QR code pra conectar [número]"
+- "verifica se a instância está conectada"
+- "cria o grupo do {cliente} no WhatsApp"
+- "adiciona [participante] no grupo"
+- [`/workflows/whatsapp-setup`](/workflows/whatsapp-setup) — configurar WhatsApp para um cliente novo
+
+## Como utilizar
+
+**O que você pede:** a ação desejada + a instância (ou cliente). Para envio de mensagem: o número de destino e o texto/mídia.
+
+**O que a ISIS faz:**
+
+1. **Verifica a allowlist primeiro** — se a instância não está aprovada, bloqueia. Sem exceção.
+2. Checa o estado da instância (`open` / `connecting` / `close`) — mensagem só sai com instância `open`.
+3. Para envio a número externo: **apresenta o rascunho e aguarda confirmação**.
+4. Para ações de provisionamento (criar instância, criar grupo, adicionar participante, trocar foto): **apresenta o plano e para**.
+5. Executa com a chave via header, sem ecoar o corpo cru da resposta (pode conter tokens).
+
+**O que você recebe:**
+- **Leitura/status:** estado da instância, resultado do QR, confirmação de conexão.
+- **Envio:** confirmação do envio com ID da mensagem.
+- **Provisionamento:** JID do grupo criado, status da instância nova.
+
+<Info>
+Número no formato `55` + DDD + número, sem `+` ou espaços. Grupo usa o JID `...@g.us`. A instância precisa estar `open` antes de qualquer envio.
+</Info>
+
+## Operações disponíveis
+
+| Operação | Tipo | Pede OK? |
+|---|---|---|
+| Verificar status da instância | leitura | não |
+| Gerar QR code para conectar | provisionamento | não (só exibe) |
+| Enviar texto | envio externo | sim |
+| Enviar mídia (imagem/vídeo/documento) | envio externo | sim |
+| Enviar áudio | envio externo | sim |
+| Criar instância nova | provisionamento | sim |
+| Logout / desconectar | destrutivo | sim |
+| Excluir instância | destrutivo | sim |
+| Criar grupo | provisionamento | sim |
+| Adicionar/remover participantes | provisionamento | sim |
+| Trocar foto do grupo | provisionamento | sim |
+| Configurar webhook | infraestrutura | sim |
+
+## Entradas / Saídas
+
+| Campo | Obrigatório | Descrição |
+|---|---|---|
+| `instância` | sim | deve estar na allowlist aprovada |
+| `operação` | sim | enviar · criar · conectar · checar · logout · grupo |
+| `número` | para envio | `55DDD+número` sem espaços/`+` |
+| `conteúdo` | para envio | texto, URL de mídia ou base64 |
+| `participantes` | para grupo | lista de números no formato correto |
+
+**Sai:** confirmação da operação (ID de mensagem, JID do grupo, estado da instância).
+
+## Usada em quais workflows
+
+- [`/workflows/whatsapp-setup`](/workflows/whatsapp-setup) — subir e conectar instância para um cliente novo
+- [`/workflows/onboarding-cliente`](/workflows/onboarding-cliente) — criar grupo do cliente e configurar webhook
+- [`/workflows/rotina-diaria`](/workflows/rotina-diaria) — verificar status de instâncias ativas
+
+## O que NÃO faz
+
+- **Não toca instância fora da allowlist** — nem que a chave tecnicamente permita.
+- **Não envia em massa nem automatiza jornadas** sem aprovação explícita (GATE-WHATSAPP, handoff humano).
+- **Não responde a terceiros desconhecidos** sem escalar — cliente com dúvida simples: ok; cobrança, promessa, decisão: escala.
+- **Não envia com instância `close`** — verifica o estado antes; se não está `open`, reporta o problema.
+- **Não é o CRM** — o Evolution é o cano de envio; o painel de conversa e funil é a skill [`/skills/crm-evo`](/skills/crm-evo).
+
+## Fonte
+
+`sistema/skills/ops/whatsapp-evolution/SKILL.md`

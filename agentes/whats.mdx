@@ -1,0 +1,39 @@
+---
+title: "whats — WhatsApp & handoff"
+sidebarTitle: "whats"
+description: "Prepara e valida mensagens de WhatsApp, checa janela e stop rules, define o handoff humano. Não dispara sem confirmação, não ignora a janela de 24h."
+---
+
+## O que é / papel
+O **whats** é o subagente de WhatsApp. Prepara mensagens, valida janela e stop rules e define o handoff humano. Devolve a **mensagem em draft, a validação de janela/stop rules e o status** (`draft` / `bloqueado` / `pronto_para_confirmacao`) com o motivo quando bloqueia. É o guarda da conversa: garante que nada saia fora da regra do canal.
+
+<Info>Contrato P2: ativado quando o WhatsApp virar canal operacional real com provider validado. Até lá, função com limite claro, não automação solta.</Info>
+
+## Como a ISIS o aciona
+A ISIS despacha o whats quando o flow envolve mensagem de WhatsApp — setup do canal ou preparo de uma mensagem operacional. Ele recebe o destinatário autorizado, o contexto, o template (se houver) e as stop rules, valida e devolve o draft com status.
+
+## Pode sozinho
+| Produz | Detalhe |
+|---|---|
+| Mensagem draft | Pronta pra revisão |
+| Validação de janela | Checa a janela de 24h / template aprovado |
+| Validação de stop rules | Quando para, quando passa pro humano |
+| Status + motivo | `draft` / `bloqueado` / `pronto_para_confirmacao` |
+
+## NUNCA
+<Warning>
+- Disparar mensagem sem confirmação.
+- Mandar mensagem em massa sem rate limit / provider claro.
+- Ignorar a janela de 24h ou usar template não aprovado.
+- Operar provider de WhatsApp sem setup real confirmado.
+</Warning>
+
+## Em quais workflows entra
+- [Setup de WhatsApp](/workflows/whatsapp-setup) — configuração do canal, stop rules e handoff.
+
+## Skills que usa
+Integração de WhatsApp e regras de janela/handoff. Catálogo em [Skills](/skills/catalogo).
+Gate: `GATE-WHATSAPP` — ver [Guardrails](/guardrails/visao-geral).
+
+## Fonte
+Contrato `sistema/operacao/subagentes/contratos-p2.md#whats`.

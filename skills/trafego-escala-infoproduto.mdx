@@ -1,0 +1,130 @@
+---
+title: "Skill: Tráfego — Escala de Infoproduto"
+sidebarTitle: "Escala de infoproduto"
+description: "Método de criação, estruturação e escala de campanhas Meta Ads para infoprodutos com rosto/expert. Inclui a estrutura de conta, rotina de escala diária por vendas (2–3x/dia) com guardrails e a adaptação para mid-ticket."
+---
+
+## O que é
+
+Método especializado para montar, reestruturar ou escalar campanhas Meta Ads de **infoprodutos com rosto/expert**. Cobre a estrutura completa de conta, a lógica de teste de criativos, a configuração de Andrômeda, a geração de demanda via Instagram e a **rotina de escala diária** — incluindo guardrails para não explodir o budget sem dados.
+
+Base: método Kevones/Seleta + adaptação para mid-ticket com marca/expert. Onde diverge do método Andromeda geral, os dados de campo da conta definem.
+
+A filosofia central: **ecossistema, não 1 campanha**. Foco é LUCRO/volume, não um ROAS gordo num único conjunto. Vários criativos validados rodando, muitas campanhas com ROAS modesto = **empilhamento de lucro**.
+
+## Quando usar
+
+- Montar do zero ou reestruturar uma conta de infoproduto no Meta.
+- Rodar a rotina de escala diária (2–3x/dia) com guardrails.
+- Diagnosticar por que uma conta de infoproduto não escala.
+- "como estruturo minha conta de infoproduto?", "como escalo sem explodir o CPA?", "quando subir a verba?".
+
+## Como utilizar
+
+**O que você passa:**
+
+| Input | Detalhe |
+|---|---|
+| Account ID | Conta de anúncios |
+| Ticket + order bumps | Valor do produto principal e bumps |
+| Plataforma de checkout | Hotmart, Guru, Kiwify, etc. |
+| Se tem rosto/expert e Instagram | Determina a estratégia de demanda |
+| Verba-alvo | Para calibrar a estrutura de campanhas |
+| Criativos validados existentes | Ponto de partida para escala |
+| Fonte de receita real | Export da plataforma — o pixel é piso |
+
+**O que a ISIS monta — estrutura completa:**
+
+**Estrutura de campanhas:**
+
+| Fase | Estrutura | Objetivo |
+|---|---|---|
+| Achar público | `1-3-3` (3 públicos × 3 criativos) | Encontrar o melhor público |
+| Rodar criativos | `1-1-3` (1 campanha, 1 conjunto, 3 anúncios) | Nunca mais que 3/conjunto |
+| Escalar | Advantage+ (toda conta hoje é Advantage por padrão) | Após validar público |
+
+**Regra absoluta:** nunca editar campanha viva (criativo/segmentação/verba). Para testar criativo novo: **duplica** a campanha mantendo o público vencedor e troca o criativo na cópia. Editar direto perde performance.
+
+**Config de conta Andrômeda (fazer cedo — alto ROI):**
+
+Configurar em Configurações de publicidade → segmentos:
+- **Engajado:** evento de pixel (IC + add payment info, não comprou) + lista de carrinho abandonado.
+- **Cliente existente:** pixel (purchase) + lista de compradores extraída da plataforma.
+- Atualizar a cada 30 dias.
+
+Por quê: sem config, o Meta vê "público desconhecido" → entrega pior, CPA maior. Com config → distingue base de novo → CPA cai, ROAS sobe no médio prazo.
+
+**Rotina de escala diária — 2 camadas:**
+
+**Regra de escala (método Kevones):**
+- **Gatilho:** a cada **2 vendas** novas num conjunto desde a última checagem → **+R$100** na verba.
+- **Lógica:** "uma venda vira lucro, a outra reinveste". Incremento de R$100 ajustável por oferta/volume.
+- **Trava de faturamento:** nunca subir a verba acima do faturamento real do dia até agora.
+- **Reset diário:** no fim do dia, devolver conjuntos para a verba-base.
+- **Exceção de ticket:** produto abaixo de ~R$97 → NÃO usar escala diária. Usar verba estática (R$40–50) + volume de campanhas + cost cap.
+
+**Cadência de checagem (2–3x/dia, ex.: ~10h, ~13h, ~17h BRT):**
+
+1. Para cada conjunto ativo: ler vendas do dia desde a última checagem.
+2. Aplicar a regra Kevones: 2 vendas novas → +R$100 (respeitando a trava).
+3. Após CADA edição de verba: checar `status_forced_to_paused`. Se pausou → reativar com `ads_activate_entity` e verificar.
+4. Conjunto sem venda: não mexer. Se gastou ≥ ~2× CPA-alvo sem venda → reduzir/pausar.
+5. Reportar cada rodada (o que mudou e por quê).
+6. Fim do dia: reset para verba-base + reconciliação com receita real da plataforma.
+
+**Guardrails (travas duras):**
+- Só escalar conjunto com ROAS do dia ≥ 1,5 (pixel; o real é maior) e CPA ≤ teto.
+- Teto de aumento por conjunto/dia: definir com o usuário por oferta.
+- Na dúvida, **não sobe**.
+
+**Cost cap / empilhamento (endgame — só com volume):**
+- Só para oferta validada com volume + constância de venda + conta configurada.
+- Top 3–5 criativos validados → nova campanha de meta de custo no CPA ideal (um pouco abaixo da média).
+- Começar R$100 → subir gradualmente. Primeiros dias pode quase não gastar — não matar, deixar otimizar (3–5 dias).
+- Empilhamento: várias campanhas de cost cap = o que gera volume grande.
+
+**Geração de demanda (produto com rosto):**
+- **Campanha de seguidores perpétua:** objetivo tráfego pro perfil IG, usando Reels existente, R$30–60/dia, nunca morre.
+- **Stories diário:** 2–3 feedbacks + 1 CTA todo dia.
+- Subir anúncio como **publicação existente** do IG (não direto no gerenciador) → sinal de confiança pro Meta.
+
+## Adaptação para mid-ticket (onde o método NÃO cabe cru)
+
+| Método base (low-ticket) | Adaptação mid-ticket (≥R$97) |
+|---|---|
+| "dane-se o ROAS, pila volume" | ROAS importa — vigiar o ROAS **real** |
+| Só pixel de Meta | Reconciliar com receita real da plataforma (Hotmart/Guru) — pixel é piso |
+| Editar verba direto | Editar verba força pause no MCP → reativar e verificar sempre |
+| Explodir volume cedo | Subir o ecossistema gradualmente |
+| Urgência e hype de atacadão | Substância do método, sem o hype |
+
+Reconciliação: o gatilho intradiário usa pixel (visível por conjunto ao vivo); o fechamento do dia reconcilia com a receita real da plataforma (com order bump). Decisão de manter/cortar usa o real.
+
+**O que você recebe:**
+
+- Conta estruturada (matriz → advantage; config Andrômeda; reciclagem; geração de demanda).
+- Rotina de escala diária rodando com guardrails + reporte por rodada.
+- Reconciliação diária pixel × receita real.
+
+## Entradas / Saídas
+
+**Entra:** account ID, ticket, plataforma, rosto/expert, verba-alvo, criativos validados, fonte de receita real.
+
+**Sai:** estrutura de conta documentada + rotina de escala com guardrails + reconciliação.
+
+## Usada em quais workflows
+
+- [Campanha Nova](/workflows/campanha-nova) — quando o cliente é infoproduto e a conta precisa ser estruturada.
+- [Iterar Criativo](/workflows/iterar-criativo) — quando a iteração é dentro de uma conta de infoproduto.
+- [Check Cliente](/workflows/check-cliente) — diagnóstico de por que a conta não escala.
+
+## O que NÃO faz
+
+- Não mexe em oferta/checkout/página sem alinhamento explícito.
+- Não usa urgência/hype artificiais — só a substância do método.
+- Não explode volume antes de ter criativos validados com constância.
+- Toda ação em conta ativa segue os guardrails; fora deles, **pede confirmação**.
+
+## Fonte
+
+`sistema/skills/performance/trafego-escala-infoproduto/SKILL.md`

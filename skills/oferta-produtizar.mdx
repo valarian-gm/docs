@@ -1,0 +1,91 @@
+---
+title: "Skill: Oferta — Produtizar"
+sidebarTitle: "Oferta: produtizar"
+description: "Transforma uma entrega bruta em oferta irresistível no nível Hormozi ($100M Offers): promessa central, avatar, pilares, 5 bônus precificados, garantia nomeada, 3 planos de preço, ticket baixo."
+---
+
+## O que é
+
+Pega UMA entrega bruta — serviço, mentoria, pacote de agência, produto — e reconstrói como **uma oferta tão boa que dizer não parece burrice**. Aplica diretamente os frameworks de `$100M Offers` (Equação de Valor, Moedas de Valor, Mensagem de Um Milhão, stack de bônus, garantia com inversão de risco, escassez e urgência legítimas).
+
+**Escopo claro:** esta skill aprofunda **um degrau** da escada de valor. Ela afia UMA oferta — não desenha o sistema de ofertas inteiro. Se o usuário quer a escada completa (entrada → core → premium → recorrência, com a lógica de ascensão entre eles), isso é outra skill. Esta é o zoom de UM degrau.
+
+O usuário só precisa responder 3 perguntas. O resto é deduzido.
+
+## Quando usar
+
+- "produtizar" / "deixar irresistível" um serviço, mentoria ou pacote.
+- Estruturar uma oferta: promessa, bônus, garantia, planos de preço.
+- Aplicar Hormozi / Equação de Valor a uma entrega.
+- Precificar com ancoragem de valor.
+- "minha oferta não converte" / "o preço parece caro" / "como justificar o valor".
+- Criar produto de entrada (ticket baixo / tripwire).
+
+## Como utilizar
+
+**Antes de qualquer coisa:** a ISIS verifica se já existe um avatar/persona do cliente em `clientes/{cliente}/`. Se existir, não re-coleta dores e desejos — usa o que está documentado e vai direto para a promessa.
+
+**O que você passa (as 3 perguntas):**
+
+| Pergunta | Exemplo de resposta suficiente |
+|---|---|
+| Produto — nome e descrição da entrega | "Mentoria de Lançamentos — 3 meses, 2 calls/mês" |
+| Público ideal — específico (N2D) | "Experts iniciantes que querem vender infoproduto sem depender de agência" |
+| Transformação — resultado concreto e mensurável | "Primeira venda digital em até 90 dias" |
+
+Resposta genérica ("ajudo pessoas a crescer") não é aceita. A ISIS propõe uma versão afiada e confirma.
+
+**O que a ISIS faz (na ordem, internamente):**
+
+1. Avatar + Moedas de Valor — 10 moedas que a oferta **aumenta** + 10 que **reduz**.
+2. Promessa central (Mensagem de Um Milhão + headline comercial). → **CHECKPOINT aqui.** A ISIS para, apresenta a promessa e espera validação antes de continuar. Construir bônus sobre promessa errada desperdiça o trabalho inteiro.
+3. Estrutura em pilares — 3 a 5, em tabela: nome · entrega tangível · forma de entrega · benefício imediato.
+4. Dores & Soluções — 10 dores reais na linguagem do público + 10 soluções; 3 mais caras de ignorar destacadas.
+5. Bônus — 5, cada um com nome, valor estimado e a objeção específica que mata.
+6. Garantia nomeada com inversão de risco.
+7. Escassez + Urgência — 2+2, **legítimas** (nunca falsas).
+8. Preço — 3 planos: Valor Cheio · À Vista · Parcelado (Setup + Recorrência quando for serviço contínuo).
+9. Produto de entrada — 1 a 5 microprodutos entre R$27 e R$200, consumo até ~60 min.
+
+Depois do OK na promessa, gera tudo de uma vez (etapas 3–9). Sem gating etapa a etapa.
+
+**O que você recebe:**
+
+Oferta completa em markdown editável, em blocos prontos para colar em página/pitch/lançamento:
+
+```
+# [Nome do Produto]
+## Promessa
+## Avatar + Moedas de Valor
+## Dores & Soluções
+## Estrutura do Produto (pilares em tabela)
+## Bônus (5, com valor e objeção que mata)
+## Garantia
+## Escassez & Urgência
+## Preço (3 planos)
+## Produto de Entrada (ticket baixo)
+## Call to Action
+```
+
+## Entradas / Saídas
+
+**Entra:** as 3 respostas (produto, público, transformação) — ou o avatar já documentado no cliente.
+
+**Sai:** oferta completa em markdown, seção por seção, editável e pronta para uso.
+
+## Usada em quais workflows
+
+- [Onboarding de Cliente](/workflows/onboarding-cliente) — estruturação da oferta no pack.
+- [Campanha Nova](/workflows/campanha-nova) — quando a oferta precisa ser destrinchada antes de criar criativos.
+- Alimenta [Página Copy LP](/skills/pagina-copy-lp) e [Criativo Gerador Andromeda](/skills/criativo-gerador-andromeda) — as skills de copy e criativo consomem a oferta como insumo.
+
+## O que NÃO faz
+
+- Não desenha a escada de valor/sistema de ofertas completo.
+- Não escreve carrossel nem anúncio isolado.
+- Não constrói o avatar do zero se ele ainda não existir — sinaliza para rodar [Persona Neurocomportamental](/skills/persona-neurocomportamental) antes.
+- Não usa escassez/urgência falsas — só o que é real (lotes, vagas, prazo real de fechamento).
+
+## Fonte
+
+`sistema/skills/performance/oferta-produtizar/SKILL.md`

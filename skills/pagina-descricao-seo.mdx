@@ -1,0 +1,106 @@
+---
+title: "Skill: Página Descrição SEO"
+sidebarTitle: "Descrição SEO de produto"
+description: "Escreve a descrição de um produto de e-commerce otimizada para SEO: storytelling, 300–800 palavras com características/benefícios/técnico, 5 FAQs e metadados completos. Regra dura: nunca inventa specs."
+---
+
+## O que é
+
+Escreve a **descrição completa de um produto de e-commerce** otimizada para SEO — um texto factual, direto e vendedor que faz o produto ser encontrado no Google e converte quem chega na página.
+
+A entrega é um documento markdown com três camadas:
+
+1. **Storytelling do produto** — narrativa curta que agrega valor antes da parte técnica.
+2. **Descrição (300–800 palavras)** — título SEO (sem slogan), características, benefícios factuais, informações técnicas, passo a passo quando houver, e 5 FAQs com no mínimo 200 caracteres cada.
+3. **Metadados** — meta-title, meta-description, meta-keywords e URL sugerida.
+
+Tom padrão: **70% profissional / 30% casual**. Autoridade e precisão técnica, com um tempero leve que não vira slogan.
+
+**Regra inegociável:** nunca inventa informações. Toda spec vem do usuário ou de fonte real confirmada (site oficial da marca, ficha do fabricante, registro regulatório). Dado que faltar e não puder ser confirmado fica como lacuna explícita — não preenchido com suposição.
+
+## Quando usar
+
+- "escreve a descrição do produto", "descrição pra loja", "descrição pro Shopify".
+- "otimiza esse produto pro Google", "deixa esse produto rankeável", "descrição SEO".
+- "ficha do produto", "copy de produto", "texto da página do produto".
+- Produto único ou kit (vários itens no mesmo conjunto).
+
+## Como utilizar
+
+**Antes de pedir input, a ISIS lê o cliente:** verifica `clientes/{cliente}/` (briefing, onboarding, catálogo, fichas anteriores). Muitas vezes o produto e as specs já estão documentados — e a isis usa o que existe em vez de pedir input cru.
+
+**O que você passa (input mínimo):**
+
+| Item | Exemplo |
+|---|---|
+| Nome do produto | "Pigmento Orgânico Premium — Tom Café" |
+| Breve descrição | "Pigmento para micropigmentação de sobrancelhas, base orgânica, sem metais pesados" |
+
+Com isso já começa. A ISIS faz no máximo perguntas pontuais que realmente melhoram a ficha (característica faltando, se é kit ou unidade, link da fonte oficial).
+
+**O que a ISIS faz:**
+
+Quando falta um dado factual (composição, dimensões, indicação, registro, modo de uso), pesquisa a fonte real antes de escrever — site oficial da marca, ficha do fabricante, registro regulatório (ex.: ANVISA). Só escreve o que a fonte confirma. Se não achar a fonte, sinaliza a lacuna e segue com o que é confirmável.
+
+**O padrão é gerar a ficha completa de uma vez** (storytelling → descrição → FAQs → metadados). Sem fatiar em checkpoints, a menos que o usuário peça "vamos por partes".
+
+**O que você recebe:**
+
+Um documento markdown com as três camadas nesta ordem:
+
+```
+## Storytelling (1–2 parágrafos)
+
+## Título SEO
+[Título claro, objetivo, sem slogan, com palavra-chave]
+
+## Descrição (300–800 palavras)
+[Características + benefícios factuais + técnico + passo a passo]
+
+## Perguntas Frequentes
+P: [pergunta]
+R: [resposta com ≥200 caracteres]
+(× 5)
+
+## Metadados
+- Meta-title: ...
+- Meta-description: ...
+- Meta-keywords: ...
+- URL sugerida: ...
+```
+
+Arquivo salvo em `clientes/{cliente}/produtos/{slug}.md`.
+
+## Entradas / Saídas
+
+**Entra:** nome + breve descrição do produto (+ specs adicionais quando disponíveis).
+
+**Sai:** ficha completa em markdown, com storytelling, descrição 300–800 palavras, 5 FAQs (≥200 char cada) e metadados. Salvo em local durável do cliente.
+
+## Usada em quais workflows
+
+- [Onboarding de Cliente](/workflows/onboarding-cliente) — catalogar os produtos da loja.
+- [QBR](/workflows/qbr) — quando a estratégia envolve melhorar SEO de produtos.
+- [Check Cliente](/workflows/check-cliente) — validar se fichas de produto estão em ordem.
+
+## O que NÃO faz
+
+- Não audita o SEO do site como um todo (indexação, technical SEO, mapa de palavras-chave).
+- Não revisa copy de anúncio, headline ou e-mail.
+- Não cria o avatar/persona do público.
+- Não inventa specs — nenhum número, composição ou indicação sem fonte real. Lacuna declarada, nunca preenchida.
+- Não trata kit como produto único — se é kit, descreve cada item separadamente.
+
+## Armadilhas clássicas
+
+| Erro | Correto |
+|---|---|
+| Inventar composição/dimensões | Pesquisa a fonte real ou declara a lacuna |
+| Título com slogan | Título descritivo e rankeável; sem adjetivo de venda |
+| FAQ raso ("Sim, é vegano.") | Cada resposta com ≥200 caracteres e conteúdo real |
+| Perguntas na descrição | A descrição afirma, não interroga — nem retóricas |
+| Copiar conteúdo de exemplos de referência | Cada produto tem fatos próprios |
+
+## Fonte
+
+`sistema/skills/performance/pagina-descricao-seo/SKILL.md`

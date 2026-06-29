@@ -1,0 +1,85 @@
+---
+title: "Skill: Arquitetura Visual"
+sidebarTitle: "Arquitetura Visual"
+description: "Gera um relatório HTML que explica algo técnico de forma visual — arquitetura, fluxos, dependências, decisões — usando um kit de blocos prontos."
+---
+
+## O que é
+
+A skill que transforma um conceito técnico em um **documento HTML explicativo**, no design dark (roxo/azul), montado a partir de um kit de blocos prontos. O design já vem feito — a ISIS não escreve CSS do zero, só escolhe os blocos certos, preenche com dados reais e entrega um arquivo que se abre direto no navegador.
+
+O princípio: o template guarda o design e a galeria de blocos. Você copia, mantém só o que o tema pede e preenche com fatos verificados.
+
+## Quando usar
+
+- "explica como funciona [sistema/integração]"
+- "desenha a arquitetura de [X]"
+- "monta um fluxo de como [processo] funciona"
+- "como X se conecta com Y?"
+- "me mostra a estrutura de [sistema]"
+- apresentar uma decisão técnica com trade-offs
+
+**Não usar para:** resposta curta de chat sem pedido visual, ou quando um painel em texto resolve.
+
+## Como utilizar
+
+**O que você pede:** o assunto a explicar + o nível de detalhe desejado. Pode ser uma pergunta aberta ("como o pipeline de relatório funciona?") ou um briefing mais estruturado.
+
+**O que a ISIS faz:**
+
+1. Entende o tema e identifica os atores, o fluxo e os pontos de decisão.
+2. Escolhe os blocos do kit adequados ao tema (ver tabela abaixo).
+3. Copia o `assets/template.html`, troca os placeholders e preenche com dados verificados.
+4. Remove blocos não usados — documento enxuto é melhor que cheio de seções forçadas.
+5. Confere: `grep '{{'` = 0 (zero placeholder residual).
+6. Entrega o arquivo e oferece commit se for material que vale versionar.
+
+**O que você recebe:** arquivo `.html` em `docs/arquitetura/<assunto-kebab>.html`, que abre no navegador com botão de tema claro/escuro.
+
+## Blocos disponíveis
+
+| Bloco | Quando usar |
+|---|---|
+| `header` | sempre — título, subtítulo, tag, botão de tema |
+| `resumo` | quase sempre — TL;DR antes do detalhe |
+| `analogia` | para destravar conceito abstrato ("pense nisso como…") |
+| `atores` | "quem é quem / quem manda em quê" |
+| `glossario` | traduz jargão — 1 linha por termo |
+| `jornada` | fluxo linear sem decisão |
+| `fluxograma` | fluxo com decisão ou ramificação (SVG inline) |
+| `fronteira/callout` | destacar risco, limite ou fato confirmado |
+| `mapa` | arquivos/camadas com selos novo/editado/reúso |
+| `dependencias` | "quem puxa quem" — cadeia e fan-out |
+| `faq` | antecipa a dúvida óbvia do leitor |
+| `ganho` | antes → depois, o payoff prático |
+| `regra-de-ouro` | princípios em chips |
+| `legenda` | quando há cores/selos/estado a explicar |
+
+<Info>
+Tem "se… então…" ou caminhos que divergem? → `fluxograma`. É passo-a-passo reto? → `jornada`. Na dúvida, se tiver decisão, é fluxograma.
+</Info>
+
+## Entradas / Saídas
+
+| Campo | Obrigatório | Descrição |
+|---|---|---|
+| `assunto` | sim | o que explicar (serve de título e nome do arquivo) |
+| `profundidade` | opcional | visão geral · detalhe técnico · decisão com trade-offs |
+| `audiência` | opcional | time interno · cliente · novo colaborador |
+
+**Sai:** `docs/arquitetura/<assunto-kebab>.html` — abre no navegador, tema claro/escuro.
+
+## Usada em quais workflows
+
+- [`/workflows/onboarding-colaborador`](/workflows/onboarding-colaborador) — explicar a arquitetura do sistema para novos membros
+- [`/workflows/qbr`](/workflows/qbr) — apresentar visualmente a evolução da operação
+
+## O que NÃO faz
+
+- **Não edita o CSS do template** — o design system é intocável.
+- **Não inventa dados ou setas** — só o que está verificado no código/docs. Se não sabe, não desenha (ou marca como hipótese).
+- **Não gera PNG/SVG exportável** — entrega HTML.
+
+## Fonte
+
+`sistema/skills/ops/ops-arquitetura-visual/SKILL.md`

@@ -1,0 +1,72 @@
+---
+title: "Skill: Workflow Builder"
+sidebarTitle: "Workflow Builder"
+description: "O portão único de criação de workflows de orquestração — garante que todo workflow nasce descobrível, registrado no router e pronto para disparar."
+---
+
+## O que é
+
+A meta-skill que cria ou edita **workflows de orquestração** da operação. Todo workflow novo passa por aqui — ela obriga a registrar no router e atualizar os MAPAs no mesmo ato. Sem este passo, o workflow não existe na prática: não dispara, não é encontrado, envelhece sozinho numa pasta.
+
+**O que é um workflow:** uma skill chamada `workflow_{nome}`, salva em `sistema/skills/workflows/workflow_{nome}/SKILL.md`. Só orquestra — define qual agente assume cada step, qual skill-task ele chama, o que grava e qual gate valida. O "como fazer" mora nas skills-task, não no workflow.
+
+## Quando usar
+
+- "cria um workflow pra X"
+- "transforma essa tarefa recorrente em workflow"
+- "novo POP pra [processo]"
+- ao converter um fluxo antigo em skill de orquestração
+
+## Como utilizar
+
+**O que você pede:** a descrição do processo que o workflow vai orquestrar — o objetivo, o gatilho natural (as frases que disparariam esse workflow), e os passos que você já conhece.
+
+**O que a ISIS faz (checklist obrigatório — todos, nesta ordem):**
+
+1. **Define o gatilho.** Lista as frases em linguagem natural que disparam o workflow. Vão no `description` do frontmatter E na coluna "Gatilho" do router.
+2. **Escreve a orquestração.** Tabela de steps: `# · step · agente · skill/ação · grava em`. Marca `(a definir)` onde a skill-task não existe — não inventa.
+3. **Declara precheck, gate e outputs obrigatórios.** O que bloqueia antes de rodar, qual gate de `core/gates.yaml`, o que define "completo".
+4. **Marca a fronteira.** Todo step cliente-facing ou irreversível → draft + confirmação humana.
+5. **Registra no `core/workflow-router.md`.** Adiciona uma linha na tabela com gatilho, caminho, orquestra e gate.
+6. **Atualiza os MAPAs.** `sistema/skills/workflows/` e qualquer MAPA pertinente à nova pasta criada.
+7. **Status inicial e relatório.** Todo workflow nasce em piloto. Vira ativo só depois de rodar ponta a ponta uma vez. Reporta ao final o que ainda está `(a definir)`.
+
+**O que você recebe:** os três artefatos abaixo, todos criados ou atualizados no mesmo ato.
+
+## Entradas / Saídas
+
+| Campo | Obrigatório | Descrição |
+|---|---|---|
+| `nome do workflow` | sim | em kebab-case (ex.: `check-cliente`, `relatorio-trafego`) |
+| `gatilho` | sim | frases naturais que disparam este workflow |
+| `steps conhecidos` | sim | o que você já sabe que acontece, mesmo que incompleto |
+| `gate` | recomendado | qual critério de qualidade valida a saída |
+| `outputs esperados` | recomendado | o que é entregue ao final |
+
+**Saídas obrigatórias (sempre as três):**
+
+| Artefato | Onde |
+|---|---|
+| `SKILL.md` do workflow | `sistema/skills/workflows/workflow_{nome}/SKILL.md` |
+| Linha no router | `sistema/operacao/core/workflow-router.md` |
+| MAPA(s) atualizado(s) | `sistema/skills/workflows/` e pertinentes |
+
+## Usada em quais workflows
+
+Esta skill é usada **para criar** os outros workflows. Os workflows que já existem e que foram criados com ela:
+
+- [`/workflows/campanha-nova`](/workflows/campanha-nova)
+- [`/workflows/relatorio-trafego`](/workflows/relatorio-trafego)
+- [`/workflows/onboarding-cliente`](/workflows/onboarding-cliente)
+- e todos os demais listados em [`/workflows`](/workflows)
+
+## O que NÃO faz
+
+- **Não coloca o "como fazer" no workflow** — detalhes de execução ficam nas skills-task que o workflow orquestra.
+- **Não cria workflows fora do router** — registrar no router é parte inegociável da criação.
+- **Não marca `(a definir)` como problema** — é honestidade: sinaliza o que falta construir, não um erro.
+- **Não ativa o workflow direto** — nasce em piloto; você valida antes de usar em produção.
+
+## Fonte
+
+`sistema/skills/ops/ops-workflow-builder/SKILL.md`

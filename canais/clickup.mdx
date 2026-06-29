@@ -1,0 +1,36 @@
+---
+title: "ClickUp — Cockpit operacional"
+sidebarTitle: "ClickUp"
+description: "O cockpit operacional: carteira de clientes, tarefas, funil comercial, MRR e saúde/retenção. Leitura nativa; escrita via Composio, sempre verificada com GET."
+---
+
+## O que é
+O ClickUp é o **cockpit operacional** da agência — manda em carteira de clientes, tarefas/status, funil comercial, MRR (recorrência) e saúde/retenção. Divisão de fronteira que importa: **ClickUp manda na operação** (tarefa, status, funil, MRR); o **repo (Git) manda no contexto profundo** (persona, `pack.yaml`, estratégia, criativos, relatórios). A ISIS é a **ponte** — o ClickUp não enxerga o repo sozinho.
+
+## Como conecta
+- **Leitura:** MCP **nativo** do ClickUp (mais `create_comment` e `merge_tasks`).
+- **Escrita:** via **Composio** (`CLICKUP_CREATE/UPDATE/DELETE_*` — folder, list, task, doc, tag, view).
+
+A conta é **Free**, com um workspace único. Credencial injetada em runtime, nunca renderizada.
+
+## Como se usa
+A estrutura é por **spaces** (Marketing, Gestão, Comercial, Projetos Próprios) e, dentro de Marketing, **um folder por cliente** (nome = slug do repo). O contexto de cada cliente vive num **Doc** dentro do folder — espelho do `clientes/<slug>/` do repo. Você pede: *"o que tá aberto pro cliente"*, *"qual o MRR atual"*, *"como tá a saúde da carteira"*. A ISIS lê via nativo e escreve (criar task, mover, taggear, atualizar Doc) via Composio.
+
+<Warning>**Falso-sucesso é a armadilha do ClickUp:** vários writes voltam `successful:true` com corpo vazio (tags) ou simplesmente ignoram o pedido (status). Por isso **toda escrita é verificada com um GET depois** — sem o GET, você acha que salvou e não salvou.</Warning>
+
+Limites do plano Free a ter na cabeça: máx 5 spaces, custom fields ~travados, automations limitadas. Algumas coisas **não têm API** e são manuais na UI: mover folder entre spaces, editar status de workflow, agrupar view por folder.
+
+## Guardrail do canal
+Carrega dado de cliente — a trava `resolve-canal` valida **canal × cliente × conta** antes de a ISIS responder, **fail-closed**. Tarefa/contexto de um cliente não vaza pro outro. Detalhe em [Guardrails](/guardrails/visao-geral) e [Operar sem vazar](/guardrails/operacao-na-pratica).
+
+## Read-only vs escrita
+- **Leitura (sem pedir):** carteira, tarefas, status, funil, MRR, saúde — uso padrão via MCP nativo.
+- **Escrita / ação externa (exige verificação, e OK quando afeta cliente/decisão):** criar/atualizar/mover task, mexer em folder/list/doc/tag via Composio. Sempre confirmada com GET.
+
+## O que NÃO faz / fronteira
+- **Não é fonte de contexto profundo** — isso é do repo. ClickUp = operação.
+- **Não confia em write sem verificar** (falso-sucesso).
+- **Não cruza dados entre clientes.**
+
+## Fonte
+`sistema/integracoes/clickup.md`.

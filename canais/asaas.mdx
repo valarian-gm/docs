@@ -1,0 +1,39 @@
+---
+title: "Asaas — Financeiro"
+sidebarTitle: "Asaas"
+description: "A fonte de verdade do financeiro: cobranças, clientes, inadimplência, previsão. Read-only por padrão; qualquer ação com efeito externo exige teu OK."
+---
+
+## O que é
+O Asaas é a **fonte de verdade do financeiro**: cobranças, clientes, atrasos, previsão de recebimento. É de onde a ISIS puxa MRR, lista de inadimplência e resumo de pendências. Regra de fundo: **read-only por padrão.** Ela consulta e resume à vontade; criar, alterar ou enviar cobrança é outra história — exige teu OK.
+
+## Como conecta
+Via **MCP próprio do Asaas** (não passa por Composio). A API autentica por um header `access_token`, injetado em runtime. O smoke-test de leitura faz só GET e imprime resumo **sanitizado** — nunca o token.
+
+<Warning>O token do Asaas é credencial sensível: nunca em conversa, relatório ou arquivo versionado. Some só em runtime, por referência. Em shell, sempre literal que o ambiente expande — nunca o valor escrito.</Warning>
+
+## Como se usa
+No tópico **Financeiro** (só teu), você pede: *"quem tá em atraso"*, *"resume a previsão do mês"*, *"prepara as cobranças pra eu aprovar"*. A ISIS consulta cobranças/clientes, monta o resumo e — quando é cobrança — deixa a **mensagem pronta pra você aprovar**, sem disparar.
+
+| Pode sozinha (consulta) | Exige teu OK (efeito externo) |
+|---|---|
+| Consultar cobranças | Criar cobrança |
+| Consultar clientes | Alterar vencimento |
+| Listar atrasos | Cancelar cobrança |
+| Resumir previsão/pendências | Enviar cobrança/notificação ao cliente |
+| Preparar mensagem de cobrança (rascunho) | Mexer em dado bancário/sensível |
+
+## Guardrail do canal
+Financeiro é dado sensível e por canal — a trava `resolve-canal` valida **canal × cliente × conta** antes de qualquer número sair, **fail-closed**. O tópico Financeiro só fala de financeiro, e só com você. Detalhe em [Guardrails](/guardrails/visao-geral) e [Operar sem vazar](/guardrails/operacao-na-pratica).
+
+## Read-only vs escrita
+- **Leitura (sem pedir):** consultar cobranças e clientes, listar atrasos, resumir previsão e pendências, preparar rascunho de cobrança.
+- **Escrita / ação externa (exige OK):** criar/alterar/cancelar cobrança, mudar vencimento, **enviar** qualquer coisa ao cliente, tocar dado bancário. Toda ação financeira com efeito externo passa por aprovação.
+
+## O que NÃO faz / fronteira
+- **Não dispara cobrança nem notificação** sem teu OK explícito.
+- **Não é o Telegram/ClickUp** — o livro-caixa é o Asaas; cockpit e MRR são resumo/espelho, não a fonte.
+- **Não imprime o token**, nem sanitizado-pela-metade.
+
+## Fonte
+`sistema/integracoes/asaas-financeiro.md`.

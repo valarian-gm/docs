@@ -1,0 +1,39 @@
+---
+title: "Vercel — Publicação"
+sidebarTitle: "Vercel"
+description: "Onde relatórios e páginas sanitizadas viram link público. Publicação é cópia da fonte interna versionada — nunca o único lugar, e nunca automática."
+---
+
+## O que é
+A Vercel é a camada de **publicação**: onde relatórios e páginas sanitizadas viram um **link público** que o cliente acessa. Regra de fundo (constitucional): a **fonte interna versionada no cérebro vem sempre primeiro**; o site é **cópia/publicação**, nunca o único lugar onde a coisa existe.
+
+## Como conecta
+Via **deploy** do repositório do site (separado do cérebro). O relatório nasce no repo do cérebro (fonte interna + cópia sanitizada) e é **publicado** pra Vercel. Domínio canônico: o domínio público da sua agência (ex.: `https://www.suaagencia.com.br/...`) — defina-o uma vez e mantenha o padrão `www.`.
+
+## Como se usa
+O fluxo de um relatório segue dois mundos:
+
+| Onde | Papel |
+|---|---|
+| `clientes/<slug>/entregaveis/relatorios/<periodo>/relatorio.html` | fonte interna (histórico auditável) |
+| `clientes/<slug>/entregaveis/relatorios/<periodo>/public.html` | cópia **sanitizada** |
+| repo do site → Vercel | **publicação** (o link que o cliente abre) |
+
+Mesma convenção pra projetos. Você pede *"publica o relatório do período"* e a ISIS gera a fonte interna, a cópia sanitizada e publica — o link público fica registrado no tópico do cliente.
+
+<Warning>**Publicar é comunicação externa** — gerar o relatório **não** autoriza jogar pro cliente. Sair pra fora exige teu OK explícito. "Gera e manda no susto" é incêndio.</Warning>
+
+## Guardrail do canal
+O que vai pro público é a versão **sanitizada** (sem dado sensível, sem ID de conta, sem nome interno). E publicar/enviar pra fora **nunca é automático**: a trava de comunicação externa exige aprovação. Princípios em [Guardrails](/guardrails/visao-geral) e [Operar sem vazar](/guardrails/operacao-na-pratica).
+
+## Read-only vs escrita
+- **Leitura (sem pedir):** gerar/preparar a fonte interna e a cópia sanitizada no repo.
+- **Escrita / ação externa (exige OK):** **publicar** na Vercel — torna público, é comunicação externa.
+
+## O que NÃO faz / fronteira
+- **Não publica versão não-sanitizada.**
+- **Não usa o site como fonte única** — a fonte interna versionada vem primeiro.
+- **Não publica sem aprovação.**
+
+## Fonte
+`AGENTS.md` (raiz) — "Relatórios e estratégias — destinos canônicos" · `sistema/integracoes/MAPA.md`. Fonte enxuta sobre o canal.

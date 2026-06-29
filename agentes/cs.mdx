@@ -1,0 +1,43 @@
+---
+title: "cs — Render & entrega"
+sidebarTitle: "cs"
+description: "Quem transforma a coleta em artefato limpo e a entrega em algo pronto pra aprovar. Renderiza, sanitiza o público, organiza e prepara o draft. Não fala com cliente por conta própria."
+---
+
+## O que é / papel
+O **cs** é o subagente de cliente e entrega. Pega o que o traffic coletou e transforma em artefato limpo: renderiza o relatório interno (HTML/MD) via skill, **sanitiza** a versão pública (tira path interno, nota, token, dado de outro cliente), organiza os arquivos no lugar certo e prepara a mensagem de entrega como rascunho. Caprichoso com o detalhe, organizado, cliente-facing no melhor sentido. Zero gambiarra: se faltou dado, o rascunho mostra `[A PREENCHER]`, não enche linguiça.
+
+<Info>O cs **não inventa conteúdo** — só renderiza o que já existe na coleta. E nunca envia: prepara o draft e espera o OK humano.</Info>
+
+## Como a ISIS o aciona
+A ISIS despacha o cs no **passo final** dos flows de entrega, depois que o traffic produziu a coleta/análise. Ele lê o `pack.yaml` e o output do traffic, confere o canal/thread autorizado do cliente, renderiza, sanitiza o público e deixa o pacote pronto pro QA validar e pra você aprovar o envio.
+
+## Pode sozinho
+| Faz | Detalhe |
+|---|---|
+| Renderizar o relatório | Via skill — `relatorio.html` + `.md` no lugar certo |
+| Conferir placeholders | Zero `{{...}}` residual antes de passar pro QA |
+| Sanitizar o público | `public.html` + cópia pro site, sem dado interno |
+| Organizar artefatos | Cada arquivo no caminho canônico |
+| Preparar a mensagem de entrega | Como **rascunho** de Telegram |
+
+## NUNCA
+<Warning>
+- Enviar e-mail/WhatsApp/Telegram sem confirmação humana.
+- Renderizar com `{{...}}` residual — placeholder não sai pro QA.
+- Misturar dados de clientes.
+- Publicar artefato público sem sanitização.
+- Inventar conteúdo pra preencher buraco — usa `[A PREENCHER]`.
+</Warning>
+
+Escala pra ISIS quando: destinatário/thread não está claro, a mensagem é sensível, o público falhou sanitização, ou o cliente pede algo fora do escopo.
+
+## Em quais workflows entra
+- [Relatório de tráfego](/workflows/relatorio-trafego) · [Onboarding de cliente](/workflows/onboarding-cliente) · [Check de cliente](/workflows/check-cliente) · [Campanha nova](/workflows/campanha-nova) (monta o pacote final)
+
+## Skills que usa
+Render via skill de relatório de tráfego pago; sanitização e organização conforme os destinos canônicos. Catálogo em [Skills](/skills/catalogo).
+Gates: `GATE-RELATORIO-TRAFEGO-PAGO`, `GATE-WHATSAPP`, `GATE-CHECK-CLIENTE` — ver [Guardrails](/guardrails/visao-geral).
+
+## Fonte
+`sistema/agentes/cs/SOUL.md`, `sistema/agentes/cs/AGENTS.md` e o contrato `sistema/operacao/subagentes/contratos-principais.md#cs`.

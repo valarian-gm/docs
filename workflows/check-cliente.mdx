@@ -1,0 +1,80 @@
+---
+title: "Workflow: Check de Cliente"
+sidebarTitle: "Check de cliente"
+description: "Preflight read-only que valida se um cliente está minimamente pronto pra operar antes de relatório, campanha ou automação. Só diagnostica e reporta — não corrige nada."
+---
+
+## O que é
+O **preflight**: um diagnóstico read-only que responde "esse cliente tá pronto pra rodar?" antes de você disparar um relatório, uma campanha ou uma automação. Checa o pack, a comunicação (thread de entrega + contato), os acessos e tracking, e o compliance da vertical — valida tudo num gate e te devolve um verdict com a lista do que falta. A ISIS conduz; o **cs** confere pack e comunicação, o **traffic** audita acessos, o **qa** valida. **Não age, não cria, não corrige produção** — só reporta. Corrigir é trabalho de outro flow e decisão sua.
+
+## Quando usar
+Dispara quando você diz:
+- *"checa o {cliente}"* / *"o {cliente} tá pronto?"* / *"tem tudo pra rodar?"*
+- *"o pack do {cliente} tá completo?"*
+- antes do primeiro relatório, antes de campanha nova, antes de automação no WhatsApp
+- qualquer dúvida sobre acessos, tracking, contexto ou comunicação de um cliente
+
+## Como utilizar
+1. **Você manda o gatilho** com o cliente e, opcionalmente, o escopo. Ex.: *"checa o {cliente} pra campanha."* O escopo (`relatorio`, `campanha`, `onboarding`, `automacao`, `auditoria`) define o **rigor** de cada check — campanha exige tracking, relatório exige thread de entrega.
+2. **A ISIS roda o precheck:** confirma que o cliente existe e que o slug resolve pra um só cliente. Se não existe, ela te aponta o [onboarding](/workflows/onboarding-cliente) — **não cria estrutura por conta própria.**
+3. **Confirma o alvo (Passo 0):** como é read-only, basta confirmar o cliente, o escopo e a lista do que vai checar. Não há ação a aprovar — nada vai mudar.
+4. **Roda os checks** em silêncio: pack → comunicação → acessos/tracking → compliance → gate.
+5. **Você recebe** um `resumo.md` com o status por dimensão e o verdict, mais o `pendencias.yaml` com a lista objetiva do que falta.
+
+**O que ter em mãos (inputs):**
+| Input | Obrigatório | Valores |
+|---|---|---|
+| `cliente_slug` | sim | o cliente-alvo |
+| `escopo` | não (default `relatorio`) | `relatorio` · `campanha` · `onboarding` · `automacao` · `auditoria` |
+
+## Por dentro (a sequência)
+Steps 2 e 4 são o núcleo (o cliente "performa"); steps 3 e 5 fecham a borda de entrega (comunicação) e o risco (compliance). **Nenhum step altera produção.**
+
+| # | Step | Quem | O que faz / skill |
+|---|---|---|---|
+| 1 | Localizar cliente | ISIS | confirma slug + caminhos |
+| 2 | **Pack** (3 números, funil, KPI, acessos, bloqueios) | cs | [`pack-cliente`](/skills/pack-cliente) em modo verificação — não inventa campo, aponta `[A PREENCHER]` |
+| 3 | **Comunicação** (thread + contato) | cs | read-only — confere thread de entrega e contato principal nas fontes do cliente |
+| 4 | **Acessos + tracking** | traffic | [`auditoria-tracking-ecommerce`](/skills/auditoria-tracking-ecommerce) (loja) ou [`auditoria-meta-360`](/skills/auditoria-meta-360) (conta Meta) — read-only |
+| 5 | **Compliance / vertical** | qa | read-only — vertical identificada, flags abertas, restrições de copy/claim |
+| 6 | Validar prontidão | qa | gate **GATE-CHECK-CLIENTE** — bloqueia se score < 80 |
+
+> Os agentes (ISIS, cs, traffic, qa) estão explicados em [Os Agentes](/agentes/visao-geral).
+
+<Info>
+**O step 4 escolhe a task pela natureza do cliente.** Loja → [`auditoria-tracking-ecommerce`](/skills/auditoria-tracking-ecommerce). Conta Meta → [`auditoria-meta-360`](/skills/auditoria-meta-360). As duas são read-only por contrato: **não criam pixel, não criam evento, não alteram campanha.** Só olham e reportam.
+</Info>
+
+### Os três verdicts (gate GATE-CHECK-CLIENTE)
+| Verdict | Quando | O que você pode fazer |
+|---|---|---|
+| **pronto** | score ≥ 80, nenhum bloqueio crítico | seguir pro flow que você pediu |
+| **pronto com ressalvas** | score 60–79, sem bloqueio crítico | só draft/interno — **não** publicar, enviar nem alterar produção |
+| **bloqueado** | score < 60 ou bloqueio crítico | não seguir; resolver as pendências listadas primeiro |
+
+## Entradas / Saídas
+- **Entra:** slug do cliente + escopo.
+- **Sai** (em `clientes/{slug}/check-cliente/{data}/`):
+  - `resumo.md` — status por dimensão + verdict
+  - `qa-verdict.yaml` — score e bloqueios do gate
+  - `pendencias.yaml` — lista objetiva do que falta
+
+## Onde trava
+- **Cliente inexistente ou slug ambíguo** — para e pede desambiguação (ou aponta o onboarding).
+- **Thread de entrega ausente** num escopo cliente-facing — não dá pra entregar sem canal.
+- **Meta Ads / tracking ausente** num escopo que depende disso (relatório, campanha).
+- **Compliance vertical crítico sem revisão.**
+- **Dados de outro cliente misturados** no contexto.
+
+## O que NÃO faz
+- **Não corrige nada.** Não cria pack, não mexe em acessos, tracking ou campanha.
+- **Não dispara o onboarding sozinho** — se o pack não existe, reporta como pendência e sugere o flow; quem decide é você.
+- **Nenhuma ação externa ou de produção** parte daqui. É só diagnóstico.
+
+## Exemplo
+**Entrada:** *"checa o {cliente} pra campanha."*
+
+**O que sai:** a ISIS confirma "cliente {cliente}, escopo campanha, vou checar pack, comunicação, tracking e compliance — read-only, nada muda. Ok?". Roda os checks e devolve um `resumo.md`: **pack** completo (3 números, KPI, funil ok), **comunicação** ok (thread no Telegram + contato principal), **tracking** com problema — pixel instalado mas evento de `Compra` sem disparar há 6 dias, **compliance** ok pra vertical. Score 68 → **pronto com ressalvas**. O `pendencias.yaml` lista: "validar evento de Compra no pixel antes de subir campanha de conversão". Você sabe exatamente o que resolver antes de chamar a [campanha nova](/workflows/campanha-nova) — e a ISIS não tocou em nada.
+
+## Fonte
+`sistema/skills/workflows/workflow_check-cliente/SKILL.md` — esta página é a leitura de operador desse workflow.

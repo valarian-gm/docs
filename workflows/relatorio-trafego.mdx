@@ -1,0 +1,80 @@
+---
+title: "Workflow: Relatório de Tráfego"
+sidebarTitle: "Relatório de tráfego"
+description: "Gera o relatório de tráfego pago de um cliente — interno auditável + versão pública sanitizada, com números batidos contra a conta ao vivo e validados por gate. Não envia ao cliente sem teu OK."
+---
+
+## O que é
+O fluxo que monta o **relatório de tráfego pago** de um cliente: coleta os dados direto da conta (read-only), analisa, renderiza um HTML interno auditável, gera a cópia pública sanitizada, valida tudo num gate e te entrega pronto. A ISIS orquestra; o **traffic** coleta e analisa, o **cs** renderiza e sanitiza, o **qa** valida. **O envio ao cliente continua sendo teu** — ela monta o draft, você aperta enviar.
+
+## Quando usar
+Dispara quando você diz, no canal certo:
+- *"relatório de tráfego do {cliente}"* / *"relatório pro cliente X"*
+- *"relatório semanal"* / *"relatório mensal"*
+- *"gera o relatório da semana"* / *"relatório Meta Ads"*
+- antes de uma reunião com o cliente, ou pedido avulso seu
+
+## Como utilizar
+1. **Você manda o gatilho** com cliente + período. Ex.: *"gera o relatório semanal do {cliente}, semana passada."*
+2. **A ISIS roda o precheck** (abaixo) antes de qualquer coisa. Se o cliente não tem pack, ou o período cai antes de você ter começado a operar a conta, ou falta acesso aos dados — ela trava aqui e te avisa **antes** de gastar tempo coletando.
+3. **Ela confirma o plano (Passo 0):** mostra cliente-alvo, período e a sequência numerada, e espera teu "ok". Você vê o que vai acontecer antes de acontecer.
+4. **Roda a sequência** em silêncio: coleta ao vivo → análise → render interno → versão pública sanitizada → gate.
+5. **Você recebe** na pasta do cliente: o `relatorio.html` (interno, auditável), o `public.html` (sanitizado), o `relatorio.md` e o `qa-verdict.yaml`. Mais o link público quando publica.
+6. **Você revisa e libera o envio.** A ISIS monta o draft no canal do cliente — **não dispara sem teu OK explícito.**
+
+**O que ter em mãos (inputs):**
+| Input | Obrigatório | Valores / observação |
+|---|---|---|
+| `cliente` | sim | o slug do cliente-alvo |
+| `período` | sim | semana, mês ou intervalo de datas |
+| acesso aos dados | sim (senão trava) | conta Meta/Google/GA4 disponível |
+| `pack.yaml` do cliente | sim (precheck) | sem ele → roda onboarding/check antes |
+
+<Warning>
+**O período não pode atribuir resultado à operação antes da data em que você começou a rodar a conta** (`operado_desde`). Pedir "relatório do último trimestre" num cliente que você opera há 3 semanas não retroage o crédito — vira baseline interno ou trava o envio. É honestidade de número, não burocracia.
+</Warning>
+
+## Por dentro (a sequência)
+Cada step tem um dono e chama uma task. Steps 2 e 3 são **read-only puros**: o traffic não altera campanha, não mexe em budget, não pausa nem ativa anúncio.
+
+| # | Step | Quem | O que faz / skill |
+|---|---|---|---|
+| 1 | Carregar contexto | ISIS | lê pack, threads, relatórios anteriores |
+| 2 | Coletar dados (read-only) | traffic | [`auditoria-meta-360`](/skills/auditoria-meta-360) — puxa Meta ao vivo |
+| 3 | Analisar | traffic | [`scan-anomalias`](/skills/scan-anomalias) — raciocínio livre; declara limitação se faltar dado |
+| 4 | Renderizar interno | cs | [`relatorio-trafego-pago`](/skills/relatorio-trafego-pago) — render via script, **sem** reescrever HTML no LLM |
+| 5 | Sanitizar público | cs | [`relatorio-trafego-pago`](/skills/relatorio-trafego-pago) em modo sanitização — tira paths, notas, tokens, outros clientes |
+| 6 | Validar | qa | gate **GATE-RELATORIO-TRAFEGO-PAGO** — bloqueia se score < 80 |
+| 7 | Publicar | ISIS | gera o link público (só após gate passar + sanitizar) |
+| 8 | Enviar ao cliente | ISIS | monta draft no canal — **exige tua confirmação** |
+
+> O step 4 é a render canônica: a skill [`relatorio-trafego-pago`](/skills/relatorio-trafego-pago) gera o HTML por script, não por LLM. Isso garante que o relatório de hoje sai igual ao de daqui a três meses. Os agentes (ISIS, traffic, cs, qa) estão explicados em [Os Agentes](/agentes/visao-geral).
+
+## Entradas / Saídas
+- **Entra:** cliente + período + acesso aos dados.
+- **Sai** (em `clientes/{cliente}/relatorios/trafego-pago/{periodo}/`):
+  - `relatorio.html` — fonte interna auditável (histórico)
+  - `relatorio.md`
+  - `public.html` — cópia sanitizada
+  - `qa-verdict.yaml` — score e bloqueios do gate
+  - link público publicado, quando aplicável
+
+## Onde trava
+- **GATE-RELATORIO-TRAFEGO-PAGO < 80** — para o fluxo. Número fraco não vira entrega.
+- **Cliente errado ou thread errada** — não manda relatório do {cliente A} pro canal do {cliente B}.
+- **Número sem fonte** — dado que não bateu contra a conta ao vivo não entra. Vira `[A PREENCHER]`.
+- **Vazamento no público** — se o `public.html` tiver path local, nota interna, token ou nome de outro cliente, trava a sanitização.
+- **Envio sem confirmação** — o draft fica parado até você liberar.
+
+## O que NÃO faz
+- **Não altera, pausa nem mexe em budget** de campanha — coleta é read-only por contrato.
+- **Não envia ao cliente sozinha** — monta o draft, você aprova. Não existe mais Gmail automático como default.
+- **Não inventa número.** Sem fonte ao vivo, marca a lacuna em vez de preencher com narrativa.
+
+## Exemplo
+**Entrada:** *"gera o relatório semanal do {cliente}, de 16 a 22 de junho."*
+
+**O que sai:** a ISIS confirma "cliente {cliente}, semana 16–22/06, 8 steps — ok?", roda a coleta (R$ 4.180 investidos, 137 leads, CPL R$ 30,51), o traffic aponta que o conjunto de remarketing dobrou de custo na quinta sem ganho de volume, o cs renderiza o `relatorio.html` interno com o gráfico de CPL por dia e gera o `public.html` sem os comentários internos, o qa dá score 88. No fim você recebe os quatro arquivos na pasta do cliente, o link público, e um draft *"Segue o relatório da semana, {contato} — destaque do CPL e o ponto do remarketing pra alinharmos"* parado esperando teu OK.
+
+## Fonte
+`sistema/skills/workflows/workflow_relatorio-trafego/SKILL.md` — esta página é a leitura de operador desse workflow.

@@ -1,0 +1,81 @@
+---
+title: "Skill: Guardrail de Mensagem"
+sidebarTitle: "Guardrail de mensagem"
+description: "Firewall WHAT × WHERE × WHO — valida assunto, canal e usuário antes de responder ou executar qualquer pedido em canal conectado."
+---
+
+## O que é
+
+O firewall de segurança da ISIS para canais conectados (Slack, WhatsApp, Telegram, DM). Antes de responder qualquer pedido que envolva dado sensível — métrica de cliente, ID de campanha, financeiro, bastidor interno, comunicação externa — a skill valida três dimensões: **WHAT** (o que foi pedido), **WHERE** (em qual canal) e **WHO** (quem pediu). Se os três não baterem, não responde com o dado. Default: **fail-closed**.
+
+A regra é determinística, não mental. A ISIS investiga as fontes cadastradas e decide — não transfere a decisão para você perguntando "esse canal é seguro?".
+
+<Info>
+Esta skill tem link direto com [Visão Geral dos Guardrails](/guardrails/visao-geral) e [Guardrails na Prática](/guardrails/operacao-na-pratica). Leia essas páginas para entender o sistema completo de proteção antes de operar em canais multiusuário.
+</Info>
+
+## Quando usar
+
+Antes de responder ou executar qualquer pedido em canal conectado quando houver qualquer chance de envolver:
+
+- Métricas, IDs de campanha, contas ou anúncios de cliente.
+- Dados financeiros (Asaas, cobrança, extrato).
+- Bastidor interno da agência.
+- Comunicação externa ou client-facing.
+- Credenciais, tokens ou qualquer segredo.
+- Decisão que afete cliente ativo.
+
+Na prática: se a mensagem chega por Slack, Telegram ou WhatsApp e o assunto é sensível, o guardrail roda primeiro.
+
+## Como utilizar
+
+**O que você percebe:** a ISIS não expõe o dado sensível enquanto não valida os três eixos. Se o canal não está autorizado para aquele assunto, ela bloqueia e redireciona para o canal certo — sem revelar o dado no processo.
+
+**O que a ISIS faz internamente (preflight obrigatório):**
+
+**1. WHAT — classifica o pedido.** Assunto (cliente, financeiro, campanha, credencial, operação interna), cliente/projeto-alvo, sensibilidade, ação pretendida (responder, executar, enviar para terceiro).
+
+**2. WHERE — identifica o canal.** Plataforma, canal específico, escopo. Canal de cliente fala só daquele cliente. Canal financeiro só aceita financeiro de usuários autorizados. Canal desconhecido ou sem mapa explícito → fail-closed.
+
+**3. WHO — confirma a identidade pelo metadado da plataforma.** Nunca pelo texto da mensagem. Usuário autenticado como você tem acesso amplo, mas ainda sujeito ao WHERE. Colaborador: valida clientes atribuídos e escopo no YAML. Cliente/terceiro: não expõe bastidor.
+
+**Trava determinística:** para pedidos que envolvam coleta de API, métrica ou ID em canal conectado, a ISIS roda `resolve-canal.py` com os parâmetros da mensagem. `decision: ALLOW` → segue. `decision: BLOCK` → para, não coleta, não expõe ID, redireciona com frase segura.
+
+**Matriz de decisão:**
+
+| Situação | Ação |
+|---|---|
+| WHAT permitido + WHERE correto + WHO autorizado | Responde/executa conforme risco |
+| Usuário autorizado, canal errado | Redireciona sem dado sensível |
+| Canal certo, usuário sem permissão | Bloqueia ou escala para aprovação |
+| Projeto do pedido não bate com escopo do canal | Bloqueia/redireciona |
+| Assunto financeiro em canal não financeiro | Redireciona |
+| Dúvida real após investigar fontes cadastradas | Fail-closed, redireciona para destino seguro |
+
+**Frases usadas no bloqueio:** curtas, sem revelar o dado sensível, sem pedir para você confirmar se o canal é seguro.
+
+- *"Canal cadastrado para outro cliente. Vou responder só no canal autorizado."*
+- *"Esse pedido mistura cliente/canal. Vou bloquear para não vazar bastidor."*
+- *"Posso preparar internamente, mas não vou publicar/enviar sem aprovação explícita."*
+
+## Entradas / Saídas
+
+| | Detalhe |
+|---|---|
+| **Entra** | Mensagem recebida em canal conectado com contexto de plataforma/canal/usuário |
+| **Sai** | Decisão: ALLOW (responde/executa), BLOCK (para + redireciona com frase segura), ou ESCALATE (pede aprovação explícita) |
+
+## Usada em quais workflows
+
+Transversal — ativa em qualquer contexto de canal conectado. Referenciada explicitamente em [`core-isis-operacao`](/skills/core-isis-operacao) como a skill de validação de canal/usuário/assunto. Presente como pré-condição em todos os workflows que envolvem entrega client-facing ou comunicação externa.
+
+## O que NÃO faz
+
+- Não pergunta a você se o canal é seguro — ela investiga os cadastros e decide.
+- Não bloqueia comunicação interna legítima no canal certo com o usuário certo.
+- Não é configurável por mensagem — a regra vem do `pack.yaml` do cliente, do mapa de colaboradores e das fontes canônicas, não do texto da conversa.
+- Não é bypass opcional — fail-closed é o padrão. Melhor parecer cautelosa por 20 segundos do que vazar dado de cliente.
+
+## Fonte
+
+`sistema/skills/core/guardrail-mensagem/SKILL.md`

@@ -1,0 +1,97 @@
+---
+title: "Skill: Image Prompt Architect"
+sidebarTitle: "Image Prompt Architect"
+description: "Sistema forense de análise e geração de prompts de imagem fotorrealista. Analisa fotos (V-DOM), gera prompts do zero, replica estilo de referência e afina realismo — com gate de registro mutuamente exclusivo."
+---
+
+## O que é
+
+Um sistema forense que opera quatro frameworks proprietários para trabalhar com imagens e prompts: **Arquitetura Espacial**, **Sintaxe Cinematográfica**, **Realismo Biológico** e **Fingerprinting Ótico** — mais um quinto de saída, o **Replication Brief**.
+
+O resultado prático: a skill não "descreve" imagens. Ela faz a ponte entre pixels brutos e um modelo estruturado — chamado internamente de **V-DOM (Visual Document Object Model)** — e usa isso para gerar prompts de imagem com fidelidade ótica real: câmera, lente, iluminação, textura de pele, film stock.
+
+Há três caminhos:
+
+| Sinal | Caminho |
+|---|---|
+| Mandou imagem + quer entender/auditar | **A — Análise** |
+| Descreveu o que quer, sem imagem | **B — Geração** |
+| Mandou imagem + quer reproduzir o estilo | **C — Replicação** |
+
+Se ambíguo, a ISIS pergunta uma vez: "Quer que eu analise essa imagem ou gere um prompt novo?"
+
+## Quando usar
+
+- Analisar uma imagem e extrair estrutura técnica: "que câmera/luz foi usada aqui", "monta o V-DOM", "audita o realismo".
+- Gerar prompt fotorrealista do zero: "cria um prompt de imagem", "prompt cinematográfico".
+- Replicar o estilo/pose/luz de uma foto de referência: "replica essa foto", "extrai a receita dessa foto".
+- Tornar uma imagem mais realista: "deixa mais real", "tira a cara de IA", "prompt de UGC realista".
+- Qualquer pedido de prompt de imagem com **fidelidade ótica real** (câmera, lente, iluminação, textura de pele).
+
+**Não usar para:** criativos de anúncio Meta (use [Criativo Gerador Andromeda](/skills/criativo-gerador-andromeda)) nem vídeo UGC completo.
+
+## Como utilizar
+
+**O que você passa:**
+
+- Para análise: a imagem.
+- Para geração: a descrição do que quer, com preferências de registro (celular/UGC, editorial, estúdio, produto...).
+- Para replicação: a imagem de referência + o que quer reproduzir.
+
+**O que a ISIS faz (por caminho):**
+
+**Caminho A — Análise:**
+1. Fingerprinting de hardware (sensor Full-Frame, Crop ou Mobile).
+2. Arquitetura espacial com grid 1000×1000, mapeamento de UID, Z-index, profundidade relativa.
+3. Auditoria forense: poros, T-Zone (obrigatória em retrato humano), interação luz/material.
+4. Direção de fotografia com terminologia DP e "Luz Motivada" (de onde vem a fonte de luz no mundo real).
+
+**Caminho B — Geração:**
+
+Antes de escrever qualquer coisa, a ISIS aplica o **Gate de Realismo** — dois registros mutuamente exclusivos. Misturar os dois (ex: "candid selfie" com bokeh de softbox) é o defeito nº1 de imagem com cara de IA:
+
+| Registro | Quando |
+|---|---|
+| Amador / UGC | selfie, candid, Reels, story, depoimento |
+| Casual / Editorial lifestyle | natural mas dirigido, campanha de marca leve |
+| Profissional / Editorial | editorial sério, beleza, retrato controlado |
+| Estúdio | headshot, beauty, luz montada, fundo seamless |
+| Produto | e-commerce, mockup, produto em lifestyle |
+| Paparazzi | foto roubada, flagra, surveillance |
+
+Depois aplica a **Regra-Mãe de Correlação**: declare UMA fonte de luz, derive todos os artefatos dela (cor, sombra, ruído, clipping). Nunca ilumine o sujeito independente do ambiente.
+
+Saída em dois formatos:
+- **Prosa (Core Syntax):** enquadramento → iluminação → hardware. Para prompt rápido.
+- **JSON estruturado:** controle máximo, campo a campo. Para edição cirúrgica e iteração.
+
+**Caminho C — Replicação:**
+Roda o Caminho A completo e traduz para o Replication Brief: Pose + Wardrobe + Environment + Lighting Recipe + Replication Prompt limpo.
+
+**O que você recebe:**
+
+- Caminho A: saída em JSON ou TXT com metadados de cena, elementos com UID/bbox, atributos técnicos.
+- Caminho B: prompt (prosa ou JSON) no registro escolhido, com exclusions como alavanca ativa.
+- Caminho C: os 5 blocos do Replication Brief + prompt pronto para colar.
+
+## Entradas / Saídas
+
+**Entra:** imagem de referência e/ou descrição textual + preferência de registro.
+
+**Sai:** análise forense (JSON/TXT) ou prompt de geração (prosa/JSON) ou Replication Brief.
+
+## Usada em quais workflows
+
+- [Campanha Nova](/workflows/campanha-nova) — etapa de criativos, geração do prompt de imagem para estáticos.
+- [Iterar Criativo](/workflows/iterar-criativo) — quando há uma referência e quer replicar/evoluir.
+- Encadeada após [Static Ad Blueprint](/skills/static-ad-blueprint) para gerar o `image_prompt` do anúncio com fidelidade ótica.
+
+## O que NÃO faz
+
+- Não gera nem submete a imagem (isso é `gerar-imagens-fal`).
+- Não monta o layout/composição do anúncio (isso é [Static Ad Blueprint](/skills/static-ad-blueprint)).
+- Não roda os 4 pilares forenses quando o pedido é apenas um prompt rápido — avalia o sinal e escolhe o caminho certo.
+
+## Fonte
+
+`sistema/skills/performance/image-prompt-architect/SKILL.md`

@@ -1,0 +1,88 @@
+---
+title: "Workflow: Onboarding de Cliente"
+sidebarTitle: "Onboarding de cliente"
+description: "Estrutura um cliente novo do zero — pack, persona, identidade de marca, acessos e provisionamento de rotinas — até ele estar pronto pra performar e decidir. Mensagem de boas-vindas fica em draft."
+---
+
+## O que é
+O fluxo que pega um cliente novo e o deixa **pronto pra operar**: cria a estrutura de pastas, consolida o `pack.yaml` (os 3 números, funil, KPI, acessos, bloqueios), monta a persona de 1 página, captura a identidade de marca, confere acessos e tracking, valida num gate e **liga o cliente ao ciclo de vida de rotinas** (relatório, NPS, monitoramento). A ISIS orquestra; o **cs** e o **strategist** montam o núcleo, o **design** cuida da marca, o **traffic** confere acessos, o **qa** valida. O núcleo é **pack + persona** — o resto é aprofundamento sob demanda.
+
+## Quando usar
+Dispara quando você diz:
+- *"faz o onboarding do {cliente}"* / *"cliente novo fechou"* / *"assinou o contrato"*
+- *"regularizar cliente antigo sem pack"*
+- antes do primeiro relatório ou campanha de um cliente que ainda não tem estrutura
+
+## Como utilizar
+1. **Você manda o gatilho** com o nome do cliente e o contexto mínimo. Ex.: *"onboarding do {cliente}, e-commerce de skincare, fechou ontem."*
+2. **A ISIS roda o precheck:** confirma que o slug está livre (ou que a regularização foi autorizada) e marca que qualquer mensagem ao cliente fica em draft.
+3. **Confirma o plano (Passo 0):** mostra o cliente-alvo e a sequência, espera teu "ok".
+4. **Roda a sequência:** estrutura → pack → persona → branding → acessos → gate → provisionamento → draft de boas-vindas.
+5. **Você recebe** o `pack.yaml` e a persona (`avatar_{SLUG}.md`) — o núcleo que define "completo" — mais o `qa-verdict.yaml`. E um draft de boas-vindas esperando teu OK.
+6. **Decisões que ela te devolve:** se o cliente ainda não vai produzir criativo, você pode dizer **"branding defino depois"**; e **ativar entregas externas** das rotinas (relatório, NPS) pede teu OK.
+
+**O que ter em mãos (inputs):**
+| Input | Obrigatório | Observação |
+|---|---|---|
+| nome / slug do cliente | sim | slug em kebab-case, não pode colidir |
+| contexto do negócio | sim | nicho, oferta, o que ele vende |
+| os 3 números | sim (vão pro pack) | ticket, meta, investimento — o mínimo pra decidir |
+| acessos Meta/GA4 | recomendado | sem tracking, mídia não roda |
+| marca (logo/site/IG) | opcional | se não tiver, "defino depois" não trava |
+
+## Por dentro (a sequência)
+Steps 2 e 3 são o núcleo: pack + persona definem "completo". O step 7 liga o cliente ao ciclo de vida de rotinas.
+
+| # | Step | Quem | O que faz / skill |
+|---|---|---|---|
+| 1 | Estrutura mínima | ISIS | cria `clientes/{slug}/` + subpastas |
+| 2 | **Pack** (3 números, funil, KPI, acessos, bloqueios) | cs · strategist | [`pack-cliente`](/skills/pack-cliente) |
+| 3 | **Persona** (N2D, objeções, ângulos) | strategist | [`persona-neurocomportamental`](/skills/persona-neurocomportamental) em modo 1 página |
+| 4 | **Identidade de marca** | design | [`branding-cliente`](/skills/branding-cliente) modo extrair — ou "defino depois" |
+| 5 | Acessos + tracking | traffic | read-only — confere status Meta/GA4/pixel, **não cria pixel nem altera campanha** |
+| 6 | Validar prontidão | qa | gate **GATE-CHECK-CLIENTE** — bloqueia se score < 80 |
+| 7 | **Provisionar operação** | ISIS | gate **GATE-PROVISIONAMENTO-CLIENTE** — escreve bloco `automacoes` no pack |
+| 8 | Draft boas-vindas | cs | draft interno — **exige tua confirmação pra enviar** |
+
+> Os agentes (ISIS, cs, strategist, design, traffic, qa) estão explicados em [Os Agentes](/agentes/visao-geral).
+
+<Info>
+**Identidade de marca (step 4) não trava o onboarding.** Se o cliente já chega com marca (logo, site, Instagram), o [`branding-cliente`](/skills/branding-cliente) extrai. Se ele ainda não vai produzir criativo, você diz **"defino depois"** → marca `branding: adiado` no pack, e a identidade nasce depois, no fluxo de criativo (a [campanha nova](/workflows/campanha-nova) roda o branding antes do primeiro brief). Marca **nova** (modo criar) pede tua aprovação antes de gravar.
+</Info>
+
+### Provisionamento de rotinas (step 7)
+É aqui que o cliente novo entra no ciclo de vida de automações — decisão **por-slug**:
+1. Escreve o bloco `automacoes` no `pack.yaml`, marcando as rotinas do pacote mínimo (penhasco, relatório, NPS). Cliente **sem Meta** → `relatorio_semanal: false` com bloqueio explícito (não adianta agendar relatório de uma conta que não existe).
+2. A ISIS, no runtime, cria as rotinas e espelha na agenda.
+3. **Semiautomático:** provisionar a estrutura é livre; **ativar entrega externa** (relatório ao cliente, NPS no WhatsApp) pede teu OK. A contraparte é o [offboarding](/workflows/offboarding), que desativa quando o cliente sai.
+
+## Entradas / Saídas
+- **Entra:** nome do cliente + contexto + os 3 números (+ acessos e marca, se houver).
+- **Sai** (em `clientes/{slug}/`):
+  - `pack.yaml` — a fonte única e enxuta (3 números, funil, KPI, bloqueios, prontidão, bloco `automacoes`)
+  - `persona/avatar_{SLUG}.md` — 1 página: N2D, objeções, ângulos
+  - `branding/identidade.md` — ou `branding: adiado` no pack
+  - `onboarding/qa-verdict.yaml`
+  - draft de boas-vindas (interno, esperando OK)
+
+## Onde trava
+- **GATE-CHECK-CLIENTE < 80** — cliente não está pronto, lista o que falta.
+- **Slug ambíguo** — não cria estrutura em cima de um nome que colide.
+- **Dado essencial sem fonte** — número inventado não entra no pack.
+- **Tracking ausente pra mídia** — se vai rodar anúncio e não tem pixel/acesso, sinaliza.
+- **Compliance crítico sem revisão** — vertical sensível precisa de checagem antes.
+- **Envio ao cliente sem confirmação** — boas-vindas fica em draft.
+
+## O que NÃO faz
+- **Não cria pixel nem altera campanha** — o step de acessos é read-only.
+- **Não envia a mensagem de boas-vindas** sozinha — monta o draft, você aprova.
+- **Não grava marca nova** sem tua aprovação (modo criar pede OK).
+- **Não enche de artefato.** Cria documento só quando ele muda uma decisão — discovery profundo e plano de primeiros passos são opcionais, sob demanda.
+
+## Exemplo
+**Entrada:** *"onboarding do {cliente}, loja de cosméticos naturais, fechou essa semana. Já tem Instagram e logo, ainda não tenho acesso ao Meta."*
+
+**O que sai:** a ISIS confirma o plano, cria a estrutura, e o cs+strategist montam o `pack.yaml` com os 3 números que você passou (ticket médio R$ 120, meta de 200 vendas/mês, verba R$ 6k). O strategist escreve a persona de 1 página ancorada na dor "produto natural que realmente funciona, sem greenwashing". O design extrai a identidade do Instagram e da logo. O traffic confere e reporta: **Meta sem acesso → tracking pendente, `relatorio_semanal: false` com bloqueio**. O qa dá 82 (pronto, com a ressalva do acesso Meta). O provisionamento marca as rotinas, mas deixa o relatório desligado até o acesso chegar. No fim você tem pack + persona + branding na pasta, e um draft de boas-vindas parado esperando teu OK.
+
+## Fonte
+`sistema/skills/workflows/workflow_onboarding/SKILL.md` — esta página é a leitura de operador desse workflow.

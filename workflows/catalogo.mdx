@@ -1,39 +1,42 @@
 ---
 title: "Workflows"
-sidebarTitle: "Catálogo"
-description: "Os fluxos de trabalho do sistema: gatilho, passos, quais skills e agentes cada um chama, gate de qualidade e status real."
+sidebarTitle: "Visão geral"
+description: "Os fluxos de trabalho do sistema: o que cada um faz, quando dispara, quais skills e agentes chama e qual gate valida."
 ---
 
-Um **workflow** é o POP (procedimento operacional) de uma tarefa recorrente: diz quais skills usar, quais agentes chamar e qual gate valida. A regra de ouro: antes de executar tarefa recorrente, consulte o roteador.
+Um **workflow** é o procedimento operacional de uma tarefa recorrente: diz quais skills usar, quais agentes chamar e qual gate valida a entrega. Regra de ouro: antes de executar uma tarefa recorrente, a ISIS consulta o roteador pra saber qual workflow responde.
 
-<Info>
-  **Fonte:** roteamento canônico em `sistema/operacao/core/workflow-router.md`. Workflows vivem em dois formatos — skills `workflow_*` em `sistema/skills/workflows/` e YAMLs em `sistema/operacao/workflows/`.
-</Info>
+<Info>**Fonte:** roteamento canônico em `sistema/operacao/core/workflow-router.md`. Cada workflow tem sua própria página (abaixo) com o passo a passo de uso.</Info>
 
-## Status (honesto, não fachada)
+## Índice
 
-🟢 **ativo** = testado, roda ponta a ponta · 🟡 **piloto** = em ativação · ⚪ **contrato** = receita escrita, ainda não testada.
+| Workflow | O que faz | Dispara quando | Gate |
+|---|---|---|---|
+| [Campanha nova](/workflows/campanha-nova) | Monta o pacote de uma campanha pra revisar e subir | "sobe campanha pro {cliente}", lançamento, novo público | GATE-CAMPANHA |
+| [Relatório de tráfego](/workflows/relatorio-trafego) | Gera o relatório de performance (interno + público) | "relatório do {cliente}", semanal/mensal | GATE-RELATORIO-TRAFEGO-PAGO |
+| [Onboarding de cliente](/workflows/onboarding-cliente) | Estrutura cliente novo (pack, persona, tracking, rotinas) | "onboarding do {cliente}", "cliente novo fechou" | GATE-CHECK-CLIENTE · GATE-PROVISIONAMENTO-CLIENTE |
+| [Check de cliente](/workflows/check-cliente) | Confere se o cliente está pronto pra operar | "o {cliente} tá pronto?", antes de operar | GATE-CHECK-CLIENTE |
+| [QBR](/workflows/qbr) | Revisão trimestral → renovação/expansão | "QBR do {cliente}", revisão trimestral | GATE-RELATORIO-TRAFEGO-PAGO |
+| [Offboarding](/workflows/offboarding) | Saída/pausa de cliente ou colaborador, preservando histórico | "cliente saiu/pausou", "colaborador saiu" | GATE-OFFBOARDING |
+| [Dashboard de anomalias](/workflows/dashboard-anomalias) | Varre as contas e entrega um radar do que saiu do padrão | "tem algo estranho nas contas?", radar do dia | GATE-AUDITORIA |
+| [Onboarding de colaborador](/workflows/onboarding-colaborador) | Estrutura pessoa do time (permissões + canais + rotinas) | "novo colaborador", "adicionar fulano" | GATE-COLABORADOR-CANAIS |
+| [WhatsApp setup](/workflows/whatsapp-setup) | Conecta uma instância de WhatsApp | "conecta o WhatsApp" | GATE-WHATSAPP |
+| [Iterar criativo](/workflows/iterar-criativo) | Diagnostica e propõe a próxima rodada de criativo | "frequência alta", "CPL alto", "novo ângulo" | GATE-COPY · GATE-CRIATIVO |
+| [Abertura de semana](/workflows/abertura-semana) | Top 3 da semana, prioridades e cortes | "segunda-feira", "o que foco essa semana?" | — |
+| [Rotina diária](/workflows/rotina-diaria) | Curadoria do dia: anomalias, riscos, próximos passos | "curadoria da manhã", "rotina diária" | — |
+| [Diagnóstico de venda](/workflows/diagnostico-venda) *(playbook)* | Conduz a call comercial (10 etapas + matriz de fit) | call comercial, antes de proposta | — |
 
-## Catálogo
+> Cada workflow tem sua página de operador no mesmo modelo da [Campanha nova](/workflows/campanha-nova): o que é, quando usar, **como utilizar**, a sequência com links pras skills e agentes, onde trava e o que não faz.
 
-| Workflow | Gatilho | Orquestra (agentes) | Skills que chama | Gate | Status |
-| --- | --- | --- | --- | --- | --- |
-| **relatorio-trafego** | traffic → cs → qa | auditoria-meta-360, scan-anomalias, relatorio-trafego-pago | GATE-RELATORIO-TRAFEGO-PAGO | 🟢 ativo |  |
-| **onboarding** | cs, strategist, traffic, qa | pack-cliente, persona-neurocomportamental, branding-cliente | GATE-CHECK-CLIENTE, GATE-PROVISIONAMENTO-CLIENTE | 🟡 piloto |  |
-| **check-cliente** | isis, traffic, cs, qa | pack-cliente (verificação), auditoria-tracking/meta | GATE-CHECK-CLIENTE | 🟡 piloto |  |
-| **campanha-nova** | strategist, copy, design, traffic, qa, cs | core-estrategia-cliente, tracking-checklist, copy-anuncio, criativo-gerador-andromeda, static-ad-blueprint | GATE-CAMPANHA | 🟡 piloto |  |
-| **qbr** | traffic, strategist, fin, cs, qa | relatorio-trafego-pago, core-estrategia-cliente, relatorio-visao-geral-cliente, retencao-upsell | GATE-RELATORIO-TRAFEGO-PAGO | 🟡 piloto |  |
-| **offboarding** | "cliente saiu/pausou", "colaborador saiu" | isis, cs, qa | — (edita pack/yaml \+ desprovisiona) | GATE-OFFBOARDING | 🟡 piloto |
-| **dashboard-anomalias** | "tem algo estranho nas contas?", radar do dia | traffic, fin, cs, qa | scan-anomalias | GATE-AUDITORIA | 🟡 piloto |
-| **onboarding\_colaborador** | "novo colaborador", "adicionar fulano" | isis | — (permissões fail-closed \+ rotinas) | GATE-COLABORADOR-CANAIS | 🟡 piloto |
-| **whatsapp-setup** | "conecta o WhatsApp da ISIS" | isis | whatsapp-evolution | GATE-WHATSAPP | 🟡 piloto |
-| **iterar-criativo** | "frequência alta", "CPL alto", "novo ângulo" | traffic, strategist, copy, design, qa, cs | copy-anuncio, copy-revisor, criativo-gerador-andromeda | GATE-COPY, GATE-CRIATIVO | ⚪ contrato |
-| **abertura-semana** | "segunda-feira", "o que foco essa semana?" | isis, scout, cs | — | — | ⚪ contrato |
-| **rotina-diaria-operacional** | "curadoria da manhã", "rotina diária" | isis, traffic, cs, qa | scan-anomalias | — | ⚪ contrato |
-| **diagnostico-venda**_(playbook, não automático)_ | call comercial, antes de proposta | MIDAS/SDR (manual) | — (10 seções \+ matriz de fit) | — | guia |
+## Como um workflow roda (exemplo: relatório de tráfego)
 
-## Anatomia de um workflow (exemplo: relatorio-trafego 🟢)
+<Steps>
+  <Step title="Carregar contexto (ISIS)">Lê o pack do cliente, o histórico e os relatórios anteriores.</Step>
+  <Step title="Coletar dados (traffic)">Puxa a conta de anúncios em modo leitura → dados estruturados.</Step>
+  <Step title="Analisar (traffic)">Lê os números, levanta hipóteses, declara limitações.</Step>
+  <Step title="Renderizar (cs)">Monta o relatório interno e a versão sanitizada pro cliente.</Step>
+  <Step title="Validar (qa)">Passa pelo gate; nota baixa bloqueia a entrega.</Step>
+  <Step title="Publicar + enviar (ISIS)">Publica; o envio ao cliente é **draft + sua confirmação**.</Step>
+</Steps>
 
-<Warning>
-  **Red-line transversal:** publicar, enviar ao cliente, alterar ads, criar cobrança ou ativar WhatsApp **nunca** é automático — o workflow entrega draft e pede OK explícito (`sistema/operacao/core/full-auto.md`).
-</Warning>
+<Warning>**Regra transversal:** publicar, enviar ao cliente, alterar anúncios, criar cobrança ou disparar WhatsApp **nunca** é automático — o workflow entrega um rascunho e pede seu OK.</Warning>

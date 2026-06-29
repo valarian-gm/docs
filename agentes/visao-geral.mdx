@@ -6,13 +6,11 @@ description: "Quem opera o sistema: a ISIS orquestra e despacha subagentes espec
 
 A operação tem **uma orquestradora (ISIS)**, **um peer de aquisição (MIDAS)** e **subagentes especializados** que a ISIS despacha dentro de um workflow. Subagente não opera sozinho — só quando despachado.
 
-<Info>
-  **Fonte:** `sistema/agentes/*` e os contratos em `sistema/operacao/subagentes/contratos-principais.md` (e `contratos-p2.md`).
-</Info>
+<Info>**Fonte:** `sistema/agentes/*` e os contratos em `sistema/operacao/subagentes/contratos-principais.md` (e `contratos-p2.md`).</Info>
 
 ## Hierarquia
 
-```text
+```
 ISIS (orquestradora, porta-pra-dentro)
  ├─ despacha → traffic · cs · qa        (subagentes fixos)
  ├─ despacha → strategist · copy · design (P1, sob demanda)
@@ -25,38 +23,38 @@ MIDAS (peer, porta-pra-fora: aquisição)  — compartilha o mesmo cérebro
 
 <AccordionGroup>
   <Accordion title="ISIS — Orquestradora (COO)">
-    **Papel:** conduz workflows, despacha subagentes, decide operação, protege clientes. Opera porta-pra-dentro (entrega, retenção). **Pode sozinha:** organizar, resumir, rascunhar, auditar read-only, atualizar memória, rodar automações já autorizadas. **Nunca:** compartilhar dado do Tai com terceiros; postar/enviar em nome dele sem validação; acessar financeiro sensível sem permissão; vazar credencial; misturar clientes. **Fonte:** `sistema/agentes/isis/` (SOUL, AGENTS, ISIS-COMPLETO).
+    **Papel:** conduz workflows, despacha subagentes, decide operação, protege clientes. Opera porta-pra-dentro (entrega, retenção).
+    **Pode sozinha:** organizar, resumir, rascunhar, auditar read-only, atualizar memória, rodar automações já autorizadas.
+    **Nunca:** compartilhar dado do Tai com terceiros; postar/enviar em nome dele sem validação; acessar financeiro sensível sem permissão; vazar credencial; misturar clientes.
+    **Fonte:** `sistema/agentes/isis/` (SOUL, AGENTS, ISIS-COMPLETO).
   </Accordion>
-
   <Accordion title="MIDAS — Aquisição (peer da ISIS)">
-    **Papel:** porta-pra-fora — sourcing, qualificação, abordagem outbound, reunião marcada. Lead frio → qualificado → handoff pra ISIS. **Nunca:** disparar mensagem externa sem OK (dry-run \+ preview); usar instância da ISIS; insistir com quem disse não; tocar cliente ativo (território da ISIS); comprar lista/raspar dado privado. **Fonte:** `sistema/agentes/midas/`.
+    **Papel:** porta-pra-fora — sourcing, qualificação, abordagem outbound, reunião marcada. Lead frio → qualificado → handoff pra ISIS.
+    **Nunca:** disparar mensagem externa sem OK (dry-run + preview); usar instância da ISIS; insistir com quem disse não; tocar cliente ativo (território da ISIS); comprar lista/raspar dado privado.
+    **Fonte:** `sistema/agentes/midas/`.
   </Accordion>
 </AccordionGroup>
 
 ## Subagentes fixos
 
 | Agente | Especialidade | Pode | Nunca | Acionado em |
-| --- | --- | --- | --- | --- |
-| **traffic** | Mídia paga, tracking | Coleta \+ diagnóstico **read-only** com evidência | Inventar número; alterar campanha/budget/criativo/pixel | relatorio-trafego, check-cliente, campanha-nova, dashboard-anomalias, qbr |
+|---|---|---|---|---|
+| **traffic** | Mídia paga, tracking | Coleta + diagnóstico **read-only** com evidência | Inventar número; alterar campanha/budget/criativo/pixel | relatorio-trafego, check-cliente, campanha-nova, dashboard-anomalias, qbr |
 | **cs** | Render & entrega | Renderizar template (script), sanitizar público, preparar drafts | Enviar sem confirmação; deixar `{{placeholder}}`; misturar clientes | relatorio-trafego, onboarding, check-cliente, campanha-nova |
 | **qa** | Validação objetiva | Aplicar gates, calcular score, bloquear risco | Aprovar com S3/S4 aceso; editar o artefato; opinar por feeling | step final de todos os workflows |
 
 ## Subagentes P1 (sob demanda)
 
 | Agente | Especialidade | Nunca | Acionado em |
-| --- | --- | --- | --- |
+|---|---|---|---|
 | **strategist** | Posicionamento, mecanismo, hipótese | Operar mídia; copy final; promessa sem prova | onboarding, campanha-nova, qbr, iterar-criativo |
 | **copy** | Ângulos, variações, mensagens por canal | Inventar prova; ignorar compliance; enviar ao cliente | campanha-nova, iterar-criativo |
 | **design** | Specs visuais, briefs A→B, DNA de marca | Gerar mídia paga externa sem OK; branding de outro cliente; publicar | onboarding, campanha-nova, iterar-criativo |
 
-## Subagentes P2 (quando o canal virar real)
+## Subagentes P2
 
-| Agente | Especialidade | Status |
-| --- | --- | --- |
-| **fin** | Financeiro/Asaas: MRR, inadimplência, ROI (read-only) | Despachado opcional no QBR |
-| **scout** | Inteligência competitiva, SWOT, alertas | Opcional na abertura de semana |
-| **whats** | WhatsApp: mensagens, stop rules, handoff humano | Quando WhatsApp virar operacional |
-
-<Note>
-  Agentes herdados (`bot-suporte`, `marketing`) existem na pasta mas o status de uso real é **a confirmar** — não documentar como ativos sem verificação (`sistema/agentes/MAPA.md`).
-</Note>
+| Agente | Especialidade | Onde entra |
+|---|---|---|
+| **fin** | Financeiro/Asaas: MRR, inadimplência, ROI (read-only) | QBR (opcional) |
+| **scout** | Inteligência competitiva, SWOT, alertas | Abertura de semana (opcional) |
+| **whats** | WhatsApp: mensagens, stop rules, handoff humano | Operação de WhatsApp |

@@ -1,0 +1,77 @@
+---
+title: "Skill: Auditoria de Tracking Ecommerce"
+sidebarTitle: "Auditoria Tracking Ecommerce"
+description: "Diagnóstico completo de tracking de ecommerce — Meta Ads, GA4, GTM, pixel/CAPI, Clarity, Shopify e funil de compra — para encontrar onde o dinheiro vaza e onde a mensuração mente."
+---
+
+## O que é
+
+Auditoria de tracking focada em ecommerce. Combina as fontes de dados disponíveis (Meta Ads, GA4, GTM, pixel/CAPI, Clarity, Shopify, Google Ads, GSC) e entrega um diagnóstico de 11 seções: do status dos acessos até o plano de ação priorizado.
+
+O objetivo não é "relatório bonito" — é apontar onde o dinheiro vaza, onde a mensuração mente e qual ajuste tem maior impacto no resultado.
+
+<Info>
+**Read-only por padrão.** A skill não altera tags, pixels, campanhas, GTM, Shopify ou eventos. Todas as recomendações ficam no documento aguardando aprovação antes de qualquer implementação.
+</Info>
+
+## Quando usar
+
+- O cliente tem ecommerce e ainda não passou por auditoria de tracking.
+- Há suspeita de problema em pixel, CAPI, GA4, GTM, Shopify, checkout, UTMs ou atribuição.
+- Meta Ads registra mais compras ou receita do que GA4 sem explicação.
+- Add to cart está alto e begin checkout está baixo — ou checkout iniciado está alto e purchase está baixo.
+- GA4 tem muito `Unassigned`, `Organic Social` ou campanhas aparecendo como IDs soltos.
+- Antes de escalar verba em conta com atribuição duvidosa.
+
+## Como utilizar
+
+**O que você pede:** domínio principal + plataformas disponíveis + período de análise + objetivo da auditoria.
+
+**O que a ISIS faz:**
+
+1. Valida quais acessos existem e quais estão bloqueados — documenta o status de cada plataforma antes de qualquer análise.
+2. Inspeciona o site público: detecta plataforma, GTM instalado, pixels ativos, GA4, Clarity.
+3. Compara domínio principal, subdomínios e landing pages — verifica se há tags diferentes sem governança.
+4. Audita GA4: sessões, eventos ecommerce, compras, receita, canais e funil completo.
+5. Audita Meta Ads: campanhas, compras atribuídas, receita, ROAS, pixel/dataset.
+6. Cruza Meta Ads vs. GA4 vs. Shopify (quando disponível) — expõe divergências com causa.
+7. Avalia o funil ecommerce passo a passo: `view_item → add_to_cart → begin_checkout → purchase`.
+8. Identifica gargalos de carrinho/checkout: frete, gateway, mobile, cupons.
+9. Verifica UTMs e classificação de canais — identifica tráfego mal classificado.
+10. Verifica pixel/CAPI, deduplicação, domínio verificado e eventos enviados.
+11. Monta o plano de tracking mínimo com a estrutura: Decisão | Evento | Ferramenta | Gatilho | Propriedades | Conversão | Validação.
+12. Entrega recomendações priorizadas por impacto.
+
+**O que você recebe:**
+
+Documento `auditoria-ecommerce-tracking.md` em `clientes/{cliente}/` com 11 seções estruturadas — do status dos acessos ao plano de ação.
+
+## Entradas / Saídas
+
+| Campo | Tipo | Obrigatório |
+|---|---|---|
+| Domínio principal | URL | Sim |
+| Plataformas disponíveis | Meta Ads, GA4, GTM, Clarity, Shopify, etc. | Sim |
+| Período de análise | ex: `últimos 90d` | Não (padrão: 90 dias) |
+| Objetivo | vendas, ROAS, recuperação de carrinho, tracking | Sim |
+
+| Saída | Conteúdo |
+|---|---|
+| `auditoria-ecommerce-tracking.md` | 11 seções: acessos, pixel, site, GA4, Meta, comparação, funil, UTMs, bloqueios, recomendações, plano |
+
+## Usada em quais workflows
+
+- [Onboarding de cliente](/workflows/onboarding-cliente) — step de diagnóstico técnico em contas ecommerce
+- [Check de cliente](/workflows/check-cliente) — quando há suspeita de problema de mensuração
+- [Dashboard de anomalias](/workflows/dashboard-anomalias) — ponto de partida quando os números não fecham
+
+## O que NÃO faz
+
+- Não altera tags, pixels, eventos, GTM, Shopify ou campanhas.
+- Não entrega a auditoria como completa se a fonte real de pedidos (Shopify/admin) estiver inacessível — registra o bloqueio explicitamente.
+- Não rastreia por vaidade: cada evento recomendado precisa explicar qual decisão ele melhora.
+- Não coleta PII em propriedades ou eventos de analytics.
+
+---
+
+**Fonte:** `sistema/skills/performance/auditoria-tracking-ecommerce/SKILL.md`

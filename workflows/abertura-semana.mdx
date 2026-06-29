@@ -1,0 +1,68 @@
+---
+title: "Workflow: Abertura de Semana"
+sidebarTitle: "Abertura de semana"
+description: "Converte o caos de segunda em um Top 3 executável: prioridades, bloqueios, oportunidades de dinheiro e a primeira ação de 15 minutos. Ferramenta de foco, não reunião fake."
+---
+
+## O que é
+O fluxo que abre a semana com **clareza, não com 40 frentes abertas**. A ISIS varre o estado dos clientes e da operação — pendências, anomalias, oportunidades — e converte isso num **Top 3 da semana** executável, com o que cortar e por onde começar. Não é reunião de agência grande nem dashboard infinito: é uma ferramenta de foco. Se tudo parece prioridade, o output está errado.
+
+## Quando usar
+- **segunda-feira** — o uso natural
+- **retomada depois de viagem ou caos** — quando você perdeu o fio
+- semana com **muito cliente/entrega** empilhados
+- **antes de iniciar um investimento forte** em tráfego próprio
+
+## Como utilizar
+1. **Você dispara.** Ex.: *"abre a semana"* / *"o que eu foco essa semana?"* Não precisa de input — ela puxa o estado sozinha.
+2. **A ISIS carrega o estado** dos clientes (packs, timelines, relatórios recentes, agenda quando disponível) e cruza com os critérios de priorização.
+3. **Se valer a pena**, ela puxa um intel competitivo **curto** — só se houver um cliente/campanha que justifique. Por padrão isso fica **desligado**; ela não vira pesquisa infinita.
+4. **Ela te entrega a pauta** em PT-BR, curta, com o Top 3, os clientes que pedem atenção, bloqueios, oportunidades de dinheiro, o que cortar e a **primeira ação de 15 minutos**.
+5. **Quando há planejamento real**, ela registra a abertura num arquivo da semana. Se for ruído, não arquiva nada.
+
+**O que ter em mãos (inputs):**
+
+| Input | Obrigatório | Padrão |
+|---|---|---|
+| (gatilho) | sim | "abre a semana" — sem mais nada |
+| incluir intel competitivo | não | **desligado**; só liga se um cliente justificar |
+| janela de análise | não | semana anterior |
+
+<Info>Como ela prioriza: dinheiro/oportunidade próxima → cliente protegido → risco reputacional → bloqueio que trava entrega → cliente sem ação registrada → preparação pra escala. Dinheiro e cliente protegido vêm primeiro, sempre.</Info>
+
+## Por dentro (a sequência)
+
+<Steps>
+  <Step title="Carregar estado (ISIS)">Lê packs, timelines, relatórios recentes, a rotina diária se existir e a agenda quando disponível. Sai com: clientes priorizados, bloqueios, oportunidades e riscos.</Step>
+  <Step title="Intel competitivo — opcional (scout)">Só roda se você ligar e houver motivo. Pesquisa curta, traz sinal acionável, não dossiê.</Step>
+  <Step title="Montar a pauta (ISIS)">Resumo semanal em PT-BR: Top 3 · clientes que exigem atenção · bloqueios · oportunidades de dinheiro · o que cortar/adiar · primeira ação de 15 minutos.</Step>
+  <Step title="Registrar quando útil (ISIS)">Salva a abertura da semana num arquivo — só se houve planejamento real. Ruído não vira arquivo.</Step>
+</Steps>
+
+> Os agentes (ISIS, traffic, scout, cs) estão em [Os Agentes](/agentes/visao-geral).
+
+## Entradas / Saídas
+- **Entra:** o estado atual da operação (a ISIS coleta; você não precisa montar nada).
+- **Sai:**
+  - uma **mensagem curta** pra você com o Top 3 e os cortes
+  - opcionalmente, um **registro** da abertura da semana (`...rotinas/semanais/abertura-<ano-semana>.md`), quando houve planejamento de verdade
+
+## Onde trava
+Não tem gate formal — mas tem **regras que invalidam o output**:
+
+- **mais de 3 prioridades principais** → não é Top 3, é lista de desejos; refaz
+- **intel competitiva sem ação** → sinal que não vira decisão é ruído
+- **plano que ignora seu foco/energia** → uma semana planejada sem respeitar o ritmo de quem executa não serve
+- **ação cliente-facing** sai daqui só com sua confirmação
+
+## O que NÃO faz
+- **Não vira reunião fake** de agência grande — é foco, não teatro.
+- **Não mexe em cliente, ads ou financeiro** — abre a semana, sugere; agir é outro fluxo.
+- **Não enche você de prioridades** — se sair mais de 3, está errado.
+- **Não pesquisa concorrente sem motivo** — intel é opcional e curto.
+
+## Exemplo
+Numa segunda depois de uma semana caótica, a ISIS leu os packs e timelines, viu um cliente protegido com relatório atrasado, um outro sem ação há dias e uma oportunidade de upsell madura. Entregou: *"Top 3: (1) relatório do cliente protegido — atrasou, é prioridade de dinheiro e reputação; (2) check no cliente parado; (3) preparar a conversa de upsell. Corta: a pesquisa de concorrente, não muda nada essa semana. Primeira ação de 15 min: abrir a conta do cliente protegido e ver se o tracking ainda está de pé."*
+
+## Fonte
+`sistema/operacao/workflows/abertura-semana.yaml` — esta página é a leitura de operador desse fluxo.
