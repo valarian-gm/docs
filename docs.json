@@ -31,6 +31,13 @@
         "tab": "Manual de Uso",
         "groups": [
           {
+            "group": "Fundamentos",
+            "icon": "scale-balanced",
+            "pages": [
+              "fundamentos/a-constituicao"
+            ]
+          },
+          {
             "group": "Primeiros Passos",
             "pages": [
               "introducao",
