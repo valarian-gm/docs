@@ -18,11 +18,11 @@ Um **workflow** é o POP (procedimento operacional) de uma tarefa recorrente: di
 
 | Workflow | Gatilho | Orquestra (agentes) | Skills que chama | Gate | Status |
 | --- | --- | --- | --- | --- | --- |
-| **relatorio-trafego** | traffic → cs → qa | auditoria-meta-360, scan-anomalias, relatorio-trafego-pago | GATE-RELATORIO-TRAFEGO-PAGO | 🟢 ativo |
-| **onboarding** | cs, strategist, traffic, qa | pack-cliente, persona-neurocomportamental, branding-cliente | GATE-CHECK-CLIENTE, GATE-PROVISIONAMENTO-CLIENTE | 🟡 piloto |
-| **check-cliente** | isis, traffic, cs, qa | pack-cliente (verificação), auditoria-tracking/meta | GATE-CHECK-CLIENTE | 🟡 piloto |
-| **campanha-nova** | strategist, copy, design, traffic, qa, cs | core-estrategia-cliente, tracking-checklist, copy-anuncio, criativo-gerador-andromeda, static-ad-blueprint | GATE-CAMPANHA | 🟡 piloto |
-| **qbr** | traffic, strategist, fin, cs, qa | relatorio-trafego-pago, core-estrategia-cliente, relatorio-visao-geral-cliente, retencao-upsell | GATE-RELATORIO-TRAFEGO-PAGO | 🟡 piloto |
+| **relatorio-trafego** | traffic → cs → qa | auditoria-meta-360, scan-anomalias, relatorio-trafego-pago | GATE-RELATORIO-TRAFEGO-PAGO | 🟢 ativo |  |
+| **onboarding** | cs, strategist, traffic, qa | pack-cliente, persona-neurocomportamental, branding-cliente | GATE-CHECK-CLIENTE, GATE-PROVISIONAMENTO-CLIENTE | 🟡 piloto |  |
+| **check-cliente** | isis, traffic, cs, qa | pack-cliente (verificação), auditoria-tracking/meta | GATE-CHECK-CLIENTE | 🟡 piloto |  |
+| **campanha-nova** | strategist, copy, design, traffic, qa, cs | core-estrategia-cliente, tracking-checklist, copy-anuncio, criativo-gerador-andromeda, static-ad-blueprint | GATE-CAMPANHA | 🟡 piloto |  |
+| **qbr** | traffic, strategist, fin, cs, qa | relatorio-trafego-pago, core-estrategia-cliente, relatorio-visao-geral-cliente, retencao-upsell | GATE-RELATORIO-TRAFEGO-PAGO | 🟡 piloto |  |
 | **offboarding** | "cliente saiu/pausou", "colaborador saiu" | isis, cs, qa | — (edita pack/yaml \+ desprovisiona) | GATE-OFFBOARDING | 🟡 piloto |
 | **dashboard-anomalias** | "tem algo estranho nas contas?", radar do dia | traffic, fin, cs, qa | scan-anomalias | GATE-AUDITORIA | 🟡 piloto |
 | **onboarding\_colaborador** | "novo colaborador", "adicionar fulano" | isis | — (permissões fail-closed \+ rotinas) | GATE-COLABORADOR-CANAIS | 🟡 piloto |
@@ -33,9 +33,6 @@ Um **workflow** é o POP (procedimento operacional) de uma tarefa recorrente: di
 | **diagnostico-venda**_(playbook, não automático)_ | call comercial, antes de proposta | MIDAS/SDR (manual) | — (10 seções \+ matriz de fit) | — | guia |
 
 ## Anatomia de um workflow (exemplo: relatorio-trafego 🟢)
-
-<Steps>
-</Steps>
 
 <Warning>
   **Red-line transversal:** publicar, enviar ao cliente, alterar ads, criar cobrança ou ativar WhatsApp **nunca** é automático — o workflow entrega draft e pede OK explícito (`sistema/operacao/core/full-auto.md`).
