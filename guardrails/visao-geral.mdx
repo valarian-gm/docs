@@ -1,0 +1,72 @@
+---
+title: "Guardrails"
+sidebarTitle: "Visão Geral"
+description: "As proteções do sistema: três camadas de fronteira de cliente, onze gates de qualidade, quatro níveis de ação e as red-lines. Como funcionam e onde estão cadastrados."
+---
+
+O sistema protege contra os dois erros que matam uma operação de agência: **vazar dado de um cliente no canal de outro** e **executar ação externa irreversível sem autorização**. A defesa tem três frentes: a **fronteira de cliente** (3 camadas), os **gates de qualidade** (11) e os **níveis de ação** (4) \+ red-lines.
+
+## 1. Fronteira de cliente — 3 camadas
+
+Nasceu de um incidente real: dado de cliente vazou em canal errado 3× em 3 dias porque o guardrail era _instrução mental_ — e o modelo pula sob pressa. A correção: virar **código determinístico**.
+
+<Steps>
+  <Step title="Camada 1 — Fonte de verdade (os packs)">
+    Cada `clientes/<slug>/pack.yaml` declara seu canal (`canais.slack`) e conta (`conta_ads_meta`). É o único lugar onde isso se escreve à mão.
+  </Step>
+  <Step title="Camada 2 — Registro gerado (build-canais.py)">
+    `sistema/integracoes/scripts/build-canais.py` lê todos os packs e gera `canais-clientes.yaml` (mapa `channel_id → slug/conta/status`). **Nunca editado à mão.**
+  </Step>
+  <Step title="Camada 3 — A trava (resolve-canal.py)">
+    `sistema/integracoes/scripts/resolve-canal.py` — zero LLM. Antes de responder com dado de cliente, valida `cliente do pedido → dono do canal → conta consultada`. Qualquer divergência ou canal desconhecido → **BLOCK** (fail-closed).
+  </Step>
+</Steps>
+
+```bash
+# A trava em ação (exit 0 = ALLOW, 2 = BLOCK):
+python3 sistema/integracoes/scripts/resolve-canal.py \
+  --platform slack --channel <channel_id_origem> --slug <cliente> [--account <act_>]
+```
+
+<Info>
+  **Fonte:** `sistema/skills/core/guardrail-mensagem/SKILL.md` (lógica WHAT·WHERE·WHO), `sistema/integracoes/scripts/*`, `sistema/operacao/core/constituicao.md`. Teste de regressão: `test-resolve-canal.py` (7/7, cobre os 3 vazamentos reais).
+</Info>
+
+<Warning>
+  A trava só **para** o vazamento quando fiada no runtime como **pré-interceptor** (antes de qualquer resposta). No repo ela existe e é testada; a fiação no runtime é o passo que garante. Ver runbook `sistema/operacao/decisoes/2026-06-29-fiacao-trava-canal-hermes.md`.
+</Warning>
+
+## 2. Gates de qualidade (11)
+
+Validação objetiva por score (0–100) antes de publicar/enviar/executar. **Fonte:** `sistema/operacao/core/gates.yaml`. Aplicados pelo subagente `qa`.
+
+| Gate | Valida |
+| --- | --- |
+| GATE-RELATORIO-TRAFEGO-PAGO | Relatório antes de publicar/enviar link |
+| GATE-CHECK-CLIENTE | Setup mínimo do cliente pra operar |
+| GATE-AUDITORIA | Auditorias, sprints, diagnósticos |
+| GATE-COPY | Copies de anúncio/headline/WhatsApp |
+| GATE-CRIATIVO | Spec/output de criativo |
+| GATE-CAMPANHA | Campanha antes de qualquer subida |
+| GATE-WHATSAPP | Automações/mensagens/fluxos WhatsApp |
+| GATE-AUTOMACAO | Automações internas ou cliente-facing |
+| GATE-PROVISIONAMENTO-CLIENTE | Cliente pronto pra provisionar rotinas |
+| GATE-COLABORADOR-CANAIS | Colaborador com identidade de canal (DM) |
+| GATE-OFFBOARDING | Saída/pausa: desprovisiona certo, preserva histórico |
+
+**Veredito:** ≥80 PASS · 60–79 CONCERNS · 40–59 REWORK · \<40 FAIL. Bloqueios S4 (ex.: `vazamento_cliente`, `acao_externa_sem_confirmacao`) param na hora.
+
+## 3. Níveis de ação (0–3)
+
+O que a ISIS faz sozinha vs. o que exige OK. **Fonte:** `sistema/operacao/regras/guardrails-automacao.md`.
+
+| Nível | Regra | Exemplo |
+| --- | --- | --- |
+| 0 | Executa em silêncio | Ler contexto, resumir, classificar, organizar |
+| 1 | Executa e avisa depois | Atualizar doc interno, criar rascunho, registrar decisão |
+| 2 | Pede aprovação compacta antes | Criar task externa, enviar formulário, publicar em canal operacional |
+| 3 | Exige comando explícito | Responder cliente, pausar/subir campanha, criar cobrança, publicar relatório |
+
+## Red-lines absolutas
+
+**Fonte:** `sistema/operacao/regras/red-lines.md`. Exigem confirmação humana explícita: publicar em canal externo, mensagem a cliente/lead/parceiro, alterar campanha/verba/criativo, editar tracking em produção, mexer em acessos, apagar histórico, fechar contrato, marcar setup como pronto, **operar dados de mais de um cliente ao mesmo tempo**.

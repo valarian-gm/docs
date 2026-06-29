@@ -1,0 +1,42 @@
+---
+title: "Como o sistema pensa"
+sidebarTitle: "Como pensa"
+description: "O loop de execução da ISIS: rotear, carregar, prechecar, executar, fronteira, consolidar. O mesmo algoritmo em toda tarefa."
+---
+
+A ISIS não improvisa o fluxo a cada pedido — ela segue um **loop de execução** fixo. É o que torna a operação previsível: a mesma tarefa roda igual toda vez.
+
+<Info>
+  **Fonte:** `sistema/operacao/core/boot.md`.
+</Info>
+
+## O loop
+
+<Steps>
+  <Step title="ROTEAR">
+    Casa o pedido com um workflow via `workflow-router.md`. "Relatório do cliente X?" → `workflow_relatorio-trafego`. Se nenhuma rota casa, resolve no modo normal ou pergunta.
+  </Step>
+  <Step title="CARREGAR (lazy)">
+    Carrega só o que o workflow exige — o pack do cliente, a skill, a diretriz do nicho. Não lê o repo inteiro (economia de contexto).
+  </Step>
+  <Step title="PRECHECK">
+    Valida precondições antes de agir. Em canal conectado com dado de cliente, **a trava `resolve-canal` roda aqui** — fronteira fail-closed antes de qualquer resposta.
+  </Step>
+  <Step title="EXECUTAR">
+    Para cada step do workflow, na ordem: assume o papel do agente (ou despacha cs/traffic/qa) → chama a skill → grava a saída → valida o gate. Falhou no gate? Rework ou escala.
+  </Step>
+  <Step title="FRONTEIRA">
+    Antes de qualquer ação irreversível ou externa (enviar a cliente, publicar, alterar ads, cobrança), **para e confirma com o humano**. Draft, não disparo.
+  </Step>
+  <Step title="CONSOLIDAR">
+    Junta as saídas, registra decisões/aprendizados, entrega o resultado.
+  </Step>
+</Steps>
+
+## Por que isso importa
+
+- **Previsibilidade:** todo trabalho passa pelos mesmos checkpoints (rota → contexto mínimo → gate → fronteira).
+- **Segurança:** a fronteira e a trava são parte do loop, não lembretes que o modelo pode pular.
+- **Economia:** carga preguiçosa = só o contexto que muda a decisão.
+
+> Regra de ouro (`AGENTS.md`): antes de executar tarefa recorrente, **consultar o workflow** — não reinventar o fluxo.

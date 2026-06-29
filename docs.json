@@ -1,11 +1,11 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "almond",
-  "name": "Cerebro Valarian",
+  "name": "Projeto ISIS™",
   "colors": {
-    "primary": "#ef7025",
-    "light": "#eec9bc",
-    "dark": "#4fa1ab"
+    "primary": "#7C3AED",
+    "light": "#A78BFA",
+    "dark": "#5B21B6"
   },
   "favicon": "/favicon.svg",
   "logo": {
@@ -28,62 +28,52 @@
   "navigation": {
     "tabs": [
       {
-        "tab": "Manual de Uso",
+        "tab": "Manual do Motor",
         "groups": [
           {
-            "group": "Primeiros Passos",
+            "group": "Fundamentos",
+            "icon": "scale-balanced",
             "pages": [
-              "introducao",
-              "primeiros-passos/cadastro-e-acesso",
-              "primeiros-passos/configuracao-inicial",
-              "primeiros-passos/visao-geral-da-plataforma"
+              "index",
+              "fundamentos/o-que-e",
+              "fundamentos/a-constituicao",
+              "fundamentos/como-o-sistema-pensa",
+              "fundamentos/os-mapas"
             ]
           },
           {
-            "group": "Conceitos Fundamentais",
+            "group": "Arquitetura",
+            "icon": "server",
             "pages": [
-              "conceitos/o-que-e-cerebro-valarian",
-              "conceitos/fluxos-de-trabalho",
-              "conceitos/espacos-e-projetos",
-              "conceitos/permissoes-e-papeis"
+              "arquitetura/plataformas"
             ]
           },
           {
-            "group": "Funcionalidades",
+            "group": "Os Agentes",
+            "icon": "users",
             "pages": [
-              "funcionalidades/painel-principal",
-              "funcionalidades/gestao-de-tarefas",
-              "funcionalidades/base-de-conhecimento",
-              "funcionalidades/relatorios-e-analises",
-              "funcionalidades/notificacoes"
+              "agentes/visao-geral"
             ]
           },
           {
-            "group": "Integrações",
+            "group": "Workflows",
+            "icon": "diagram-project",
             "pages": [
-              "integracoes/visao-geral",
-              "integracoes/configurar-integracao"
+              "workflows/catalogo"
             ]
           },
           {
-            "group": "Configurações",
+            "group": "Skills",
+            "icon": "puzzle-piece",
             "pages": [
-              "configuracoes/conta-e-perfil",
-              "configuracoes/equipe-e-membros",
-              "configuracoes/seguranca"
+              "skills/catalogo"
             ]
-          }
-        ]
-      },
-      {
-        "tab": "Suporte",
-        "groups": [
+          },
           {
-            "group": "Ajuda",
+            "group": "Guardrails",
+            "icon": "shield-halved",
             "pages": [
-              "suporte/perguntas-frequentes",
-              "suporte/solucao-de-problemas",
-              "suporte/contato"
+              "guardrails/visao-geral"
             ]
           }
         ]
@@ -94,5 +84,6 @@
     "socials": {
       "linkedin": "https://linkedin.com/company/valarian"
     }
-  }
+  },
+  "description": "Manual do Motor — o sistema operacional agêntico que liga oferta, criativo, tráfego, dados e relatório numa operação só."
 }

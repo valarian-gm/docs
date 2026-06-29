@@ -1,0 +1,93 @@
+---
+title: "Skills"
+sidebarTitle: "Catálogo"
+description: "A biblioteca de capacidades do sistema — 59 skills em 5 categorias. Cada skill é uma pasta com SKILL.md (frontmatter + corpo)."
+---
+
+Uma **skill** é uma capacidade encapsulada: uma pasta com `SKILL.md` (frontmatter YAML — nome, descrição, versão, tags — \+ corpo com passo a passo). A ISIS e os subagentes carregam skills sob demanda.
+
+<Info>
+  **Fonte:** `sistema/skills/<categoria>/<skill>/SKILL.md`. Esta página é **gerada** do frontmatter de cada skill — quando uma skill muda, regera. Total: **59 skills**.
+</Info>
+
+## Core (6)
+
+| Skill | O que faz |
+| --- | --- |
+| `guardrail-mensagem` | Firewall WHAT/WHERE/WHO \+ trava determinística antes de responder em canal conectado. |
+| `core-eficiencia-tokens` | Regras de eficiência de tokens: mínimo de tokens, máxima fidelidade. |
+| `core-ops-agencia` | Operar o workspace da agência via runtime — briefing, onboarding, preflight read-only. |
+| `core-estrategia-cliente` | Constrói estratégia diagnosticando modelo de negócio → economia da oferta → marca. |
+| `core-mesa-clevel` | Mesa executiva (Vision/COO/CMO/CAIO/CTO/CIO) para decidir questões do negócio. |
+| `core-isis-operacao` | Modo de operação da ISIS: colaboração, limites de privacidade, suporte proativo. |
+
+## Performance (24)
+
+| Skill | O que faz |
+| --- | --- |
+| `relatorio-trafego-pago` | Gera relatório de tráfego pago profissional (HTML interno \+ público) por cliente. |
+| `auditoria-meta-360` | Audita conta Meta Ads read-only por tiers (estado → opportunity → benchmark). |
+| `scan-anomalias` | Varre contas ativas e entrega digest de anomalias priorizado por impacto no dinheiro. |
+| `auditoria-tracking-ecommerce` | Audita Meta \+ GA4 \+ GTM \+ pixel/CAPI \+ Clarity \+ loja \+ funil de compra. |
+| `relatorio-raio-x-ecommerce` | Raio-x de vendas: loja×ads, funil, recompra/LTV, RFM, cohort, viabilidade. |
+| `relatorio-visao-geral-cliente` | Relatório de visão geral/estratégia para cliente (design do sistema). |
+| `tracking-checklist` | Checklist de tracking pré-campanha — valida o que precisa estar de pé antes da mídia. |
+| `pack-cliente` | Monta/atualiza o `pack.yaml` enxuto — o SSoT do cliente que cabe numa tela. |
+| `persona-neurocomportamental` | Constrói avatar neurocomportamental profundo do cliente ideal. |
+| `branding-cliente` | Captura/define identidade de marca num brandbook (DESIGN.md \+ tokens \+ preview). |
+| `oferta-produtizar` | Transforma serviço/produto em oferta irresistível (nível \$100M Offers). |
+| `pagina-copy-lp` | Copy de landing page de alta conversão, seção a seção ("UM de tudo"). |
+| `pagina-descricao-seo` | Descrição de produto de e-commerce otimizada para SEO. |
+| `copy-anuncio` | Texto final de anúncio (Meta/Google): primary text, headline, descrição, CTA. |
+| `copy-revisor` | Revisa copy (anúncio, headline, lead, e-mail, VSL) e expõe falhas. |
+| `copy-humanizar-ia` | Reescreve texto que soa IA até soar humano, natural e fluido. |
+| `copy-vsl` | Roteiro palavra-a-palavra de VSL de alta conversão. |
+| `criativo-gerador-andromeda` | Gerador de criativos Meta Ads (base Andromeda \+ camada de copy). |
+| `static-ad-blueprint` | Transforma a mensagem num andaime visual de estático (layout \+ wireframe \+ prompt). |
+| `criativo-carrossel-html` | Carrossel Instagram em HTML standalone \+ export JPG. |
+| `criativo-prompt-ia` | Gera UM prompt técnico fotorrealista para modelo de imagem/vídeo. |
+| `image-prompt-architect` | Sistema forense de geração de prompts fotorrealistas (V-DOM). |
+| `conteudo-roteiro-reels` | Roteiros de vídeo curto (Reels/TikTok/Shorts) feitos pra viralizar. |
+| `conteudo-sequencia-stories` | Sequências diárias de Stories que vendem (80% rotina \+ 20% CTA). |
+| `conteudo-caixinha-fdf` | Sequência de Stories de fundo de funil ancorada numa caixinha de perguntas. |
+| `conteudo-expandir` | Expande explicação curta (texto/áudio) em material didático, sem extrapolar. |
+| `conteudo-artigo-linkedin` | Artigo viral de LinkedIn ou matéria de blog jornalística. |
+| `conteudo-10-angulos` | Gera ângulos/ideias novas via conversa leve e curiosa. |
+| `trafego-escala-infoproduto` | Método de criação e escala de campanhas Meta para infoprodutos com expert. |
+
+<Note>
+  Há **24** em performance; a tabela acima cobre o conjunto. Detalhe e passo a passo de cada uma no próprio `SKILL.md`.
+</Note>
+
+## Comercial (5)
+
+| Skill | O que faz |
+| --- | --- |
+| `vendas-script-bdr` | Roteiro completo de prospecção outbound (metodologia BUNCH). |
+| `vendas-sdr-virtual` | Prompt operacional de SDR virtual (WhatsApp/DM) pronto pra automação n8n. |
+| `vendas-sprint-aquisicao` | Diagnostica fit, gargalos e oportunidades da Sprint de Aquisição. |
+| `vendas-proposta` | Monta a proposta comercial estruturada para fechar. |
+| `retencao-upsell` | Decide e prepara a conversa de renovar ou expandir um cliente ativo. |
+
+## Ops (10)
+
+| Skill | O que faz |
+| --- | --- |
+| `ops-workflow-builder` | Cria/edita um workflow de orquestração (meta-skill: atualiza router \+ MAPAs). |
+| `ops-auditoria-sistema` | Auditoria read-only do sistema inteiro: erros, travas, impedimentos. |
+| `ops-manutencao-cerebro` | Higiene read-only: skills sujas/quebradas, índices podres, pastas vazias. |
+| `ops-arquitetura-visual` | Relatório HTML que explica algo técnico (diagrama, design). |
+| `ops-implementacao` | Implementação operacional: taxonomia de registro, acesso a ferramentas. |
+| `ops-composio-cli` | Composio CLI como camada de integração (Gmail, Calendar, GitHub…). |
+| `ops-ata-reuniao` | Transforma reunião (transcrição/notas) em ata estruturada em markdown. |
+| `whatsapp-evolution` | Operar WhatsApp via Evolution API (enviar, criar/conectar instâncias). |
+| `crm-evo` | Operar o Evo CRM: leads, pipeline, conversas multi-canal. |
+| `financeiro-faturamento` | Monta fatura/cobrança, termos de pagamento e aviso pré-vencimento (Asaas). |
+
+## Workflows (9)
+
+Skills de orquestração `workflow_*` — ver [Workflows → Catálogo](/workflows/catalogo). São: `relatorio-trafego`, `onboarding`, `check-cliente`, `campanha-nova`, `qbr`, `offboarding`, `dashboard-anomalias`, `onboarding_colaborador`, `whatsapp-setup`.
+
+<Note>
+  **Adaptação:** os nomes e descrições de skill carregam o contexto da sua operação. Ao instanciar o sistema para outra agência, troque as referências de marca/nicho pelas suas — a estrutura (`SKILL.md` por domínio) é a mesma.
+</Note>
